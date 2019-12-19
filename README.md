@@ -39,6 +39,11 @@
 ```
 git clone https://github.com/Quantumoffices/goNet.git
 ```
+### **2.** 在goNet路径下执行命令
+
+```
+go mod download
+```
 
 ## 使用样例参考
 - 服务端
