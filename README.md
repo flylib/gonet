@@ -3,7 +3,7 @@
 ## version
  v 1.0.0
 ## 介绍
-一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[beego](https://github.com/astaxie/beego)两大开框架的设计，使用非常方便简洁，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域的通讯。
+一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[beego](https://github.com/astaxie/beego)两大开框架的设计，轻松上手，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域的通讯。
 
 ## 主要特性及追求目标
 - 高并发
@@ -118,7 +118,7 @@ http://www.quantumstudio:8080/client-release-signed.apk
 ## FAQ
 ## 参与贡献
 ## 感谢您的帮助
-我的母亲今年(2019年9月份)被查出患肺腺癌晚期，目前家里入不敷出，如果框架能帮助到您，希望帮助一下我的母亲！在此真诚的谢谢您并加群@叛逆小子,会赠与游戏demo源码！  
+我的母亲今年(2019年9月份)被查出患肺腺癌晚期，目前家里入不敷出，如果框架能帮助到您，希望帮助一下我的母亲！在此真诚的谢谢您并在交流群@我,会赠与游戏demo源码！  
 <img src="./ali_pay.JPG" height="300">  <img src="./wx_pay.JPG" height="300">
 
 
