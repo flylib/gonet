@@ -122,5 +122,5 @@ http://www.quantumstudio:8080/client-release-signed.apk
 <img src="./ali_pay.JPG" height="300">  <img src="./wx_pay.JPG" height="300">
 
 
-#### QQ群：795611332
+#### QQ交流群：795611332
 
