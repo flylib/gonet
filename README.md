@@ -117,7 +117,7 @@ func (s *SessionClose) Handle(session Session) {
 - **使用etcd+mysql+beego+goNet+cocos creator制作**  
 服务端：大厅服+游戏服+服务注册  
 客户端：大厅+子游戏模式  
-http://www.quantumstudio:8080/client-release-signed.apk
+http://www.quantumstudio.cn:8080/client-release-signed.apk
 ![display](./display_lkby.gif)
 ## 测试
 ## FAQ
