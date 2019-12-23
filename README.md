@@ -3,7 +3,7 @@
 ## version
  v 1.0.0
 ## 介绍
-一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[beego](https://github.com/astaxie/beego)两大开框架的设计，轻松上手，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域的通讯。
+一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[beego](https://github.com/astaxie/beego)两大开框架的设计，轻松上手，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域通讯。
 
 ## 主要特性及追求目标
 - 高并发
@@ -97,8 +97,6 @@ type Ping struct {
 type Pong struct {
 	TimeStamp int64 `json:"time_stamp",xml:"time_stamp"`
 }
-type SessionClose struct {
-}
 
 //消息处理：只需要实现 goNet.Message接口
 func (p *Ping) Handle(session Session) {
@@ -107,10 +105,6 @@ func (p *Ping) Handle(session Session) {
 }
 func (p *Pong) Handle(session Session) {
 	logrus.Infof("session_%v pong at time=%v", session.ID(), time.Unix(p.TimeStamp, 0).String())
-}
-
-func (s *SessionClose) Handle(session Session) {
-	logrus.Errorf("session_%v closed", session.ID())
 }
 ```
 ## 在线游戏demo
