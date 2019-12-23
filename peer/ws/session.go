@@ -2,9 +2,9 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	"github.com/sirupsen/logrus"
 	"goNet"
 	"goNet/codec"
+	. "goNet/log"
 	"sync"
 )
 
@@ -37,7 +37,7 @@ func (s *session) Socket() interface{} {
 
 func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
-		logrus.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 	s.data = nil
 }
@@ -47,8 +47,8 @@ func (s *session) Send(msg interface{}) {
 	s.Lock()
 	defer s.Unlock()
 	if err := codec.SendWSPacket(s.conn, msg); err != nil {
-		logrus.Errorf("sesssion_%v send msg error,reason is %v", s.ID(), err)
-		logrus.Errorf(s.conn.RemoteAddr().String())
+		Log.Errorf("sesssion_%v send msg error,reason is %v", s.ID(), err)
+		Log.Errorf(s.conn.RemoteAddr().String())
 	}
 }
 
@@ -57,28 +57,28 @@ func (s *session) recvLoop() {
 	for {
 		t, body, err := s.conn.ReadMessage()
 		if err != nil || t == websocket.CloseMessage {
-			logrus.Warnf("session_%d closed, err: %s", s.ID(), err)
+			Log.Warnf("session_%d closed, err: %s", s.ID(), err)
 			goNet.SessionManager.RecycleSession(s)
 			break
 		}
 		var msg goNet.Message
 		switch t {
 		case websocket.TextMessage:
-			//logrus.Info("TextMessage")
+			//goNet.Log.Info("TextMessage")
 			msg, err = codec.ParserWSPacket(body)
 			if err != nil {
-				logrus.Warnf("message decode error=%v", err)
+				Log.Warnf("message decode error=%v", err)
 				continue
 			}
 		case websocket.BinaryMessage:
-			//logrus.Info("BinaryMessage")
+			//goNet.Log.Info("BinaryMessage")
 			msg, err = codec.ParserPacket(body)
 			if err != nil {
-				logrus.Warnf("message decode error=%s", err)
+				Log.Warnf("message decode error=%s", err)
 				continue
 			}
 		default:
-			logrus.Errorf("unknown message")
+			Log.Errorf("unknown message")
 			continue
 		}
 		goNet.HandleMessage(msg, s)

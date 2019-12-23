@@ -2,7 +2,7 @@ package udp
 
 import (
 	"goNet"
-	"log"
+	. "goNet/log"
 	"net"
 )
 
@@ -23,15 +23,15 @@ func init() {
 func (c *client) Start() {
 	remoteAddr, err := net.ResolveUDPAddr("udp", c.Addr())
 	if err != nil {
-		log.Fatalf("#resolve udp address failed(%s) %v", c.Addr(), err.Error())
+		Log.Fatalf("#resolve udp address failed(%s) %v", c.Addr(), err.Error())
 	}
 
 	conn, err := net.DialUDP("udp", nil, remoteAddr)
 	if err != nil {
-		log.Fatalf("#udp.connect failed(%s) %v", c.Addr(), err.Error())
+		Log.Fatalf("#udp.connect failed(%s) %v", c.Addr(), err.Error())
 	}
 
-	c.session = newSession(conn,nil)
+	c.session = newSession(conn, nil)
 	go c.session.recvLoop()
 }
 

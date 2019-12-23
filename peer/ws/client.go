@@ -2,8 +2,8 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	"github.com/sirupsen/logrus"
 	"goNet"
+	. "goNet/log"
 	"net/http"
 	"time"
 )
@@ -29,10 +29,10 @@ func (c *client) Start() {
 	}
 	conn, _, err := dialer.Dial(c.Addr(), nil)
 	if err != nil {
-		logrus.Errorf("#ws.connect failed(%s) %v", c.Addr(), err.Error())
+		Log.Errorf("#ws.connect failed(%s) %v", c.Addr(), err.Error())
 		return
 	}
-	logrus.Info(conn.RemoteAddr())
+	Log.Info(conn.RemoteAddr())
 	c.session = newSession(conn)
 	go c.session.recvLoop()
 }

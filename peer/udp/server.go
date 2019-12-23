@@ -1,8 +1,8 @@
 package udp
 
 import (
-	"github.com/sirupsen/logrus"
 	"goNet"
+	. "goNet/log"
 	"net"
 )
 
@@ -23,16 +23,16 @@ func init() {
 func (u *server) Start() {
 	localAddr, err := net.ResolveUDPAddr("udp", u.Addr())
 	if err != nil {
-		logrus.Fatalf("#udp.resolve failed(%s) %v", u.Addr(), err.Error())
+		Log.Fatalf("#udp.resolve failed(%s) %v", u.Addr(), err.Error())
 	}
 
 	conn, err := net.ListenUDP("udp", localAddr)
 	if err != nil {
-		logrus.Fatalf("#udp.listen failed(%s) %s", u.Addr(), err.Error())
+		Log.Fatalf("#udp.listen failed(%s) %s", u.Addr(), err.Error())
 	}
-	logrus.Infof("#udp.listen(%s) %s", u.Type(), u.Addr())
+	Log.Infof("#udp.listen(%s) %s", u.Type(), u.Addr())
 
-	u.session = newSession(conn,localAddr)
+	u.session = newSession(conn, localAddr)
 	u.session.recvLoop()
 }
 func (u *server) Stop() {

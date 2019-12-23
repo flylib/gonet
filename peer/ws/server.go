@@ -2,8 +2,8 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	"github.com/sirupsen/logrus"
 	"goNet"
+	. "goNet/log"
 	"net/http"
 	"net/url"
 )
@@ -50,12 +50,12 @@ func (s *server) SetHttps(certfile, keyfile string) {
 func (s *server) Start() {
 	url, err := url.Parse(s.Addr())
 	if err != nil {
-		logrus.Fatalf("#websocket.url parse failed(%s) %v", s.Addr(), err.Error())
+		Log.Fatalf("#websocket.url parse failed(%s) %v", s.Addr(), err.Error())
 	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc(url.Path, s.newConn)
-	logrus.Infof("#websocket.listen(%s)", s.Addr())
+	Log.Infof("#websocket.listen(%s)", s.Addr())
 
 	if url.Scheme == "https" {
 		err = http.ListenAndServeTLS(url.Host, s.certfile, s.keyfile, mux)
@@ -63,17 +63,17 @@ func (s *server) Start() {
 		err = http.ListenAndServe(url.Host, mux)
 	}
 	if err != nil {
-		logrus.Fatalf("#websocket stop listen , failed(%s) %v", s.Addr(), err.Error())
+		Log.Fatalf("#websocket stop listen , failed(%s) %v", s.Addr(), err.Error())
 	}
 }
 
 func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	conn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		logrus.Error("http covert to websocket err:", err.Error())
+		Log.Error("http covert to websocket err:", err.Error())
 		return
 	}
-	logrus.Info("new connect from ",conn.RemoteAddr())
+	Log.Info("new connect from ", conn.RemoteAddr())
 	ses := newSession(conn)
 	ses.recvLoop()
 }

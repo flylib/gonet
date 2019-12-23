@@ -1,8 +1,8 @@
 package tcp
 
 import (
-	"github.com/sirupsen/logrus"
 	"goNet"
+	. "goNet/log"
 	"net"
 )
 
@@ -14,18 +14,18 @@ type server struct {
 func (s *server) Start() {
 	ln, err := net.Listen("tcp", s.Addr())
 	if err != nil {
-		logrus.Fatalf("tcp(%v) listen failed %v", s.Type(), err.Error())
+		Log.Fatalf("tcp(%v) listen failed %v", s.Type(), err.Error())
 	}
 	s.ln = ln
-	logrus.Infof("tcp(%v)listen on %v", s.Type(), ":8087")
+	Log.Infof("tcp(%v)listen on %v", s.Type(), ":8087")
 
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			logrus.Error("#tcp(%v),accept failed,err:%v", s.Type(), err.Error())
+			Log.Error("#tcp(%v),accept failed,err:%v", s.Type(), err.Error())
 			break
 		}
-		logrus.Infof("#tcp.accept from %s connected", conn.RemoteAddr())
+		Log.Infof("#tcp.accept from %s connected", conn.RemoteAddr())
 
 		go s.newConn(conn)
 	}

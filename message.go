@@ -2,7 +2,7 @@ package goNet
 
 import (
 	"github.com/panjf2000/ants"
-	"github.com/sirupsen/logrus"
+	. "goNet/log"
 	"math"
 	"reflect"
 	"time"
@@ -22,19 +22,19 @@ type Pong struct {
 }
 
 func (p *Ping) Handle(session Session) {
-	logrus.Infof("session_%v ping at time=%v", session.ID(), time.Unix(p.TimeStamp, 0).String())
+	Log.Infof("session_%v ping at time=%v", session.ID(), time.Unix(p.TimeStamp, 0).String())
 	session.Send(Pong{
 		TimeStamp: time.Now().Unix(),
 	})
 }
 func (p *Pong) Handle(session Session) {
-	logrus.Infof("session_%v pong at time=%v", session.ID(), time.Unix(p.TimeStamp, 0).String())
+	Log.Infof("session_%v pong at time=%v", session.ID(), time.Unix(p.TimeStamp, 0).String())
 }
 
 //注册消息
 func RegisterMessage(idx int32, msg interface{}) {
 	if idx > math.MaxUint16 {
-		logrus.Panicf("msg.idx not allowed to be more than %v", math.MaxUint16)
+		Log.Panicf("msg.idx not allowed to be more than %v", math.MaxUint16)
 	}
 
 	more := idx - int32(len(msgTList)) + 1
@@ -44,12 +44,12 @@ func RegisterMessage(idx int32, msg interface{}) {
 	}
 
 	if msgTList[idx] != nil {
-		logrus.Panicf("msg.idx %v is existed,please check out", idx)
+		Log.Panicf("msg.idx %v is existed,please check out", idx)
 	}
 
 	t := reflect.TypeOf(msg)
 	//if _, ok := reflect.New(t).Interface().(Message); !ok {
-	//	logrus.Panic(t.Name() + ":not a Message type")
+	//	Log.Panic(t.Name() + ":not a Message type")
 	//}
 	msgTList[idx] = t
 	msgTID[t] = idx
@@ -81,7 +81,7 @@ func HandleMessage(msg Message, s Session) {
 		msg.Handle(s)
 	})
 	if err != nil {
-		logrus.Errorf("antsPool commit message error,reason is ", err.Error())
+		Log.Errorf("antsPool commit message error,reason is ", err.Error())
 	}
 }
 

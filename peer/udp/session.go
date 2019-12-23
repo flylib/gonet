@@ -1,9 +1,9 @@
 package udp
 
 import (
-	"github.com/sirupsen/logrus"
 	"goNet"
 	"goNet/codec"
+	. "goNet/log"
 	"net"
 )
 
@@ -45,20 +45,20 @@ func (s *session) Socket() interface{} {
 func (s *session) Send(msg interface{}) {
 	var err error
 	if s.remote == nil {
-		logrus.Info("client send msg ")
+		Log.Info("client send msg ")
 		err = codec.SendPacket(s.conn, msg)
 	} else {
-		logrus.Info("server send msg ")
+		Log.Info("server send msg ")
 		err = codec.SendUdpPacket(s.conn, msg, s.remote)
 	}
 	if err != nil {
-		logrus.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 }
 
 func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
-		logrus.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 	s.data = nil
 }
@@ -67,9 +67,9 @@ func (s *session) Close() {
 func (s *session) recvLoop() {
 	for {
 		n, remote, err := s.conn.ReadFromUDP(s.buf)
-		logrus.Info("recv=", remote.String())
+		Log.Info("recv=", remote.String())
 		if err != nil {
-			logrus.Errorf("#udp.accept failed(%v) %v", s.conn.RemoteAddr(), err.Error())
+			Log.Errorf("#udp.accept failed(%v) %v", s.conn.RemoteAddr(), err.Error())
 		}
 		var ses goNet.Session
 		if sid, exit := remotes[remote.String()]; exit {
@@ -79,7 +79,7 @@ func (s *session) recvLoop() {
 		}
 		msg, err := codec.ParserPacket(s.buf[:n])
 		if err != nil {
-			logrus.Warnf("message decode error=%s", err)
+			Log.Warnf("message decode error=%s", err)
 			continue
 		}
 		goNet.HandleMessage(msg, ses)
