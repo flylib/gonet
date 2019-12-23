@@ -100,7 +100,7 @@ type Pong struct {
 type SessionClose struct {
 }
 
-//消息需要实现 goNet.Message接口
+//消息处理：只需要实现 goNet.Message接口
 func (p *Ping) Handle(session Session) {
 	logrus.Infof("session_%v ping at time=%v", session.ID(), time.Unix(p.TimeStamp, 0).String())
 	session.Send(Pong{TimeStamp: time.Now().Unix(),})
