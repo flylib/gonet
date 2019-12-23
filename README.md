@@ -3,7 +3,7 @@
 ## version
  v 1.0.0
 ## 介绍
-一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[beego](https://github.com/astaxie/beego)两大开框架的设计，使用非常方便简洁，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域的通讯。
+一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[beego](https://github.com/astaxie/beego)两大开框架的设计，轻松上手，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域的通讯。
 
 ## 主要特性及追求目标
 - 高并发
@@ -38,6 +38,11 @@
 
 ```
 git clone https://github.com/Quantumoffices/goNet.git
+```
+### **2.** 在goNet路径下执行命令
+
+```
+go mod download
 ```
 
 ## 使用样例参考
@@ -112,15 +117,15 @@ func (s *SessionClose) Handle(session Session) {
 - **使用etcd+mysql+beego+goNet+cocos creator制作**  
 服务端：大厅服+游戏服+服务注册  
 客户端：大厅+子游戏模式  
-http://www.quantumstudio:8080/client-release-signed.apk
+http://116.62.245.150:8080/game_wh/client-release-signed.apk
 ![display](./display_lkby.gif)
 ## 测试
 ## FAQ
 ## 参与贡献
 ## 感谢您的帮助
-我的母亲今年(2019年9月份)被查出患肺腺癌晚期，目前家里入不敷出，如果框架能帮助到您，希望帮助一下我的母亲！在此真诚的谢谢您并加群@叛逆小子,会赠与游戏demo源码！
+我的母亲今年(2019年9月份)被查出患肺腺癌晚期，目前家里入不敷出，如果框架能帮助到您，希望帮助一下我的母亲！在此真诚的谢谢您并在交流群@我,会赠与游戏demo源码！  
 <img src="./ali_pay.JPG" height="300">  <img src="./wx_pay.JPG" height="300">
 
 
-#### QQ群：795611332
+#### QQ交流群：795611332
 
