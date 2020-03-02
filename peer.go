@@ -1,5 +1,9 @@
 package goNet
 
+var (
+	peers = map[PeerType]Peer{}
+)
+
 type (
 	//端
 	Peer interface {
@@ -14,8 +18,15 @@ type (
 		//地址
 		addr string
 		//类型
-		_type string
+		peerType PeerType
 	}
+	//端类型
+	PeerType string
+)
+
+const (
+	PEER_SERVER PeerType = "server" //服务端
+	PEER_CLIENT PeerType = "client" //客户端
 )
 
 func (p *PeerIdentify) Addr() string {
@@ -26,24 +37,28 @@ func (p *PeerIdentify) SetAddr(addr string) {
 	p.addr = addr
 }
 
-func (p *PeerIdentify) Type() string {
-	return p._type
+func (p *PeerIdentify) Type() PeerType {
+	return p.peerType
 }
 
-func (p *PeerIdentify) SetType(t string) {
-	p._type = t
+func (p *PeerIdentify) SetType(t PeerType) {
+	p.peerType = t
 }
-
-var (
-	peers =map[string]Peer{}
-)
 
 func RegisterPeer(peer Peer) {
-	peers[peer.(interface{Type() string}).Type()]=peer
+	peers[peer.(interface{ Type() PeerType }).Type()] = peer
 }
 
-func NewPeer(peertype,addr string) Peer {
-	p:=peers[peertype]
-	p.(interface {SetAddr(string)}).SetAddr(addr)
+func NewPeer(opts ...Option) Peer {
+	//parser options
+	for _, opt := range opts {
+		opt(Opts)
+	}
+	err := initPool()
+	if err != nil {
+		panic(err)
+	}
+	p := peers[Opts.PeerType]
+	p.(interface{ SetAddr(string) }).SetAddr(Opts.Addr)
 	return p
 }

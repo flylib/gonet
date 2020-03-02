@@ -1,7 +1,6 @@
 package goNet
 
 import (
-	"github.com/panjf2000/ants"
 	. "goNet/log"
 	"math"
 	"reflect"
@@ -66,14 +65,7 @@ func GetMessageID(t reflect.Type) int32 {
 var (
 	msgTList = make([]reflect.Type, 8)
 	msgTID   = make(map[reflect.Type]int32)
-
-	antsPool, _ = ants.NewPool(10)
 )
-
-//重置协程池大小
-func ResetAnstsPoolSize(size int) {
-	antsPool.Tune(size)
-}
 
 //提交到协程池处理消息
 func HandleMessage(msg Message, s Session) {
@@ -86,8 +78,6 @@ func HandleMessage(msg Message, s Session) {
 }
 
 func init() {
-	//0
 	RegisterMessage(0, Ping{})
-	//1
 	RegisterMessage(1, Pong{})
 }

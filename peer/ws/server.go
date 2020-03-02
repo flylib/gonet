@@ -21,7 +21,7 @@ type server struct {
 
 func init() {
 	identify := goNet.PeerIdentify{}
-	identify.SetType("server")
+	identify.SetType(goNet.PEER_SERVER)
 
 	////响应头
 	//var header http.Header = make(map[string][]string)

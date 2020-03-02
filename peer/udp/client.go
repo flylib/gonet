@@ -13,7 +13,7 @@ type client struct {
 
 func init() {
 	identify := goNet.PeerIdentify{}
-	identify.SetType("client")
+	identify.SetType(goNet.PEER_CLIENT)
 	c := &client{
 		PeerIdentify: identify,
 	}

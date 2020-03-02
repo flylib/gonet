@@ -43,9 +43,6 @@ func (s *server) Stop() {
 
 func init() {
 	identify := goNet.PeerIdentify{}
-	identify.SetType("server")
-	s := &server{
-		PeerIdentify: identify,
-	}
-	goNet.RegisterPeer(s)
+	identify.SetType(goNet.PEER_SERVER)
+	goNet.RegisterPeer(&server{PeerIdentify: identify})
 }

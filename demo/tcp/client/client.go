@@ -9,7 +9,10 @@ import (
 )
 
 func main() {
-	p := goNet.NewPeer("client", ":8087")
+	p := goNet.NewPeer(
+		goNet.WithPeerType(goNet.PEER_CLIENT),
+		goNet.WithAddr("localhost:8087"),
+	)
 	p.Start()
 	fmt.Println("session count=", goNet.SessionManager.GetSessionCount())
 	s := goNet.SessionManager.GetSessionById(1)

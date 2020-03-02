@@ -13,7 +13,7 @@ type server struct {
 
 func init() {
 	identify := goNet.PeerIdentify{}
-	identify.SetType("server")
+	identify.SetType(goNet.PEER_SERVER)
 	s := &server{
 		PeerIdentify: identify,
 	}
