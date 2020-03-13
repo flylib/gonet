@@ -21,7 +21,6 @@ type server struct {
 func init() {
 	identify := goNet.PeerIdentify{}
 	identify.SetType(goNet.PEERTYPE_SERVER)
-
 	////响应头
 	//var header http.Header = make(map[string][]string)
 	//header.Add("Access-Control-Allow-Origin", "*")

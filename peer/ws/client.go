@@ -28,7 +28,7 @@ func (c *client) Start() {
 	}
 	conn, _, err := dialer.Dial(c.Addr(), nil)
 	if err != nil {
-		goNet.Log.Errorf("#ws.connect failed(%s) %v", c.Addr(), err.Error())
+		goNet.Log.Panicf("#ws.connect failed(%s) %v", c.Addr(), err.Error())
 		return
 	}
 	goNet.Log.Info(conn.RemoteAddr())

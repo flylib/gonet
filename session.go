@@ -1,12 +1,18 @@
 package goNet
 
 import (
+	"errors"
 	"sync"
 	"sync/atomic"
 )
 
 var (
 	SessionManager = newSessionManager()
+)
+
+const (
+	//无效会话id
+	INVALID_SESSION_ID uint32 = 0
 )
 
 type (
@@ -32,6 +38,12 @@ type (
 		//id
 		id uint32
 	}
+
+	SessionController struct {
+		//example center_service/room_service/...
+		controllers []Controller
+	}
+
 	//session管理器
 	sessionManager struct {
 		//流水号
@@ -74,15 +86,19 @@ func (s *sessionManager) GetSessionById(id uint32) Session {
 func (s *sessionManager) AddSession(ses Session) {
 	s.Lock()
 	defer s.Unlock()
-
 	//如果会话新分配的要分配流水号
-	if ses.ID() < 1 {
+	if ses.ID() == INVALID_SESSION_ID {
 		s.count++
 		ses.(interface {
 			SetID(uint32)
 		}).SetID(s.count)
+		ses.(interface {
+			AddController(index int, c Controller)
+		}).AddController(SYSTEM_CONTROLLER_IDX, SysController)
 	}
 	s.sessions[ses.ID()] = ses
+	//notify session connect
+	SubmitMsgToAntsPool(SysController, ses, &SessionConnect{})
 }
 
 //回收到空闲会话池
@@ -92,6 +108,8 @@ func (s *sessionManager) RecycleSession(ses Session) {
 	ses.Close()
 	delete(s.sessions, ses.ID())
 	s.idleSessions[ses.ID()] = ses
+	//notify session close
+	SubmitMsgToAntsPool(SysController, ses, &SessionClose{})
 }
 
 //总数
@@ -119,4 +137,24 @@ func (s *SessionIdentify) ID() uint32 {
 
 func (s *SessionIdentify) SetID(id uint32) {
 	s.id = id
+}
+
+func (s *SessionController) AddController(index int, c Controller) {
+	if s.controllers == nil {
+		s.controllers = make([]Controller, 0, 3)
+	}
+	more := index - len(s.controllers) + 1
+	//extending
+	if more > 0 {
+		moreControllers := make([]Controller, more)
+		s.controllers = append(s.controllers, moreControllers...)
+	}
+	s.controllers[index] = c
+}
+
+func (s *SessionController) GetController(index int) (Controller, error) {
+	if index >= len(s.controllers) {
+		return nil, errors.New("not found controller")
+	}
+	return s.controllers[index], nil
 }

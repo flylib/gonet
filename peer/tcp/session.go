@@ -11,6 +11,7 @@ import (
 type session struct {
 	//核心会话标志
 	goNet.SessionIdentify
+	goNet.SessionController
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -19,8 +20,6 @@ type session struct {
 	buf   []byte
 	//缓存数据，用于解决粘包问题
 	//cache []byte
-	//example center_service/room_service/...
-	//stubs []interface{}
 }
 
 //新会话
@@ -61,17 +60,22 @@ func (s *session) recvLoop() {
 	for {
 		n, err := s.conn.Read(s.buf)
 		if err != nil {
-			logrus.Errorf("session_%v closed, reason is %v", s.ID(), err)
+			logrus.Errorf("session_%v closed,reason is %v", s.ID(), err)
+			//recycle session
 			goNet.SessionManager.RecycleSession(s)
-			return
+			break
 		}
-
-		msg, err := codec.ParserPacket(s.buf[:n])
+		controllerIdx, msg, err := codec.ParserPacket(s.buf[:n])
 		if err != nil {
-			logrus.Warnf("msg decode error,reason is %v", err)
+			logrus.Warnf("msg parser error,reason is %v", err)
 			continue
 		}
-		goNet.SubmitMsgToAntsPool(msg, s)
+		controller, err := s.GetController(controllerIdx)
+		if err != nil {
+			logrus.Warnf("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
+			continue
+		}
+		goNet.SubmitMsgToAntsPool(controller, s, msg)
 	}
 }
 

@@ -28,5 +28,5 @@ func (c *client) Stop() {
 func init() {
 	identify := goNet.PeerIdentify{}
 	identify.SetType(goNet.PEERTYPE_CLIENT)
-	goNet.RegisterPeer(&server{PeerIdentify: identify})
+	goNet.RegisterPeer(&client{PeerIdentify: identify})
 }

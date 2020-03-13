@@ -27,23 +27,24 @@ const (
 )
 
 //----------------------------------------------【解析包】--------------------------------------------------
-func ParserPacket(data []byte) (goNet.Msg, error) {
+func ParserPacket(data []byte) (int, interface{}, error) {
 	// 小于包头
 	if len(data) < packetLen {
-		return nil, errors.New("packet size too min")
+		return goNet.SYSTEM_CONTROLLER_IDX, nil, errors.New("packet size too min")
 	}
 	// 读取Size
 	size := binary.LittleEndian.Uint16(data)
 	// 出错，等待下次数据
 	if size > MTU {
-		return nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
+		return goNet.SYSTEM_CONTROLLER_IDX, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
 	}
 	// 读取消息ID
-	msgId := binary.LittleEndian.Uint16(data[packetLen:])
+	msgId := int(binary.LittleEndian.Uint16(data[packetLen:]))
 	//内容
 	content := data[headerSize : headerSize+size]
-
-	return decodeMessage(int(msgId), content)
+	controllerIdx := goNet.GetMsgBelongToControllerIdx(msgId)
+	msg, err := decodeMessage(msgId, content)
+	return controllerIdx, msg, err
 }
 
 //----------------------------------------------【发送包】--------------------------------------------------
@@ -57,7 +58,7 @@ func SendPacket(w io.Writer, msg interface{}) error {
 	// Size==len(body)
 	binary.LittleEndian.PutUint16(pktData, uint16(len(body)))
 	// ID
-	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.GetMsgIdByType(reflect.TypeOf(msg))))
+	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.GetMsgIdxByType(reflect.TypeOf(msg))))
 	// Value
 	copy(pktData[headerSize:], body)
 
@@ -76,7 +77,7 @@ func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 	// Size==len(body)
 	binary.LittleEndian.PutUint16(pktData, uint16(len(body)))
 	// ID
-	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.GetMsgIdByType(reflect.TypeOf(msg))))
+	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.GetMsgIdxByType(reflect.TypeOf(msg))))
 	// Value
 	copy(pktData[headerSize:], body)
 
@@ -86,17 +87,19 @@ func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 }
 
 //----------------------------------------------【ws】--------------------------------------------------
-func ParserWSPacket(pkt []byte) (goNet.Msg, error) {
+func ParserWSPacket(pkt []byte) (int, interface{}, error) {
 	for index, d := range pkt {
 		if d == '\n' {
 			msgID, err := strconv.Atoi(string(pkt[:index]))
 			if err != nil {
-				return nil, err
+				return goNet.SYSTEM_CONTROLLER_IDX, nil, err
 			}
-			return decodeMessage(msgID, pkt[index+1:])
+			controllerIdx := goNet.GetMsgBelongToControllerIdx(msgID)
+			msg, err := decodeMessage(msgID, pkt[index+1:])
+			return controllerIdx, msg, err
 		}
 	}
-	return nil, errors.New("parser message error.EOF")
+	return goNet.SYSTEM_CONTROLLER_IDX, nil, errors.New("parser message error.EOF")
 }
 
 func SendWSPacket(w *websocket.Conn, msg interface{}) error {
@@ -105,5 +108,5 @@ func SendWSPacket(w *websocket.Conn, msg interface{}) error {
 		return err
 	}
 	return w.WriteMessage(websocket.TextMessage,
-		bytes.Join([][]byte{[]byte(strconv.Itoa(int(goNet.GetMsgIdByType(reflect.TypeOf(msg))))), body}, []byte{10}))
+		bytes.Join([][]byte{[]byte(strconv.Itoa(int(goNet.GetMsgIdxByType(reflect.TypeOf(msg))))), body}, []byte{10}))
 }

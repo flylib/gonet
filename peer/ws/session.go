@@ -2,6 +2,7 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 	"goNet"
 	"goNet/codec"
 	"sync"
@@ -10,6 +11,7 @@ import (
 // webSocket session
 type session struct {
 	goNet.SessionIdentify
+	goNet.SessionController
 	//core connection
 	conn *websocket.Conn
 	data interface{}
@@ -65,13 +67,17 @@ func (s *session) recvLoop() {
 			goNet.SessionManager.RecycleSession(s)
 			break
 		}
-		var msg goNet.Msg
-		msg, err = codec.ParserWSPacket(data)
+		controllerIdx, msg, err := codec.ParserWSPacket(data)
 		if err != nil {
-			goNet.Log.Warnf("parse message error:%s", err)
+			logrus.Warnf("msg parser error,reason is %v", err)
 			continue
 		}
-		goNet.SubmitMsgToAntsPool(msg, s)
+		controller, err := s.GetController(controllerIdx)
+		if err != nil {
+			logrus.Warnf("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
+			continue
+		}
+		goNet.SubmitMsgToAntsPool(controller, s, msg)
 	}
 }
 
