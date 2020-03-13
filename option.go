@@ -1,6 +1,8 @@
 package goNet
 
-import "time"
+import (
+	"time"
+)
 
 var Opts = &Options{}
 

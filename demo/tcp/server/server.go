@@ -8,7 +8,7 @@ import (
 
 func main() {
 	p := goNet.NewPeer(
-		goNet.WithPeerType(goNet.PEER_SERVER),
+		goNet.WithPeerType(goNet.PEERTYPE_SERVER),
 		goNet.WithAddr(":8087"),
 	)
 	p.Start()

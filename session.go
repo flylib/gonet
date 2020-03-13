@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	SessionManager = newSessionManger()
+	SessionManager = newSessionManager()
 )
 
 type (
@@ -43,11 +43,11 @@ type (
 		//保证线程安全
 		sync.RWMutex
 		//会话断开消息
-		OnSessionClose func(session Session)
+		//OnSessionClose func(session Session)
 	}
 )
 
-func newSessionManger() *sessionManager {
+func newSessionManager() *sessionManager {
 	return &sessionManager{
 		idleSessions: map[uint32]Session{},
 		sessions:     map[uint32]Session{},
@@ -89,10 +89,6 @@ func (s *sessionManager) AddSession(ses Session) {
 func (s *sessionManager) RecycleSession(ses Session) {
 	s.Lock()
 	defer s.Unlock()
-
-	if s.OnSessionClose != nil {
-		s.OnSessionClose(ses)
-	}
 	ses.Close()
 	delete(s.sessions, ses.ID())
 	s.idleSessions[ses.ID()] = ses

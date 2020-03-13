@@ -10,7 +10,7 @@ import (
 
 func main() {
 	p := goNet.NewPeer(
-		goNet.WithPeerType(goNet.PEER_CLIENT),
+		goNet.WithPeerType(goNet.PEERTYPE_CLIENT),
 		goNet.WithAddr("localhost:8087"),
 	)
 	p.Start()

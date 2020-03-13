@@ -2,7 +2,6 @@ package tcp
 
 import (
 	"goNet"
-	. "goNet/log"
 	"net"
 )
 
@@ -14,10 +13,10 @@ type client struct {
 func (c *client) Start() {
 	conn, err := net.Dial("tcp", c.Addr())
 	if err != nil {
-		Log.Fatalf("#tcp(%v) connect failed %v", c.Type(), err.Error())
+		goNet.Log.Fatalf("#tcp(%v) connect failed %v", c.Type(), err.Error())
 		return
 	}
-	Log.Infof("#tcp(%v) connect(%v) success", c.Type(), conn.RemoteAddr())
+	goNet.Log.Infof("#tcp(%v) connect(%v) success", c.Type(), conn.RemoteAddr())
 	c.session = newSession(conn)
 	go c.session.recvLoop()
 }
@@ -28,6 +27,6 @@ func (c *client) Stop() {
 
 func init() {
 	identify := goNet.PeerIdentify{}
-	identify.SetType(goNet.PEER_CLIENT)
+	identify.SetType(goNet.PEERTYPE_CLIENT)
 	goNet.RegisterPeer(&server{PeerIdentify: identify})
 }

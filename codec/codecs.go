@@ -23,8 +23,8 @@ func encodeMessage(msg interface{}) ([]byte, error) {
 }
 
 // 解码消息
-func decodeMessage(msgIdx int, data []byte) (goNet.Message, error) {
-	msg := goNet.GetMessageByIdx(msgIdx)
+func decodeMessage(msgIdx int, data []byte) (goNet.Msg, error) {
+	msg := goNet.GetMsgByIdx(msgIdx)
 	err := defaultCodec.Decode(data, msg)
 	return msg, err
 }

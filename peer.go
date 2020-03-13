@@ -25,8 +25,8 @@ type (
 )
 
 const (
-	PEER_SERVER PeerType = "server" //服务端
-	PEER_CLIENT PeerType = "client" //客户端
+	PEERTYPE_SERVER PeerType = "server" //服务端
+	PEERTYPE_CLIENT PeerType = "client" //客户端
 )
 
 func (p *PeerIdentify) Addr() string {
@@ -54,7 +54,7 @@ func NewPeer(opts ...Option) Peer {
 	for _, opt := range opts {
 		opt(Opts)
 	}
-	err := initPool()
+	err := initAntsPool()
 	if err != nil {
 		panic(err)
 	}

@@ -12,13 +12,15 @@ type session struct {
 	//核心会话标志
 	goNet.SessionIdentify
 	//累计收消息总数
-	msgCount uint64
+	recvCount uint64
 	//raw conn
-	conn net.Conn
-	data interface{}
-	buf  []byte
+	conn  net.Conn
+	store interface{}
+	buf   []byte
 	//缓存数据，用于解决粘包问题
 	//cache []byte
+	//example center_service/room_service/...
+	//stubs []interface{}
 }
 
 //新会话
@@ -51,7 +53,7 @@ func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
 		logrus.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
-	s.data = nil
+	s.store = nil
 }
 
 // 接收循环
@@ -69,13 +71,13 @@ func (s *session) recvLoop() {
 			logrus.Warnf("msg decode error,reason is %v", err)
 			continue
 		}
-		goNet.HandleMessage(msg, s)
+		goNet.SubmitMsgToAntsPool(msg, s)
 	}
 }
 
 func (u *session) Value(v ...interface{}) interface{} {
 	if len(v) > 0 {
-		u.data = v[0]
+		u.store = v[0]
 	}
-	return u.data
+	return u.store
 }

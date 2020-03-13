@@ -3,7 +3,6 @@ package ws
 import (
 	"github.com/gorilla/websocket"
 	"goNet"
-	. "goNet/log"
 	"net/http"
 	"net/url"
 )
@@ -21,7 +20,7 @@ type server struct {
 
 func init() {
 	identify := goNet.PeerIdentify{}
-	identify.SetType(goNet.PEER_SERVER)
+	identify.SetType(goNet.PEERTYPE_SERVER)
 
 	////响应头
 	//var header http.Header = make(map[string][]string)
@@ -50,12 +49,12 @@ func (s *server) SetHttps(certfile, keyfile string) {
 func (s *server) Start() {
 	url, err := url.Parse(s.Addr())
 	if err != nil {
-		Log.Fatalf("#websocket.url parse failed(%s) %v", s.Addr(), err.Error())
+		goNet.Log.Fatalf("#websocket.url parse failed(%s) %v", s.Addr(), err.Error())
 	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc(url.Path, s.newConn)
-	Log.Infof("#websocket.listen(%s)", s.Addr())
+	goNet.Log.Infof("#websocket.listen(%s)", s.Addr())
 
 	if url.Scheme == "https" {
 		err = http.ListenAndServeTLS(url.Host, s.certfile, s.keyfile, mux)
@@ -63,17 +62,17 @@ func (s *server) Start() {
 		err = http.ListenAndServe(url.Host, mux)
 	}
 	if err != nil {
-		Log.Fatalf("#websocket stop listen , failed(%s) %v", s.Addr(), err.Error())
+		goNet.Log.Fatalf("#websocket stop listen , failed(%s) %v", s.Addr(), err.Error())
 	}
 }
 
 func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	conn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		Log.Error("http covert to websocket err:", err.Error())
+		goNet.Log.Error("http covert to websocket err:", err.Error())
 		return
 	}
-	Log.Info("new connect from ", conn.RemoteAddr())
+	goNet.Log.Info("new connect from ", conn.RemoteAddr())
 	ses := newSession(conn)
 	ses.recvLoop()
 }

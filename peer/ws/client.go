@@ -3,7 +3,6 @@ package ws
 import (
 	"github.com/gorilla/websocket"
 	"goNet"
-	. "goNet/log"
 	"net/http"
 	"time"
 )
@@ -15,7 +14,7 @@ type client struct {
 
 func init() {
 	identify := goNet.PeerIdentify{}
-	identify.SetType(goNet.PEER_CLIENT)
+	identify.SetType(goNet.PEERTYPE_CLIENT)
 	c := &client{
 		PeerIdentify: identify,
 	}
@@ -29,10 +28,10 @@ func (c *client) Start() {
 	}
 	conn, _, err := dialer.Dial(c.Addr(), nil)
 	if err != nil {
-		Log.Errorf("#ws.connect failed(%s) %v", c.Addr(), err.Error())
+		goNet.Log.Errorf("#ws.connect failed(%s) %v", c.Addr(), err.Error())
 		return
 	}
-	Log.Info(conn.RemoteAddr())
+	goNet.Log.Info(conn.RemoteAddr())
 	c.session = newSession(conn)
 	go c.session.recvLoop()
 }

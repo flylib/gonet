@@ -9,7 +9,12 @@ import (
 )
 
 func main() {
-	p := goNet.NewPeer("client", "ws://127.0.0.1:8087/echo")
+	p := goNet.NewPeer(
+		goNet.WithPeerType(goNet.PEERTYPE_CLIENT),
+		goNet.WithAddr("ws://127.0.0.1:8085/echo"),
+		//goNet.WithAddr("ws://www.quantumstudio.cn:8000/echo"),
+		//goNet.WithAddr("ws://www.quantumstudio.cn:8000/center_server_cluster"),
+	)
 	p.Start()
 	fmt.Println("session count=", goNet.SessionManager.GetSessionCount())
 	s := goNet.SessionManager.GetSessionById(1)
