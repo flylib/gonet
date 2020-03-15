@@ -1,8 +1,7 @@
 package tcp
 
 import (
-	"github.com/sirupsen/logrus"
-	"goNet"
+	. "goNet"
 	"goNet/codec"
 	"net"
 )
@@ -10,8 +9,8 @@ import (
 // Socket会话
 type session struct {
 	//核心会话标志
-	goNet.SessionIdentify
-	goNet.SessionController
+	SessionIdentify
+	SessionController
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -24,13 +23,13 @@ type session struct {
 
 //新会话
 func newSession(conn net.Conn) *session {
-	ses := goNet.SessionManager.GetIdleSession()
+	ses := SessionManager.GetIdleSession()
 	if ses == nil {
 		ses = &session{
 			conn: conn,
 			buf:  make([]byte, codec.MTU),
 		}
-		goNet.SessionManager.AddSession(ses)
+		SessionManager.AddSession(ses)
 	} else {
 		ses.(*session).conn = conn
 	}
@@ -44,13 +43,13 @@ func (s *session) Socket() interface{} {
 
 func (s *session) Send(msg interface{}) {
 	if err := codec.SendPacket(s.conn, msg); err != nil {
-		logrus.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 }
 
 func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
-		logrus.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 	s.store = nil
 }
@@ -60,22 +59,22 @@ func (s *session) recvLoop() {
 	for {
 		n, err := s.conn.Read(s.buf)
 		if err != nil {
-			logrus.Errorf("session_%v closed,reason is %v", s.ID(), err)
+			Log.Errorf("session_%v closed,reason is %v", s.ID(), err)
 			//recycle session
-			goNet.SessionManager.RecycleSession(s)
+			SessionManager.RecycleSession(s)
 			break
 		}
 		controllerIdx, msg, err := codec.ParserPacket(s.buf[:n])
 		if err != nil {
-			logrus.Warnf("msg parser error,reason is %v", err)
+			Log.Warnf("msg parser error,reason is %v", err)
 			continue
 		}
 		controller, err := s.GetController(controllerIdx)
 		if err != nil {
-			logrus.Warnf("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
+			Log.Warnf("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
 			continue
 		}
-		goNet.SubmitMsgToAntsPool(controller, s, msg)
+		SubmitMsgToAntsPool(controller, s, msg)
 	}
 }
 

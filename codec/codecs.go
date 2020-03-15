@@ -1,6 +1,6 @@
 package codec
 
-import "goNet"
+import . "goNet"
 
 type Codec interface {
 	Encode(v interface{}) (data []byte, err error)
@@ -24,7 +24,7 @@ func encodeMessage(msg interface{}) ([]byte, error) {
 
 // 解码消息
 func decodeMessage(msgIdx int, data []byte) (interface{}, error) {
-	msg := goNet.GetMsgByIdx(msgIdx)
+	msg := GetMsgByIdx(msgIdx)
 	err := defaultCodec.Decode(data, msg)
 	return msg, err
 }

@@ -3,15 +3,15 @@ package ws
 import (
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
-	"goNet"
+	. "goNet"
 	"goNet/codec"
 	"sync"
 )
 
 // webSocket session
 type session struct {
-	goNet.SessionIdentify
-	goNet.SessionController
+	SessionIdentify
+	SessionController
 	//core connection
 	conn *websocket.Conn
 	data interface{}
@@ -22,12 +22,12 @@ type session struct {
 }
 
 func newSession(conn *websocket.Conn) *session {
-	ses := goNet.SessionManager.GetIdleSession()
+	ses := SessionManager.GetIdleSession()
 	if ses == nil {
 		ses = &session{
 			buf: make([]byte, codec.MTU),
 		}
-		goNet.SessionManager.AddSession(ses)
+		SessionManager.AddSession(ses)
 	}
 	ses.(*session).conn = conn
 	return ses.(*session)
@@ -40,7 +40,7 @@ func (s *session) Socket() interface{} {
 
 func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
-		goNet.Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 	s.data = nil
 }
@@ -53,8 +53,8 @@ func (s *session) Send(msg interface{}) {
 	s.Lock()
 	defer s.Unlock()
 	if err := codec.SendWSPacket(s.conn, msg); err != nil {
-		goNet.Log.Errorf("sesssion_%v send msg error,reason is %v", s.ID(), err)
-		goNet.Log.Errorf(s.conn.RemoteAddr().String())
+		Log.Errorf("sesssion_%v send msg error,reason is %v", s.ID(), err)
+		Log.Errorf(s.conn.RemoteAddr().String())
 	}
 }
 
@@ -63,8 +63,8 @@ func (s *session) recvLoop() {
 	for {
 		t, data, err := s.conn.ReadMessage()
 		if err != nil || t == websocket.CloseMessage {
-			goNet.Log.Warnf("session_%d closed, err: %s", s.ID(), err)
-			goNet.SessionManager.RecycleSession(s)
+			Log.Warnf("session_%d closed, err: %s", s.ID(), err)
+			SessionManager.RecycleSession(s)
 			break
 		}
 		controllerIdx, msg, err := codec.ParserWSPacket(data)
@@ -77,7 +77,7 @@ func (s *session) recvLoop() {
 			logrus.Warnf("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
 			continue
 		}
-		goNet.SubmitMsgToAntsPool(controller, s, msg)
+		SubmitMsgToAntsPool(controller, s, msg)
 	}
 }
 

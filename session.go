@@ -94,11 +94,11 @@ func (s *sessionManager) AddSession(ses Session) {
 		}).SetID(s.count)
 		ses.(interface {
 			AddController(index int, c Controller)
-		}).AddController(SYSTEM_CONTROLLER_IDX, SysController)
+		}).AddController(SYSTEM_CONTROLLER_IDX, systemController)
 	}
 	s.sessions[ses.ID()] = ses
 	//notify session connect
-	SubmitMsgToAntsPool(SysController, ses, &SessionConnect{})
+	SubmitMsgToAntsPool(systemController, ses, &SessionConnect{})
 }
 
 //回收到空闲会话池
@@ -109,7 +109,7 @@ func (s *sessionManager) RecycleSession(ses Session) {
 	delete(s.sessions, ses.ID())
 	s.idleSessions[ses.ID()] = ses
 	//notify session close
-	SubmitMsgToAntsPool(SysController, ses, &SessionClose{})
+	SubmitMsgToAntsPool(systemController, ses, &SessionClose{})
 }
 
 //总数
@@ -144,7 +144,7 @@ func (s *SessionController) AddController(index int, c Controller) {
 		s.controllers = make([]Controller, 0, 3)
 	}
 	more := index - len(s.controllers) + 1
-	//extending
+	//extend
 	if more > 0 {
 		moreControllers := make([]Controller, more)
 		s.controllers = append(s.controllers, moreControllers...)
@@ -153,7 +153,7 @@ func (s *SessionController) AddController(index int, c Controller) {
 }
 
 func (s *SessionController) GetController(index int) (Controller, error) {
-	if index >= len(s.controllers) {
+	if index >= len(s.controllers) || s.controllers[index] == nil {
 		return nil, errors.New("not found controller")
 	}
 	return s.controllers[index], nil

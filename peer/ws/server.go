@@ -2,14 +2,14 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	"goNet"
+	. "goNet"
 	"net/http"
 	"net/url"
 )
 
 //接收端
 type server struct {
-	goNet.PeerIdentify
+	PeerIdentify
 	certfile string
 	keyfile  string
 	//指定将HTTP连接升级到WebSocket连接的参数。
@@ -19,8 +19,8 @@ type server struct {
 }
 
 func init() {
-	identify := goNet.PeerIdentify{}
-	identify.SetType(goNet.PEERTYPE_SERVER)
+	identify := PeerIdentify{}
+	identify.SetType(PEERTYPE_SERVER)
 	////响应头
 	//var header http.Header = make(map[string][]string)
 	//header.Add("Access-Control-Allow-Origin", "*")
@@ -36,7 +36,7 @@ func init() {
 		},
 		//respHeader: header,
 	}
-	goNet.RegisterPeer(s)
+	RegisterPeer(s)
 }
 
 //wss加密通信协议
@@ -48,12 +48,12 @@ func (s *server) SetHttps(certfile, keyfile string) {
 func (s *server) Start() {
 	url, err := url.Parse(s.Addr())
 	if err != nil {
-		goNet.Log.Fatalf("#websocket.url parse failed(%s) %v", s.Addr(), err.Error())
+		Log.Fatalf("#websocket.url parse failed(%s) %v", s.Addr(), err.Error())
 	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc(url.Path, s.newConn)
-	goNet.Log.Infof("#websocket.listen(%s)", s.Addr())
+	Log.Infof("#websocket.listen(%s)", s.Addr())
 
 	if url.Scheme == "https" {
 		err = http.ListenAndServeTLS(url.Host, s.certfile, s.keyfile, mux)
@@ -61,17 +61,17 @@ func (s *server) Start() {
 		err = http.ListenAndServe(url.Host, mux)
 	}
 	if err != nil {
-		goNet.Log.Fatalf("#websocket stop listen , failed(%s) %v", s.Addr(), err.Error())
+		Log.Fatalf("#websocket stop listen , failed(%s) %v", s.Addr(), err.Error())
 	}
 }
 
 func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	conn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		goNet.Log.Error("http covert to websocket err:", err.Error())
+		Log.Error("http covert to websocket err:", err.Error())
 		return
 	}
-	goNet.Log.Info("new connect from ", conn.RemoteAddr())
+	Log.Info("new connect from ", conn.RemoteAddr())
 	ses := newSession(conn)
 	ses.recvLoop()
 }

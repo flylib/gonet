@@ -4,10 +4,10 @@ import "time"
 
 const SYSTEM_CONTROLLER_IDX = 0
 
-var SysController *SystemController
+var systemController *SystemController
 
 func init() {
-	SysController = &SystemController{}
+	systemController = &SystemController{}
 }
 
 //控制模块

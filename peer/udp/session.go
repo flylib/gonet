@@ -1,7 +1,7 @@
 package udp
 
 import (
-	"goNet"
+	. "goNet"
 	"goNet/codec"
 	"net"
 )
@@ -11,7 +11,7 @@ var remotes = map[string]uint32{}
 
 // Socket会话
 type session struct {
-	goNet.SessionIdentify
+	SessionIdentify
 	remote *net.UDPAddr
 	conn   *net.UDPConn
 	data   interface{}
@@ -20,14 +20,14 @@ type session struct {
 
 //新会话
 func newSession(conn *net.UDPConn, remote *net.UDPAddr) *session {
-	ses := goNet.SessionManager.GetIdleSession()
+	ses := SessionManager.GetIdleSession()
 	if ses == nil {
 		ses = &session{
 			conn:   conn,
 			remote: remote,
 			buf:    make([]byte, codec.MTU),
 		}
-		goNet.SessionManager.AddSession(ses)
+		SessionManager.AddSession(ses)
 	} else {
 		ses.(*session).conn = conn
 	}
@@ -44,45 +44,45 @@ func (s *session) Socket() interface{} {
 func (s *session) Send(msg interface{}) {
 	var err error
 	if s.remote == nil {
-		goNet.Log.Info("client send msg ")
+		Log.Info("client send msg ")
 		err = codec.SendPacket(s.conn, msg)
 	} else {
-		goNet.Log.Info("server send msg ")
+		Log.Info("server send msg ")
 		err = codec.SendUdpPacket(s.conn, msg, s.remote)
 	}
 	if err != nil {
-		goNet.Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 }
 
 func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
-		goNet.Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 	s.data = nil
 }
 
 // 接收循环
 func (s *session) recvLoop() {
-	for {
-		n, remote, err := s.conn.ReadFromUDP(s.buf)
-		goNet.Log.Info("recv=", remote.String())
-		if err != nil {
-			goNet.Log.Errorf("#udp.accept failed(%v) %v", s.conn.RemoteAddr(), err.Error())
-		}
-		var ses goNet.Session
-		if sid, exit := remotes[remote.String()]; exit {
-			ses = goNet.SessionManager.GetSessionById(sid)
-		} else {
-			ses = newSession(s.conn, remote)
-		}
-		msg, err := codec.ParserPacket(s.buf[:n])
-		if err != nil {
-			goNet.Log.Warnf("message decode error=%s", err)
-			continue
-		}
-		goNet.SubmitMsgToAntsPool(msg, ses)
-	}
+	//for {
+	//	n, remote, err := s.conn.ReadFromUDP(s.buf)
+	//	Log.Info("recv=", remote.String())
+	//	if err != nil {
+	//		Log.Errorf("#udp.accept failed(%v) %v", s.conn.RemoteAddr(), err.Error())
+	//	}
+	//	var ses Session
+	//	if sid, exit := remotes[remote.String()]; exit {
+	//		ses = SessionManager.GetSessionById(sid)
+	//	} else {
+	//		ses = newSession(s.conn, remote)
+	//	}
+	//	//msg, err := codec.ParserPacket(s.buf[:n])
+	//	//if err != nil {
+	//	//	Log.Warnf("message decode error=%s", err)
+	//	//	continue
+	//	//}
+	//	//SubmitMsgToAntsPool(msg, ses)
+	//}
 }
 
 func (u *session) Value(v ...interface{}) interface{} {

@@ -1,33 +1,33 @@
 package udp
 
 import (
-	"goNet"
+	. "goNet"
 	"net"
 )
 
 type client struct {
-	goNet.PeerIdentify
+	PeerIdentify
 	session *session
 }
 
 func init() {
-	identify := goNet.PeerIdentify{}
-	identify.SetType(goNet.PEERTYPE_CLIENT)
+	identify := PeerIdentify{}
+	identify.SetType(PEERTYPE_CLIENT)
 	c := &client{
 		PeerIdentify: identify,
 	}
-	goNet.RegisterPeer(c)
+	RegisterPeer(c)
 }
 
 func (c *client) Start() {
 	remoteAddr, err := net.ResolveUDPAddr("udp", c.Addr())
 	if err != nil {
-		goNet.Log.Fatalf("#resolve udp address failed(%s) %v", c.Addr(), err.Error())
+		Log.Fatalf("#resolve udp address failed(%s) %v", c.Addr(), err.Error())
 	}
 
 	conn, err := net.DialUDP("udp", nil, remoteAddr)
 	if err != nil {
-		goNet.Log.Fatalf("#udp.connect failed(%s) %v", c.Addr(), err.Error())
+		Log.Fatalf("#udp.connect failed(%s) %v", c.Addr(), err.Error())
 	}
 
 	c.session = newSession(conn, nil)
