@@ -1,8 +1,8 @@
 package ws
 
 import (
+	. "github.com/Quantumoffices/goNet"
 	"github.com/gorilla/websocket"
-	. "goNet"
 	"net/http"
 	"net/url"
 )

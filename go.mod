@@ -1,6 +1,6 @@
-module goNet
+module github.com/Quantumoffices/goNet
 
-go 1.12
+go 1.13
 
 require (
 	github.com/davyxu/goobjfmt v0.1.0

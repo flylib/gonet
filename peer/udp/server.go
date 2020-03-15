@@ -1,7 +1,6 @@
 package udp
 
 import (
-	. "goNet"
 	"net"
 )
 

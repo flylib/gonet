@@ -1,10 +1,10 @@
 package ws
 
 import (
+	. "github.com/Quantumoffices/goNet"
+	"github.com/Quantumoffices/goNet/codec"
 	"github.com/gorilla/websocket"
 	"github.com/sirupsen/logrus"
-	. "goNet"
-	"goNet/codec"
 	"sync"
 )
 

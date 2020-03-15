@@ -1,8 +1,8 @@
 package udp
 
 import (
-	. "goNet"
-	"goNet/codec"
+	. "github.com/Quantumoffices/goNet"
+	"github.com/Quantumoffices/goNet/codec"
 	"net"
 )
 
