@@ -1,6 +1,6 @@
 package codec
 
-import . "goNet"
+import . "github.com/Quantumoffices/goNet"
 
 type Codec interface {
 	Encode(v interface{}) (data []byte, err error)

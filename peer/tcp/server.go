@@ -1,7 +1,7 @@
 package tcp
 
 import (
-	. "goNet"
+	. "github.com/Quantumoffices/goNet"
 	"net"
 )
 

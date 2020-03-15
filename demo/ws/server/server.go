@@ -1,9 +1,9 @@
 package main
 
 import (
-	"goNet"
-	_ "goNet/codec/json"
-	_ "goNet/peer/ws"
+	"github.com/Quantumoffices/goNet"
+	_ "github.com/Quantumoffices/goNet/codec/json"
+	_ "github.com/Quantumoffices/goNet/peer/ws"
 )
 
 func main() {

@@ -2,7 +2,7 @@ package json
 
 import (
 	"encoding/json"
-	"goNet/codec"
+	"github.com/Quantumoffices/goNet/codec"
 )
 
 type jsonCodec struct {
