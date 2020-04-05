@@ -77,9 +77,8 @@ func (s *sessionManager) GetIdleSession() Session {
 }
 
 func (s *sessionManager) GetSessionById(id uint32) Session {
-	s.RLock()
-	defer s.RUnlock()
-
+	//s.RLock()
+	//defer s.RUnlock()
 	return s.sessions[id]
 }
 
@@ -94,22 +93,23 @@ func (s *sessionManager) AddSession(ses Session) {
 		}).SetID(s.count)
 		ses.(interface {
 			AddController(index int, c Controller)
-		}).AddController(SYSTEM_CONTROLLER_IDX, systemController)
+		}).AddController(SYSTEM_CONTROLLER_IDX, sysCtl)
 	}
 	s.sessions[ses.ID()] = ses
+
 	//notify session connect
-	SubmitMsgToAntsPool(systemController, ses, &SessionConnect{})
+	SubmitMsgToAntsPool(sysCtl, ses, &SessionConnect{})
 }
 
 //回收到空闲会话池
 func (s *sessionManager) RecycleSession(ses Session) {
-	s.Lock()
-	defer s.Unlock()
+	//s.Lock()
+	//defer s.Unlock()
 	ses.Close()
 	delete(s.sessions, ses.ID())
 	s.idleSessions[ses.ID()] = ses
 	//notify session close
-	SubmitMsgToAntsPool(systemController, ses, &SessionClose{})
+	SubmitMsgToAntsPool(sysCtl, ses, &SessionClose{})
 }
 
 //总数
@@ -119,8 +119,8 @@ func (s *sessionManager) GetSessionCount() uint32 {
 
 //活跃总数
 func (s *sessionManager) GetSessionAliveCount() uint32 {
-	s.RLock()
-	defer s.RUnlock()
+	//s.RLock()
+	//defer s.RUnlock()
 	return uint32(len(s.sessions))
 }
 

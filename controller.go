@@ -4,23 +4,22 @@ import "time"
 
 const SYSTEM_CONTROLLER_IDX = 0
 
-var systemController *SystemController
+var sysCtl Controller
 
 func init() {
-	systemController = &SystemController{}
+	sysCtl = &SystemController{}
 }
 
-//控制模块
+//控制器
 type Controller interface {
-	//消息处理接口
-	ProcessMsg(session Session, msg interface{})
+	OnMsg(session Session, msg interface{})
 }
 
 //系统控制模块
 type SystemController struct {
 }
 
-func (*SystemController) ProcessMsg(session Session, msg interface{}) {
+func (*SystemController) OnMsg(session Session, msg interface{}) {
 	switch data := msg.(type) {
 	case *SessionConnect:
 		Log.Infof("session_%v connected", session.ID())
@@ -32,4 +31,12 @@ func (*SystemController) ProcessMsg(session Session, msg interface{}) {
 	case *Pong:
 		Log.Infof("session_%v pong at time=%v", session.ID(), time.Unix(data.TimeStamp, 0).String())
 	}
+}
+
+//替换系统控制器
+func UpdateSystemController(c Controller) {
+	if c == nil {
+		return
+	}
+	sysCtl = c
 }
