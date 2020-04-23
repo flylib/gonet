@@ -2,28 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/tcp/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/tcp/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/server/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/udp/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/udp/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/udp/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/udp/server/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log.go" beforeDir="false" afterPath="$PROJECT_DIR$/log.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/tcp/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/tcp/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/tcp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/tcp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/udp/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/udp/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/udp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/udp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/peer/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routine_pool.go" beforeDir="false" afterPath="$PROJECT_DIR$/routine_pool.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,11 +73,11 @@
     <property name="settings.editor.selected.configurable" value="go.vgo" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="E:\goNet" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\goNet" />
     </key>
   </component>
   <component name="RemoteSynchronizer">
@@ -276,6 +257,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1587612385300" />
+    <state x="636" y="258" width="647" height="524" key="find.popup" timestamp="1587619372016">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="636" y="258" width="647" height="524" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1587619372016" />
   </component>
   <component name="masterDetails">
     <states>

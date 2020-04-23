@@ -5,7 +5,6 @@ import (
 	. "github.com/Quantumoffices/goNet"
 	"github.com/Quantumoffices/goNet/codec"
 	"github.com/gorilla/websocket"
-	"github.com/sirupsen/logrus"
 	"sync"
 )
 
@@ -69,12 +68,12 @@ func (s *session) recvLoop() {
 		}
 		controllerIdx, msg, err := codec.ParserWSPacket(data)
 		if err != nil {
-			logrus.Warnf("msg parser error,reason is %v", err)
+			logs.Warn("msg parser error,reason is %v", err)
 			continue
 		}
 		controller, err := s.GetController(controllerIdx)
 		if err != nil {
-			logrus.Warnf("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
+			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
 			continue
 		}
 		SubmitMsgToAntsPool(controller, s, msg)
