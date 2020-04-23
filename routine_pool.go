@@ -1,6 +1,7 @@
 package goNet
 
 import (
+	"github.com/Quantumoffices/beego/logs"
 	"github.com/panjf2000/ants/v2"
 )
 
@@ -21,10 +22,10 @@ func initAntsPool() error {
 }
 
 //提交到协程池处理消息
-func SubmitMsgToAntsPool(c Controller, s Session, msg interface{}) {
+func SubmitMsgToAntsPool(c MsgController, s Session, msg interface{}) {
 	if err := antsPool.Submit(func() {
 		c.ProcessMsg(s, msg)
 	}); err != nil {
-		Log.Errorf("antsPool commit message error,reason is ", err.Error())
+		logs.Error("antsPool commit message error,reason is ", err.Error())
 	}
 }

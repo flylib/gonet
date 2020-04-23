@@ -39,9 +39,9 @@ type (
 		id uint32
 	}
 
-	SessionController struct {
+	MsgControllers struct {
 		//example center_service/room_service/...
-		controllers []Controller
+		controllers []MsgController
 	}
 
 	//session管理器
@@ -54,8 +54,6 @@ type (
 		sessions map[uint32]Session
 		//保证线程安全
 		sync.RWMutex
-		//会话断开消息
-		//OnSessionClose func(session Session)
 	}
 )
 
@@ -93,12 +91,12 @@ func (s *sessionManager) AddSession(ses Session) {
 			SetID(uint32)
 		}).SetID(s.count)
 		ses.(interface {
-			AddController(index int, c Controller)
-		}).AddController(SYSTEM_CONTROLLER_IDX, systemController)
+			AddController(index int, c MsgController)
+		}).AddController(SYSTEM_CONTROLLER_IDX, systemMsgController)
 	}
 	s.sessions[ses.ID()] = ses
 	//notify session connect
-	SubmitMsgToAntsPool(systemController, ses, &SessionConnect{})
+	SubmitMsgToAntsPool(systemMsgController, ses, &SessionConnect{})
 }
 
 //回收到空闲会话池
@@ -109,7 +107,7 @@ func (s *sessionManager) RecycleSession(ses Session) {
 	delete(s.sessions, ses.ID())
 	s.idleSessions[ses.ID()] = ses
 	//notify session close
-	SubmitMsgToAntsPool(systemController, ses, &SessionClose{})
+	SubmitMsgToAntsPool(systemMsgController, ses, &SessionClose{})
 }
 
 //总数
@@ -139,20 +137,20 @@ func (s *SessionIdentify) SetID(id uint32) {
 	s.id = id
 }
 
-func (s *SessionController) AddController(index int, c Controller) {
+func (s *MsgControllers) AddController(index int, c MsgController) {
 	if s.controllers == nil {
-		s.controllers = make([]Controller, 0, 3)
+		s.controllers = make([]MsgController, 0, 3)
 	}
 	more := index - len(s.controllers) + 1
 	//extend
 	if more > 0 {
-		moreControllers := make([]Controller, more)
+		moreControllers := make([]MsgController, more)
 		s.controllers = append(s.controllers, moreControllers...)
 	}
 	s.controllers[index] = c
 }
 
-func (s *SessionController) GetController(index int) (Controller, error) {
+func (s *MsgControllers) GetController(index int) (MsgController, error) {
 	if index >= len(s.controllers) || s.controllers[index] == nil {
 		return nil, errors.New("not found controller")
 	}

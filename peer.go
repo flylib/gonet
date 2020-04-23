@@ -50,7 +50,6 @@ func RegisterPeer(peer Peer) {
 }
 
 func NewPeer(opts ...Option) Peer {
-	//parser options
 	for _, opt := range opts {
 		opt(Opts)
 	}

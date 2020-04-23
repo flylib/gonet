@@ -1,6 +1,7 @@
 package udp
 
 import (
+	. "github.com/Quantumoffices/goNet"
 	"net"
 )
 
@@ -21,12 +22,11 @@ func init() {
 func (c *client) Start() {
 	remoteAddr, err := net.ResolveUDPAddr("udp", c.Addr())
 	if err != nil {
-		Log.Fatalf("#resolve udp address failed(%s) %v", c.Addr(), err.Error())
+		panic(err)
 	}
-
 	conn, err := net.DialUDP("udp", nil, remoteAddr)
 	if err != nil {
-		Log.Fatalf("#udp.connect failed(%s) %v", c.Addr(), err.Error())
+		panic(err)
 	}
 
 	c.session = newSession(conn, nil)

@@ -1,6 +1,7 @@
 package udp
 
 import (
+	"github.com/Quantumoffices/beego/logs"
 	. "github.com/Quantumoffices/goNet"
 	"github.com/Quantumoffices/goNet/codec"
 	"net"
@@ -44,20 +45,20 @@ func (s *session) Socket() interface{} {
 func (s *session) Send(msg interface{}) {
 	var err error
 	if s.remote == nil {
-		Log.Info("client send msg ")
+		logs.Info("client send msg ")
 		err = codec.SendPacket(s.conn, msg)
 	} else {
-		Log.Info("server send msg ")
+		logs.Info("server send msg ")
 		err = codec.SendUdpPacket(s.conn, msg, s.remote)
 	}
 	if err != nil {
-		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 }
 
 func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
-		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 	s.data = nil
 }
@@ -66,9 +67,9 @@ func (s *session) Close() {
 func (s *session) recvLoop() {
 	//for {
 	//	n, remote, err := s.conn.ReadFromUDP(s.buf)
-	//	Log.Info("recv=", remote.String())
+	//	logs.Info("recv=", remote.String())
 	//	if err != nil {
-	//		Log.Errorf("#udp.accept failed(%v) %v", s.conn.RemoteAddr(), err.Error())
+	//		logs.Errorf("#udp.accept failed(%v) %v", s.conn.RemoteAddr(), err.Error())
 	//	}
 	//	var ses Session
 	//	if sid, exit := remotes[remote.String()]; exit {
@@ -78,7 +79,7 @@ func (s *session) recvLoop() {
 	//	}
 	//	//msg, err := codec.ParserPacket(s.buf[:n])
 	//	//if err != nil {
-	//	//	Log.Warnf("message decode error=%s", err)
+	//	//	logs.Warnf("message decode error=%s", err)
 	//	//	continue
 	//	//}
 	//	//SubmitMsgToAntsPool(msg, ses)

@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"github.com/Quantumoffices/beego/logs"
 	. "github.com/Quantumoffices/goNet"
 	"github.com/gorilla/websocket"
 	"net/http"
@@ -48,12 +49,10 @@ func (s *server) SetHttps(certfile, keyfile string) {
 func (s *server) Start() {
 	url, err := url.Parse(s.Addr())
 	if err != nil {
-		Log.Fatalf("#websocket.url parse failed(%s) %v", s.Addr(), err.Error())
+		panic(err)
 	}
-
 	mux := http.NewServeMux()
 	mux.HandleFunc(url.Path, s.newConn)
-	Log.Infof("#websocket.listen(%s)", s.Addr())
 
 	if url.Scheme == "https" {
 		err = http.ListenAndServeTLS(url.Host, s.certfile, s.keyfile, mux)
@@ -61,17 +60,17 @@ func (s *server) Start() {
 		err = http.ListenAndServe(url.Host, mux)
 	}
 	if err != nil {
-		Log.Fatalf("#websocket stop listen , failed(%s) %v", s.Addr(), err.Error())
+		panic(err)
 	}
 }
 
 func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	conn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		Log.Error("http covert to websocket err:", err.Error())
+		logs.Error("http covert to websocket err:", err.Error())
 		return
 	}
-	Log.Info("new connect from ", conn.RemoteAddr())
+	logs.Info("new connect from ", conn.RemoteAddr())
 	ses := newSession(conn)
 	ses.recvLoop()
 }

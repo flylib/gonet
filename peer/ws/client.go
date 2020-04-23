@@ -28,10 +28,8 @@ func (c *client) Start() {
 	}
 	conn, _, err := dialer.Dial(c.Addr(), nil)
 	if err != nil {
-		Log.Panicf("#ws.connect failed(%s) %v", c.Addr(), err.Error())
-		return
+		panic(err)
 	}
-	Log.Info(conn.RemoteAddr())
 	c.session = newSession(conn)
 	go c.session.recvLoop()
 }

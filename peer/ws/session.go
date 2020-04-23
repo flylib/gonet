@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"github.com/Quantumoffices/beego/logs"
 	. "github.com/Quantumoffices/goNet"
 	"github.com/Quantumoffices/goNet/codec"
 	"github.com/gorilla/websocket"
@@ -11,7 +12,7 @@ import (
 // webSocket session
 type session struct {
 	SessionIdentify
-	SessionController
+	MsgControllers
 	//core connection
 	conn *websocket.Conn
 	data interface{}
@@ -40,7 +41,7 @@ func (s *session) Socket() interface{} {
 
 func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
-		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 	s.data = nil
 }
@@ -53,8 +54,7 @@ func (s *session) Send(msg interface{}) {
 	s.Lock()
 	defer s.Unlock()
 	if err := codec.SendWSPacket(s.conn, msg); err != nil {
-		Log.Errorf("sesssion_%v send msg error,reason is %v", s.ID(), err)
-		Log.Errorf(s.conn.RemoteAddr().String())
+		logs.Error("sesssion_%v send msg error,reason is %v", s.ID(), err)
 	}
 }
 
@@ -63,7 +63,7 @@ func (s *session) recvLoop() {
 	for {
 		t, data, err := s.conn.ReadMessage()
 		if err != nil || t == websocket.CloseMessage {
-			Log.Warnf("session_%d closed, err: %s", s.ID(), err)
+			logs.Warn("session_%d closed, err: %s", s.ID(), err)
 			SessionManager.RecycleSession(s)
 			break
 		}
