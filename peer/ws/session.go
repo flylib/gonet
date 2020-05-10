@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
 	"sync"
+	"sync/atomic"
 )
 
 // webSocket session
@@ -14,20 +15,27 @@ type session struct {
 	SessionStore
 	SessionController
 	conn *websocket.Conn
-	buf  []byte
 	sync.RWMutex
 }
 
+func init() {
+	RegisterSessionType(session{})
+}
+
 func newSession(conn *websocket.Conn) *session {
-	ses := SessionManager.GetIdleSession()
-	if ses == nil {
-		ses = &session{
-			buf: make([]byte, codec.MTU),
-		}
-		SessionManager.AddSession(ses)
-	}
-	ses.(*session).conn = conn
-	return ses.(*session)
+	//ses := SessionManager.GetIdleSession()
+	//if ses == nil {
+	//	ses = &session{}
+	//	SessionManager.AddSession(ses)
+	//}
+	//ses.(*session).conn = conn
+	//return ses.(*session)
+	atomic.AddUint64(&SessionManager.AutoIncrement, 1)
+	ses := SessionManager.Get().(*session)
+	ses.SetID(SessionManager.AutoIncrement)
+	ses.conn = conn
+	SessionManager.AddSession(ses)
+	return ses
 }
 
 func (s *session) Socket() interface{} {
@@ -41,10 +49,6 @@ func (s *session) Close() {
 }
 
 func (s *session) Send(msg interface{}) {
-	//传入消息校验
-	if msg == nil {
-		return
-	}
 	s.Lock()
 	defer s.Unlock()
 	if err := codec.SendWSPacket(s.conn, msg); err != nil {
@@ -58,6 +62,8 @@ func (s *session) recvLoop() {
 		t, data, err := s.conn.ReadMessage()
 		if err != nil || t == websocket.CloseMessage {
 			logs.Warn("session_%d closed, err: %s", s.ID(), err)
+			//SessionManager.RecycleSession(s)
+			s.Close()
 			SessionManager.RecycleSession(s)
 			break
 		}

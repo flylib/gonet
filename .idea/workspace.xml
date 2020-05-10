@@ -3,19 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/log.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/peer.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/peer/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routine_pool.go" beforeDir="false" afterPath="$PROJECT_DIR$/routine_pool.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -142,8 +132,8 @@
       <list>
         <item itemvalue="Go Build.go build client.go (2)" />
         <item itemvalue="Go Build.go build server.go (2)" />
-        <item itemvalue="Go Build.go build client.go" />
         <item itemvalue="Go Build.go build server.go" />
+        <item itemvalue="Go Build.go build client.go" />
         <item itemvalue="Go Build.go build server.go (1)" />
       </list>
     </recent_temporary>
@@ -226,30 +216,57 @@
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="702" y="327" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1050@0.0.1920.1050" timestamp="1589093017667" />
-    <state width="1877" height="343" key="GridCell.Tab.0.bottom" timestamp="1589095045488">
+    <state width="1877" height="168" key="GridCell.Tab.0.bottom" timestamp="1589124463842">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1589095045488" />
-    <state width="1877" height="343" key="GridCell.Tab.0.center" timestamp="1589095045488">
+    <state width="1877" height="168" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1589124463842" />
+    <state width="1877" height="168" key="GridCell.Tab.0.center" timestamp="1589124463842">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1589095045488" />
-    <state width="1877" height="343" key="GridCell.Tab.0.left" timestamp="1589095045488">
+    <state width="1877" height="168" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1589124463842" />
+    <state width="1877" height="168" key="GridCell.Tab.0.left" timestamp="1589124463842">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1589095045488" />
-    <state width="1877" height="343" key="GridCell.Tab.0.right" timestamp="1589095045488">
+    <state width="1877" height="168" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1589124463842" />
+    <state width="1877" height="168" key="GridCell.Tab.0.right" timestamp="1589124463842">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="343" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1589095045488" />
+    <state width="1877" height="168" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1589124463842" />
+    <state width="1877" height="168" key="GridCell.Tab.1.bottom" timestamp="1589124463842">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="168" key="GridCell.Tab.1.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1589124463842" />
+    <state width="1877" height="168" key="GridCell.Tab.1.center" timestamp="1589124463842">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="168" key="GridCell.Tab.1.center/0.0.1920.1050@0.0.1920.1050" timestamp="1589124463842" />
+    <state width="1877" height="168" key="GridCell.Tab.1.left" timestamp="1589124463842">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="168" key="GridCell.Tab.1.left/0.0.1920.1050@0.0.1920.1050" timestamp="1589124463842" />
+    <state width="1877" height="168" key="GridCell.Tab.1.right" timestamp="1589124463842">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="168" key="GridCell.Tab.1.right/0.0.1920.1050@0.0.1920.1050" timestamp="1589124463842" />
     <state x="734" y="238" key="com.goide.refactor.move.GoMoveDeclarationDialog" timestamp="1589073367040">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="734" y="238" key="com.goide.refactor.move.GoMoveDeclarationDialog/0.0.1920.1050@0.0.1920.1050" timestamp="1589073367040" />
-    <state x="567" y="225" width="786" height="600" key="find.popup" timestamp="1589093237154">
+    <state x="567" y="225" width="786" height="600" key="find.popup" timestamp="1589124373589">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="567" y="225" width="786" height="600" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1589093237154" />
+    <state x="567" y="225" width="786" height="600" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1589124373589" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/session.go</url>
+          <line>145</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="masterDetails">
     <states>

@@ -2,12 +2,13 @@ package goNet
 
 import (
 	"errors"
+	"reflect"
 	"sync"
-	"sync/atomic"
 )
 
 var (
 	SessionManager = newSessionManager()
+	sessionType    reflect.Type
 )
 
 const (
@@ -28,7 +29,7 @@ type (
 		Close()
 
 		// ID b
-		ID() uint32
+		ID() uint64
 
 		//数据存储
 		Value(obj ...interface{}) interface{}
@@ -36,7 +37,7 @@ type (
 	//核心会话标志
 	SessionIdentify struct {
 		//id
-		id uint32
+		id uint64
 	}
 	//存储功能
 	SessionStore struct {
@@ -51,11 +52,12 @@ type (
 	//session管理器
 	sessionManager struct {
 		//流水号
-		count uint32
-		//空闲会话，重复利用
-		idleSessions map[uint32]Session
+		AutoIncrement uint64
+		////空闲会话，重复利用
+		//idleSessions map[uint32]Session
 		//活跃sessions
-		sessions map[uint32]Session
+		sessions map[uint64]Session
+		*sync.Pool
 		//保证线程安全
 		sync.RWMutex
 	}
@@ -63,65 +65,46 @@ type (
 
 func newSessionManager() *sessionManager {
 	return &sessionManager{
-		idleSessions: map[uint32]Session{},
-		sessions:     map[uint32]Session{},
+		//idleSessions: map[uint32]Session{},
+		sessions: map[uint64]Session{},
+		Pool: &sync.Pool{New: func() interface{} {
+			return reflect.New(sessionType).Interface()
+		}},
 	}
 }
 
-func (s *sessionManager) GetIdleSession() Session {
-	s.Lock()
-	defer s.Unlock()
-	for _, ses := range s.idleSessions {
-		delete(s.idleSessions, ses.ID())
-		return ses
-	}
-	return nil
-}
+//func (s *sessionManager) GetIdleSession() Session {
+//	s.Lock()
+//	defer s.Unlock()
+//	for _, ses := range s.idleSessions {
+//		delete(s.idleSessions, ses.ID())
+//		return ses
+//	}
+//	return nil
+//}
 
-func (s *sessionManager) GetSessionById(id uint32) Session {
+func (s *sessionManager) GetSessionById(id uint64) Session {
 	return s.sessions[id]
 }
 
 func (s *sessionManager) AddSession(ses Session) {
-	s.Lock()
-	defer s.Unlock()
-	//如果会话新分配的要分配流水号
-	if ses.ID() == INVALID_SESSION_ID {
-		s.count++
-		ses.(interface {
-			SetID(uint32)
-		}).SetID(s.count)
-		ses.(interface {
-			AddController(index int, c Controller)
-		}).AddController(SYSTEM_CONTROLLER_IDX, sysCtl)
-	}
 	s.sessions[ses.ID()] = ses
-
 	//notify session connect
 	SubmitMsgToAntsPool(sysCtl, ses, &SessionConnect{})
 }
 
 //回收到空闲会话池
 func (s *sessionManager) RecycleSession(ses Session) {
-	//s.Lock()
-	//defer s.Unlock()
 	ses.Close()
 	delete(s.sessions, ses.ID())
-	s.idleSessions[ses.ID()] = ses
+	s.Put(ses)
 	//notify session close
 	SubmitMsgToAntsPool(sysCtl, ses, &SessionClose{})
 }
 
 //总数
-func (s *sessionManager) GetSessionCount() uint32 {
-	return atomic.LoadUint32(&s.count)
-}
-
-//活跃总数
-func (s *sessionManager) GetSessionAliveCount() uint32 {
-	//s.RLock()
-	//defer s.RUnlock()
-	return uint32(len(s.sessions))
+func (s *sessionManager) GetSessionCount() int {
+	return len(s.sessions)
 }
 
 //广播
@@ -131,11 +114,11 @@ func (s *sessionManager) Broadcast(msg interface{}) {
 	}
 }
 
-func (s *SessionIdentify) ID() uint32 {
+func (s *SessionIdentify) ID() uint64 {
 	return s.id
 }
 
-func (s *SessionIdentify) SetID(id uint32) {
+func (s *SessionIdentify) SetID(id uint64) {
 	s.id = id
 }
 
@@ -164,4 +147,8 @@ func (s *SessionController) GetController(index int) (Controller, error) {
 		return nil, errors.New("not found controller")
 	}
 	return s.controllers[index], nil
+}
+
+func RegisterSessionType(ses interface{}) {
+	sessionType = reflect.TypeOf(ses)
 }

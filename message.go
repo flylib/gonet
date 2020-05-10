@@ -53,7 +53,7 @@ func RegisterMsg(msgIndex, controllerIndex int, msg interface{}) {
 }
 
 func GetMsgByIdx(msgIndex int) interface{} {
-	return reflect.New(msgTypes[msgIndex]).Interface().(interface{})
+	return reflect.New(msgTypes[msgIndex]).Interface()
 }
 
 func GetMsgIdxByType(t reflect.Type) int {

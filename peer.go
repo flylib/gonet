@@ -1,5 +1,7 @@
 package goNet
 
+import "github.com/astaxie/beego/logs"
+
 var (
 	peers = map[PeerType]Peer{}
 )
@@ -30,6 +32,10 @@ const (
 	PEERTYPE_SERVER PeerType = "server" //服务端
 	PEERTYPE_CLIENT PeerType = "client" //客户端
 )
+
+func init() {
+	logs.EnableFuncCallDepth(true)
+}
 
 func (p *PeerIdentify) Addr() string {
 	return p.addr
