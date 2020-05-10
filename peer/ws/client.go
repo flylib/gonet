@@ -2,6 +2,7 @@ package ws
 
 import (
 	. "github.com/Quantumoffices/goNet"
+	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
 	"net/http"
 	"time"
@@ -26,12 +27,11 @@ func (c *client) Start() {
 		Proxy:            http.ProxyFromEnvironment,
 		HandshakeTimeout: 5 * time.Second,
 	}
+	logs.Info(c.Addr())
 	conn, _, err := dialer.Dial(c.Addr(), nil)
 	if err != nil {
-		Log.Panicf("#ws.connect failed(%s) %v", c.Addr(), err.Error())
-		return
+		panic(err)
 	}
-	Log.Info(conn.RemoteAddr())
 	c.session = newSession(conn)
 	go c.session.recvLoop()
 }

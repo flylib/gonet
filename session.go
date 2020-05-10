@@ -27,18 +27,22 @@ type (
 		// 断开
 		Close()
 
-		// ID
+		// ID b
 		ID() uint32
 
 		//数据存储
-		Value(v ...interface{}) interface{}
+		Value(obj ...interface{}) interface{}
 	}
 	//核心会话标志
 	SessionIdentify struct {
 		//id
 		id uint32
 	}
-
+	//存储功能
+	SessionStore struct {
+		obj interface{}
+	}
+	//消息路由
 	SessionController struct {
 		//example center_service/room_service/...
 		controllers []Controller
@@ -54,8 +58,6 @@ type (
 		sessions map[uint32]Session
 		//保证线程安全
 		sync.RWMutex
-		//会话断开消息
-		//OnSessionClose func(session Session)
 	}
 )
 
@@ -77,8 +79,6 @@ func (s *sessionManager) GetIdleSession() Session {
 }
 
 func (s *sessionManager) GetSessionById(id uint32) Session {
-	//s.RLock()
-	//defer s.RUnlock()
 	return s.sessions[id]
 }
 
@@ -137,6 +137,13 @@ func (s *SessionIdentify) ID() uint32 {
 
 func (s *SessionIdentify) SetID(id uint32) {
 	s.id = id
+}
+
+func (s *SessionStore) Value(v ...interface{}) interface{} {
+	if len(v) > 0 {
+		s.obj = v[0]
+	}
+	return s.obj
 }
 
 func (s *SessionController) AddController(index int, c Controller) {

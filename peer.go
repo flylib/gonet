@@ -19,6 +19,8 @@ type (
 		addr string
 		//类型
 		peerType PeerType
+		//options
+		options Options
 	}
 	//端类型
 	PeerType string
@@ -44,21 +46,23 @@ func (p *PeerIdentify) Type() PeerType {
 func (p *PeerIdentify) SetType(t PeerType) {
 	p.peerType = t
 }
+func (p *PeerIdentify) SetOptions(o Options) {
+	p.options = o
+}
+func (p *PeerIdentify) Options(o Options) {
+	p.options = o
+}
 
 func RegisterPeer(peer Peer) {
 	peers[peer.(interface{ Type() PeerType }).Type()] = peer
 }
 
-func NewPeer(opts ...Option) Peer {
-	//parser options
-	for _, opt := range opts {
-		opt(Opts)
+func NewPeer(opts Options) Peer {
+	peer, ok := peers[opts.PeerType]
+	if !ok {
+		panic(opts.PeerType + "does not exist")
 	}
-	err := initAntsPool()
-	if err != nil {
-		panic(err)
-	}
-	p := peers[Opts.PeerType]
-	p.(interface{ SetAddr(string) }).SetAddr(Opts.Addr)
-	return p
+	peer.(interface{ SetAddr(string) }).SetAddr(opts.Addr)
+	peer.(interface{ SetOptions(Options) }).SetOptions(opts)
+	return peer
 }

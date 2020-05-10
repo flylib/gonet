@@ -4,6 +4,17 @@
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/client/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/log.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/session.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routine_pool.go" beforeDir="false" afterPath="$PROJECT_DIR$/routine_pool.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
     </list>
@@ -38,30 +49,6 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>9999</find>
-      <find>peer</find>
-      <find>msgData</find>
-      <find>writer</find>
-      <find>fmt</find>
-      <find>f</find>
-      <find>idx</find>
-      <find>controllerIdx</find>
-      <find>goNet</find>
-      <find>log</find>
-      <find>logrus</find>
-      <find>goNet.</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>codec</replace>
-      <replace>body</replace>
-      <replace>w</replace>
-      <replace>msgIdx</replace>
-      <replace>msgIndex</replace>
-      <replace>Log</replace>
-    </replaceStrings>
-  </component>
   <component name="GOROOT" path="D:\env\Go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -92,17 +79,17 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="go.vgo" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="E:\goNet" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\goNet" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.go build client.go (2)">
@@ -233,6 +220,36 @@
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
     <proxy>https://mirrors.aliyun.com/goproxy/</proxy>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="702" y="327" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1589093017667">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="702" y="327" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1050@0.0.1920.1050" timestamp="1589093017667" />
+    <state width="1877" height="343" key="GridCell.Tab.0.bottom" timestamp="1589095045488">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="343" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1589095045488" />
+    <state width="1877" height="343" key="GridCell.Tab.0.center" timestamp="1589095045488">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="343" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1589095045488" />
+    <state width="1877" height="343" key="GridCell.Tab.0.left" timestamp="1589095045488">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="343" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1589095045488" />
+    <state width="1877" height="343" key="GridCell.Tab.0.right" timestamp="1589095045488">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="343" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1589095045488" />
+    <state x="734" y="238" key="com.goide.refactor.move.GoMoveDeclarationDialog" timestamp="1589073367040">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="734" y="238" key="com.goide.refactor.move.GoMoveDeclarationDialog/0.0.1920.1050@0.0.1920.1050" timestamp="1589073367040" />
+    <state x="567" y="225" width="786" height="600" key="find.popup" timestamp="1589093237154">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="567" y="225" width="786" height="600" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1589093237154" />
   </component>
   <component name="masterDetails">
     <states>

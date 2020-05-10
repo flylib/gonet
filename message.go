@@ -35,7 +35,7 @@ type SessionClose struct {
 //注册消息
 func RegisterMsg(msgIndex, controllerIndex int, msg interface{}) {
 	if msgIndex > math.MaxUint16 {
-		Log.Panicf("Message_%v index not allowed to be more than %v", msgIndex, math.MaxUint16)
+		panic("msg index over allowed range")
 	}
 	more := msgIndex - len(msgTypes) + 1
 	//extending
@@ -44,7 +44,7 @@ func RegisterMsg(msgIndex, controllerIndex int, msg interface{}) {
 		msgTypes = append(msgTypes, moreMsgTList...)
 	}
 	if msgTypes[msgIndex] != nil {
-		Log.Panicf("message_%v duplicate registration error", msgIndex)
+		panic("msg existed!")
 	}
 	t := reflect.TypeOf(msg)
 	msgTypes[msgIndex] = t

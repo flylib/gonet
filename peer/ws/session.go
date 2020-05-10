@@ -3,22 +3,19 @@ package ws
 import (
 	. "github.com/Quantumoffices/goNet"
 	"github.com/Quantumoffices/goNet/codec"
+	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
-	"github.com/sirupsen/logrus"
 	"sync"
 )
 
 // webSocket session
 type session struct {
 	SessionIdentify
+	SessionStore
 	SessionController
-	//core connection
 	conn *websocket.Conn
-	data interface{}
 	buf  []byte
 	sync.RWMutex
-	//example center_service/room_service/...
-	//stubs []interface{}
 }
 
 func newSession(conn *websocket.Conn) *session {
@@ -33,16 +30,14 @@ func newSession(conn *websocket.Conn) *session {
 	return ses.(*session)
 }
 
-// 取原始连接
 func (s *session) Socket() interface{} {
 	return s.conn
 }
 
 func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
-		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
-	s.data = nil
 }
 
 func (s *session) Send(msg interface{}) {
@@ -53,8 +48,7 @@ func (s *session) Send(msg interface{}) {
 	s.Lock()
 	defer s.Unlock()
 	if err := codec.SendWSPacket(s.conn, msg); err != nil {
-		Log.Errorf("sesssion_%v send msg error,reason is %v", s.ID(), err)
-		Log.Errorf(s.conn.RemoteAddr().String())
+		logs.Error("sesssion_%v send msg error,reason is %v", s.ID(), err)
 	}
 }
 
@@ -63,27 +57,20 @@ func (s *session) recvLoop() {
 	for {
 		t, data, err := s.conn.ReadMessage()
 		if err != nil || t == websocket.CloseMessage {
-			Log.Warnf("session_%d closed, err: %s", s.ID(), err)
+			logs.Warn("session_%d closed, err: %s", s.ID(), err)
 			SessionManager.RecycleSession(s)
 			break
 		}
 		controllerIdx, msg, err := codec.ParserWSPacket(data)
 		if err != nil {
-			logrus.Warnf("msg parser error,reason is %v", err)
+			logs.Warn("msg parser error,reason is %v", err)
 			continue
 		}
 		controller, err := s.GetController(controllerIdx)
 		if err != nil {
-			logrus.Warnf("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
+			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
 			continue
 		}
 		SubmitMsgToAntsPool(controller, s, msg)
 	}
-}
-
-func (u *session) Value(v ...interface{}) interface{} {
-	if len(v) > 0 {
-		u.data = v[0]
-	}
-	return u.data
 }
