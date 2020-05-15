@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"goNet"
-	_ "goNet/codec/json"
-	_ "goNet/peer/udp"
+	"github.com/Quantumoffices/goNet"
+	_ "github.com/Quantumoffices/goNet/codec/json"
+	_ "github.com/Quantumoffices/goNet/peer/udp"
 	"time"
 )
 
 func main() {
-	p := goNet.NewPeer("client", "127.0.0.1:8087")
+	p := goNet.NewPeer(goNet.WithAddr(":88"))
 	p.Start()
 	fmt.Println("session count=", goNet.SessionManager.GetSessionCount())
 	s := goNet.SessionManager.GetSessionById(1)

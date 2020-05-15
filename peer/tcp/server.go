@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"github.com/Quantumoffices/beego/logs"
 	. "github.com/Quantumoffices/goNet"
 	"net"
 )
@@ -13,19 +14,16 @@ type server struct {
 func (s *server) Start() {
 	ln, err := net.Listen("tcp", s.Addr())
 	if err != nil {
-		Log.Fatalf("tcp(%v) listen failed %v", s.Type(), err.Error())
+		panic(err)
 	}
 	s.ln = ln
-	Log.Infof("tcp(%v)listen on %v", s.Type(), ":8087")
 
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			Log.Error("#tcp(%v),accept failed,err:%v", s.Type(), err.Error())
+			logs.Error("#tcp(%v),accept failed,err:%v", s.Type(), err.Error())
 			break
 		}
-		Log.Infof("#tcp.accept from %s connected", conn.RemoteAddr())
-
 		go s.newConn(conn)
 	}
 }

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"goNet"
-	_ "goNet/codec/json"
-	_ "goNet/peer/udp"
+	"github.com/Quantumoffices/goNet"
+	_ "github.com/Quantumoffices/goNet/codec/json"
+	_ "github.com/Quantumoffices/goNet/peer/udp"
 )
 
 func main() {
-	p := goNet.NewPeer("server", ":8087")
+	p := goNet.NewPeer(goNet.WithAddr(""))
 	p.Start()
 }

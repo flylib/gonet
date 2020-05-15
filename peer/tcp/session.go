@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"github.com/Quantumoffices/beego/logs"
 	. "github.com/Quantumoffices/goNet"
 	"github.com/Quantumoffices/goNet/codec"
 	"net"
@@ -10,7 +11,7 @@ import (
 type session struct {
 	//核心会话标志
 	SessionIdentify
-	SessionController
+	MsgControllers
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -43,13 +44,13 @@ func (s *session) Socket() interface{} {
 
 func (s *session) Send(msg interface{}) {
 	if err := codec.SendPacket(s.conn, msg); err != nil {
-		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 }
 
 func (s *session) Close() {
 	if err := s.conn.Close(); err != nil {
-		Log.Errorf("sesssion_%v close error,reason is %v", s.ID(), err)
+		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 	s.store = nil
 }
@@ -59,19 +60,19 @@ func (s *session) recvLoop() {
 	for {
 		n, err := s.conn.Read(s.buf)
 		if err != nil {
-			Log.Errorf("session_%v closed,reason is %v", s.ID(), err)
+			logs.Error("session_%v closed,reason is %v", s.ID(), err)
 			//recycle session
 			SessionManager.RecycleSession(s)
 			break
 		}
 		controllerIdx, msg, err := codec.ParserPacket(s.buf[:n])
 		if err != nil {
-			Log.Warnf("msg parser error,reason is %v", err)
+			logs.Warn("msg parser error,reason is %v", err)
 			continue
 		}
 		controller, err := s.GetController(controllerIdx)
 		if err != nil {
-			Log.Warnf("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
+			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
 			continue
 		}
 		SubmitMsgToAntsPool(controller, s, msg)
