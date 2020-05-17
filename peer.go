@@ -35,6 +35,7 @@ const (
 
 func init() {
 	logs.EnableFuncCallDepth(true)
+	logs.SetLogFuncCallDepth(3)
 }
 
 func (p *PeerIdentify) Addr() string {

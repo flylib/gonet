@@ -7,10 +7,10 @@ import (
 
 const SYSTEM_CONTROLLER_IDX = 0
 
-var sysCtl Controller
+var systemController Controller
 
 func init() {
-	sysCtl = &SystemController{}
+	systemController = &SystemController{}
 }
 
 //控制器
@@ -41,5 +41,5 @@ func UpdateSystemController(c Controller) {
 	if c == nil {
 		return
 	}
-	sysCtl = c
+	systemController = c
 }

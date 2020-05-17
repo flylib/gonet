@@ -53,8 +53,6 @@ type (
 	sessionManager struct {
 		//流水号
 		AutoIncrement uint64
-		////空闲会话，重复利用
-		//idleSessions map[uint32]Session
 		//活跃sessions
 		sessions map[uint64]Session
 		*sync.Pool
@@ -73,24 +71,15 @@ func newSessionManager() *sessionManager {
 	}
 }
 
-//func (s *sessionManager) GetIdleSession() Session {
-//	s.Lock()
-//	defer s.Unlock()
-//	for _, ses := range s.idleSessions {
-//		delete(s.idleSessions, ses.ID())
-//		return ses
-//	}
-//	return nil
-//}
-
 func (s *sessionManager) GetSessionById(id uint64) Session {
 	return s.sessions[id]
 }
 
 func (s *sessionManager) AddSession(ses Session) {
 	s.sessions[ses.ID()] = ses
+	ses.(interface{ JoinController(index int, c Controller) }).JoinController(SYSTEM_CONTROLLER_IDX, systemController)
 	//notify session connect
-	SubmitMsgToAntsPool(sysCtl, ses, &SessionConnect{})
+	SubmitMsgToAntsPool(systemController, ses, &SessionConnect{})
 }
 
 //回收到空闲会话池
@@ -99,7 +88,7 @@ func (s *sessionManager) RecycleSession(ses Session) {
 	delete(s.sessions, ses.ID())
 	s.Put(ses)
 	//notify session close
-	SubmitMsgToAntsPool(sysCtl, ses, &SessionClose{})
+	SubmitMsgToAntsPool(systemController, ses, &SessionClose{})
 }
 
 //总数
@@ -129,7 +118,7 @@ func (s *SessionStore) Value(v ...interface{}) interface{} {
 	return s.obj
 }
 
-func (s *SessionController) AddController(index int, c Controller) {
+func (s *SessionController) JoinController(index int, c Controller) {
 	if s.controllers == nil {
 		s.controllers = make([]Controller, 0, 3)
 	}

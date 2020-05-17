@@ -23,13 +23,6 @@ func init() {
 }
 
 func newSession(conn *websocket.Conn) *session {
-	//ses := SessionManager.GetIdleSession()
-	//if ses == nil {
-	//	ses = &session{}
-	//	SessionManager.AddSession(ses)
-	//}
-	//ses.(*session).conn = conn
-	//return ses.(*session)
 	atomic.AddUint64(&SessionManager.AutoIncrement, 1)
 	ses := SessionManager.Get().(*session)
 	ses.SetID(SessionManager.AutoIncrement)
@@ -62,7 +55,6 @@ func (s *session) recvLoop() {
 		t, data, err := s.conn.ReadMessage()
 		if err != nil || t == websocket.CloseMessage {
 			logs.Warn("session_%d closed, err: %s", s.ID(), err)
-			//SessionManager.RecycleSession(s)
 			s.Close()
 			SessionManager.RecycleSession(s)
 			break
