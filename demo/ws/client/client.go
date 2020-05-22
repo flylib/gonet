@@ -7,10 +7,12 @@ import (
 	"time"
 )
 
+//ws://47.57.65.221:8088/game/blockInfo
+//ws://192.168.0.125:8088/game/blockInfo
 func main() {
 	p := goNet.NewPeer(
 		goNet.Options{
-			Addr:     "ws://127.0.0.1:8085/echo",
+			Addr:     "ws://192.168.0.125:2020/center/ws",
 			PeerType: goNet.PEERTYPE_CLIENT,
 			//ReadDeadline:  0,
 			//WriteDeadline: 0,

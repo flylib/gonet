@@ -9,7 +9,7 @@ import (
 func main() {
 	p := goNet.NewPeer(
 		goNet.Options{
-			Addr:          "ws://127.0.0.1:8085/echo",
+			Addr:          "ws://192.168.0.125:8080/center/ws",
 			PeerType:      goNet.PEERTYPE_SERVER,
 			ReadDeadline:  0,
 			WriteDeadline: 0,

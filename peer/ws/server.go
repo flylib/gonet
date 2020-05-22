@@ -53,6 +53,8 @@ func (s *server) Start() {
 }
 
 func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
+	r.Header.Add("Connection", "upgrade") //升级
+	r.Header.Add("Upgrade", "websocket")  //websocket
 	conn, err := s.upGrader.Upgrade(w, r, nil)
 	if err != nil {
 		logs.Error("http covert to websocket err:", err.Error())
