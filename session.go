@@ -4,16 +4,12 @@ import (
 	"errors"
 	"reflect"
 	"sync"
+	"sync/atomic"
 )
 
 var (
-	SessionManager = newSessionManager()
-	sessionType    reflect.Type
-)
-
-const (
-	//无效会话id
-	INVALID_SESSION_ID uint32 = 0
+	sessions    = newSessionManager()
+	sessionType reflect.Type
 )
 
 type (
@@ -34,6 +30,13 @@ type (
 		//数据存储
 		Value(obj ...interface{}) interface{}
 	}
+
+	//会话功能
+	SessionAbility interface {
+		SetID(id uint64)
+		JoinController(index int, c Controller)
+	}
+
 	//核心会话标志
 	SessionIdentify struct {
 		//id
@@ -48,59 +51,78 @@ type (
 		//example center_service/room_service/...
 		controllers []Controller
 	}
-
-	//session管理器
+	//会话管理
 	sessionManager struct {
-		//流水号
-		AutoIncrement uint64
-		//活跃sessions
-		sessions map[uint64]Session
+		autoIncrement uint64 //流水号
+		sync.Map
 		*sync.Pool
-		//保证线程安全
-		sync.RWMutex
+		sessionType reflect.Type //会话类型
 	}
 )
 
 func newSessionManager() *sessionManager {
 	return &sessionManager{
-		//idleSessions: map[uint32]Session{},
-		sessions: map[uint64]Session{},
 		Pool: &sync.Pool{New: func() interface{} {
 			return reflect.New(sessionType).Interface()
 		}},
 	}
 }
 
-func (s *sessionManager) GetSessionById(id uint64) Session {
-	return s.sessions[id]
+func FindSession(id uint64) (Session, bool) {
+	value, ok := sessions.Load(id)
+	if ok {
+		return value.(Session), ok
+	}
+	return nil, false
 }
 
-func (s *sessionManager) AddSession(ses Session) {
-	s.sessions[ses.ID()] = ses
-	ses.(interface{ JoinController(index int, c Controller) }).JoinController(SYSTEM_CONTROLLER_IDX, systemController)
+func AddSession( /*conn io.Closer*/ ) Session {
+	ses := sessions.Get()
+	sessionAbility := ses.(SessionAbility)
+	atomic.AddUint64(&sessions.autoIncrement, 1)
+	sessionAbility.SetID(sessions.autoIncrement)
+	sessions.Store(sessions.autoIncrement, ses)
+	sessionAbility.JoinController(SYSTEM_CONTROLLER_IDX, systemController)
+
+	session := ses.(Session)
 	//notify session connect
-	SubmitMsgToAntsPool(systemController, ses, &SessionConnect{})
+	SubmitMsgToAntsPool(systemController, session, &SessionConnect{})
+	return session
 }
 
 //回收到空闲会话池
 func (s *sessionManager) RecycleSession(ses Session) {
 	ses.Close()
-	delete(s.sessions, ses.ID())
+	s.Delete(ses.ID())
 	s.Put(ses)
 	//notify session close
 	SubmitMsgToAntsPool(systemController, ses, &SessionClose{})
 }
 
-//总数
-func (s *sessionManager) GetSessionCount() int {
-	return len(s.sessions)
+func RecycleSession(ses Session) {
+	ses.Close()
+	//delete(s.sessions, ses.ID())
+	sessions.Delete(ses.ID())
+	sessions.Put(ses)
+	//notify session close
+	SubmitMsgToAntsPool(systemController, ses, &SessionClose{})
+}
+
+func SessionCount() int {
+	sum := 0
+	sessions.Range(func(key, value interface{}) bool {
+		sum++
+		return true
+	})
+	return sum
 }
 
 //广播
-func (s *sessionManager) Broadcast(msg interface{}) {
-	for _, ses := range s.sessions {
-		ses.Send(msg)
-	}
+func Broadcast(msg interface{}) {
+	sessions.Range(func(_, value interface{}) bool {
+		value.(Session).Send(msg)
+		return true
+	})
 }
 
 func (s *SessionIdentify) ID() uint64 {

@@ -3,11 +3,16 @@
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/tcp/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/client/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/udp/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/udp/client/client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/demo/ws/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/client/client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routine_pool.go" beforeDir="false" afterPath="$PROJECT_DIR$/routine_pool.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/tcp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/udp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/../../pkg/mod/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,8 +45,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/demo/ws/client/client.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="23" column="44" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="44" />
+            <state relative-caret-position="189">
+              <caret line="13" column="19" lean-forward="true" selection-start-line="13" selection-start-column="19" selection-end-line="13" selection-end-column="19" />
               <folding>
                 <element signature="e#14#160#0" expanded="true" />
               </folding>
@@ -50,30 +55,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/routine_pool.go">
+        <entry file="file://$PROJECT_DIR$/message.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
-              <folding>
-                <element signature="e#15#90#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/demo/ws/server/build.bat">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/demo/ws/server/server.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="11" column="34" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
-              <folding>
-                <element signature="e#14#152#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="432">
+              <caret line="19" selection-start-line="18" selection-start-column="1" selection-end-line="19" />
             </state>
           </provider>
         </entry>
@@ -81,53 +66,83 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/peer/ws/session.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="16" column="20" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+            <state relative-caret-position="240">
+              <caret line="56" column="9" lean-forward="true" selection-start-line="56" selection-start-column="9" selection-end-line="56" selection-end-column="9" />
+              <folding>
+                <element signature="e#12#188#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/codec/packet.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="261">
+              <caret line="109" selection-start-line="109" selection-end-line="109" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://C:/Go/src/runtime/panic.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="176">
+              <caret line="846" selection-start-line="846" selection-end-line="846" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo/ws/server/server.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="18" column="10" lean-forward="true" selection-start-line="18" selection-start-column="10" selection-end-line="18" selection-end-column="10" />
+              <folding>
+                <element signature="e#14#152#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/peer/ws/server.go">
+        <entry file="file://$PROJECT_DIR$/session.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="151">
-              <caret line="56" column="51" selection-start-line="56" selection-start-column="51" selection-end-line="56" selection-end-column="51" />
+            <state relative-caret-position="243">
+              <caret line="9" column="5" lean-forward="true" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
+              <folding>
+                <element signature="e#15#54#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/Go/src/net/http/request.go">
+        <entry file="file://$PROJECT_DIR$/peer/tcp/session.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="169" column="4" selection-start-line="169" selection-start-column="4" selection-end-line="169" selection-end-column="4" />
+            <state relative-caret-position="135">
+              <caret line="16" column="18" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="18" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../pkg/mod/github.com/gorilla/websocket@v1.4.1/server.go">
+        <entry file="file://$PROJECT_DIR$/peer/udp/session.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="169">
-              <caret line="122" column="19" selection-start-line="122" selection-start-column="19" selection-end-line="122" selection-end-column="19" />
+            <state relative-caret-position="135">
+              <caret line="5" column="15" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="15" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/peer/ws/client.go">
+        <entry file="file://$PROJECT_DIR$/peer/udp/server.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="365">
-              <caret line="27" column="24" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="24" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/Go/src/net/http/transport.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="400" column="5" selection-start-line="400" selection-start-column="5" selection-end-line="400" selection-end-column="5" />
+            <state relative-caret-position="54">
+              <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+              <folding>
+                <element signature="e#13#67#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -154,9 +169,13 @@
       <list>
         <option value="$PROJECT_DIR$/controller.go" />
         <option value="$PROJECT_DIR$/routine_pool.go" />
-        <option value="$PROJECT_DIR$/demo/ws/server/server.go" />
-        <option value="$PROJECT_DIR$/demo/ws/client/client.go" />
         <option value="$PROJECT_DIR$/peer/ws/server.go" />
+        <option value="$PROJECT_DIR$/demo/tcp/client/client.go" />
+        <option value="$PROJECT_DIR$/demo/ws/server/server.go" />
+        <option value="$PROJECT_DIR$/peer/tcp/session.go" />
+        <option value="$PROJECT_DIR$/session.go" />
+        <option value="$PROJECT_DIR$/demo/ws/client/client.go" />
+        <option value="$PROJECT_DIR$/peer/ws/session.go" />
       </list>
     </option>
   </component>
@@ -172,7 +191,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -180,21 +198,11 @@
               <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
               <item name="goNet" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goNet" type="462c0819:PsiDirectoryNode" />
-              <item name="peer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goNet" type="462c0819:PsiDirectoryNode" />
-              <item name="peer" type="462c0819:PsiDirectoryNode" />
-              <item name="ws" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="ProjectViewState">
@@ -225,11 +233,11 @@
     <property name="settings.editor.selected.configurable" value="go.vgo" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\goNet" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
     </key>
   </component>
   <component name="RemoteSynchronizer">
@@ -345,13 +353,13 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26332623" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26599148" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.19631237" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.3991323" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.329718" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.22451194" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.1681128" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -464,33 +472,27 @@
     </state>
     <state x="567" y="225" width="786" height="600" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1589124373589" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/../../pkg/mod/github.com/gorilla/websocket@v1.4.1/conn.go</url>
+          <line>240</line>
+          <properties />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/../../pkg/mod/github.com/gorilla/websocket@v1.4.1/conn.go</url>
+          <line>752</line>
+          <properties />
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/message.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="19" selection-start-line="18" selection-start-column="1" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/peer.go">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/wx_pay.JPG">
       <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="12" column="20" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/session.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3699">
-          <caret line="141" column="15" selection-start-line="141" selection-start-column="4" selection-end-line="141" selection-end-column="15" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/logo.jpg">
       <provider selected="true" editor-type-id="images" />
@@ -507,73 +509,523 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routine_pool.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        <state relative-caret-position="270">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
           <folding>
             <element signature="e#15#90#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/peer/ws/session.go">
+    <entry file="file://C:/Go/src/net/http/header.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="16" column="20" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Go/src/net/http/transport.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="400" column="5" selection-start-line="400" selection-start-column="5" selection-end-line="400" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/peer/ws/client.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="365">
-          <caret line="27" column="24" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="24" />
+        <state relative-caret-position="486">
+          <caret line="26" column="16" selection-start-line="26" selection-start-column="16" selection-end-line="26" selection-end-column="16" />
         </state>
       </provider>
     </entry>
     <entry file="file://C:/Go/src/net/http/request.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
+        <state relative-caret-position="3996">
           <caret line="169" column="4" selection-start-line="169" selection-start-column="4" selection-end-line="169" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../../pkg/mod/github.com/gorilla/websocket@v1.4.1/server.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
+        <state relative-caret-position="3078">
           <caret line="122" column="19" selection-start-line="122" selection-start-column="19" selection-end-line="122" selection-end-column="19" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/demo/ws/server/server.go">
+    <entry file="file://C:/Go/src/net/http/transport.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="11" column="34" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
+        <state relative-caret-position="10179">
+          <caret line="400" column="5" selection-start-line="400" selection-start-column="5" selection-end-line="400" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/codec/codecs.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="20" column="5" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1215" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/go.mod">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.en.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controller.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="12" column="20" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo/tcp/client/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="15" column="10" selection-start-line="15" selection-start-column="10" selection-end-line="15" selection-end-column="10" />
           <folding>
-            <element signature="e#14#152#0" expanded="true" />
+            <element signature="e#14#168#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/tcp/server.go">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://C:/Go/src/net/net.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="112" column="5" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/tcp/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="14" column="19" lean-forward="true" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/net/udpsock.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="90" column="5" selection-start-line="90" selection-start-column="5" selection-end-line="90" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/ws/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="27" column="24" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/ws/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="514">
+          <caret line="57" column="8" selection-start-line="57" selection-start-column="4" selection-end-line="57" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/io/io.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="97" column="5" selection-start-line="97" selection-start-column="5" selection-end-line="97" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/sync/pool.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="123" column="15" selection-start-line="123" selection-start-column="15" selection-end-line="123" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/sync/map.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="135" column="14" selection-start-line="135" selection-start-column="14" selection-end-line="135" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/reflect/value.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-77">
+          <caret line="2348" column="5" selection-start-line="2348" selection-start-column="5" selection-end-line="2348" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/runtime/proc.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="156" selection-start-line="156" selection-end-line="156" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../pkg/mod/github.com/gorilla/websocket@v1.4.1/conn.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="752" column="44" selection-start-line="752" selection-start-column="24" selection-end-line="752" selection-end-column="44" />
+          <folding>
+            <element signature="n#!!doc" />
+            <element signature="e#326#790#0" />
+            <element signature="e#842#1369#0" />
+            <element signature="e#1431#2099#0" />
+            <element signature="e#1440#1511#0" />
+            <element signature="e#1644#1713#0" />
+            <element signature="e#1855#1930#0" />
+            <element signature="e#1977#2052#0" />
+            <element signature="e#2101#2173#0" />
+            <element signature="e#2275#2349#0" />
+            <element signature="e#2514#2574#0" />
+            <element signature="e#2612#2628#0" />
+            <element signature="e#2665#2687#0" />
+            <element signature="e#2724#2744#0" />
+            <element signature="e#2804#2924#0" />
+            <element signature="e#2962#3992#0" />
+            <element signature="e#3044#3898#0" />
+            <element signature="e#3061#3117#0" />
+            <element signature="e#3119#3175#0" />
+            <element signature="e#3177#3241#0" />
+            <element signature="e#3243#3311#0" />
+            <element signature="e#3313#3375#0" />
+            <element signature="e#3377#3445#0" />
+            <element signature="e#3447#3527#0" />
+            <element signature="e#3529#3597#0" />
+            <element signature="e#3599#3664#0" />
+            <element signature="e#3666#3748#0" />
+            <element signature="e#3750#3825#0" />
+            <element signature="e#3827#3895#0" />
+            <element signature="e#3916#3972#0" />
+            <element signature="e#3994#4071#0" />
+            <element signature="e#4156#4292#0" />
+            <element signature="e#4193#4276#0" />
+            <element signature="e#4224#4273#0" />
+            <element signature="e#4247#4269#0" />
+            <element signature="e#4294#4369#0" />
+            <element signature="e#4498#4657#0" />
+            <element signature="e#4535#4641#0" />
+            <element signature="e#4574#4624#0" />
+            <element signature="e#4597#4620#0" />
+            <element signature="e#4659#5079#0" />
+            <element signature="e#4700#4765#0" />
+            <element signature="e#4803#4866#0" />
+            <element signature="e#5107#5199#0" />
+            <element signature="e#5144#5197#0" />
+            <element signature="e#5235#5361#0" />
+            <element signature="e#5287#5347#0" />
+            <element signature="e#5306#5344#0" />
+            <element signature="e#5398#5491#0" />
+            <element signature="e#5525#5591#0" />
+            <element signature="e#5635#6244#0" />
+            <element signature="e#6291#6366#0" />
+            <element signature="e#6368#6446#0" />
+            <element signature="e#6535#6691#0" />
+            <element signature="e#6693#6769#0" />
+            <element signature="e#6887#6907#0" />
+            <element signature="e#7710#7746#0" />
+            <element signature="e#8498#9501#0" />
+            <element signature="e#8515#8791#0" />
+            <element signature="e#8542#8589#0" />
+            <element signature="e#8642#8739#0" />
+            <element signature="e#8818#8865#0" />
+            <element signature="e#8952#8999#0" />
+            <element signature="e#9050#9419#0" />
+            <element signature="e#9503#9583#0" />
+            <element signature="e#9674#9748#0" />
+            <element signature="e#9686#9712#0" />
+            <element signature="e#9853#9878#0" />
+            <element signature="e#9880#9956#0" />
+            <element signature="e#10010#10036#0" />
+            <element signature="e#10122#10152#0" />
+            <element signature="e#10241#10272#0" />
+            <element signature="e#10335#10464#0" />
+            <element signature="e#10404#10427#0" />
+            <element signature="e#10509#10621#0" />
+            <element signature="e#10553#10582#0" />
+            <element signature="e#10704#11100#0" />
+            <element signature="e#10728#10744#0" />
+            <element signature="e#10826#10843#0" />
+            <element signature="e#10899#10933#0" />
+            <element signature="e#10939#10975#0" />
+            <element signature="e#10991#11022#0" />
+            <element signature="e#11053#11086#0" />
+            <element signature="e#11102#11179#0" />
+            <element signature="e#11328#12395#0" />
+            <element signature="e#11358#11389#0" />
+            <element signature="e#11433#11469#0" />
+            <element signature="e#11546#11566#0" />
+            <element signature="e#11682#11715#0" />
+            <element signature="e#11721#11836#0" />
+            <element signature="e#11884#11962#0" />
+            <element signature="e#11928#11959#0" />
+            <element signature="e#11992#12074#0" />
+            <element signature="e#12002#12029#0" />
+            <element signature="e#12031#12071#0" />
+            <element signature="e#12089#12105#0" />
+            <element signature="e#12187#12204#0" />
+            <element signature="e#12284#12315#0" />
+            <element signature="e#12348#12381#0" />
+            <element signature="e#12543#13239#0" />
+            <element signature="e#12546#12617#0" />
+            <element signature="e#12766#12806#0" />
+            <element signature="e#12860#12891#0" />
+            <element signature="e#12971#12988#0" />
+            <element signature="e#13080#13225#0" />
+            <element signature="e#13137#13166#0" />
+            <element signature="e#13172#13222#0" />
+            <element signature="e#13241#13320#0" />
+            <element signature="e#13702#14030#0" />
+            <element signature="e#13782#13804#0" />
+            <element signature="e#13906#14006#0" />
+            <element signature="e#14051#14252#0" />
+            <element signature="e#14306#14492#0" />
+            <element signature="e#14325#14342#0" />
+            <element signature="e#14405#14478#0" />
+            <element signature="e#14494#14569#0" />
+            <element signature="e#14709#16646#0" />
+            <element signature="e#14891#14941#0" />
+            <element signature="e#14978#14999#0" />
+            <element signature="e#15015#15035#0" />
+            <element signature="e#15088#15108#0" />
+            <element signature="e#15201#15271#0" />
+            <element signature="e#15274#15711#0" />
+            <element signature="e#15284#15439#0" />
+            <element signature="e#15441#15609#0" />
+            <element signature="e#15611#15708#0" />
+            <element signature="e#15729#15994#0" />
+            <element signature="e#15881#15991#0" />
+            <element signature="e#15997#16065#0" />
+            <element signature="e#16182#16238#0" />
+            <element signature="e#16359#16415#0" />
+            <element signature="e#16453#16484#0" />
+            <element signature="e#16496#16544#0" />
+            <element signature="e#16700#16897#0" />
+            <element signature="e#16745#16853#0" />
+            <element signature="e#16796#16818#0" />
+            <element signature="e#16866#16880#0" />
+            <element signature="e#16952#17356#0" />
+            <element signature="e#16971#16993#0" />
+            <element signature="e#17044#17174#0" />
+            <element signature="e#17128#17150#0" />
+            <element signature="e#17206#17338#0" />
+            <element signature="e#17252#17274#0" />
+            <element signature="e#17417#17640#0" />
+            <element signature="e#17436#17458#0" />
+            <element signature="e#17490#17622#0" />
+            <element signature="e#17536#17558#0" />
+            <element signature="e#17710#18039#0" />
+            <element signature="e#17729#17751#0" />
+            <element signature="e#17757#18021#0" />
+            <element signature="e#17791#17864#0" />
+            <element signature="e#17844#17860#0" />
+            <element signature="e#17963#18018#0" />
+            <element signature="e#17985#18005#0" />
+            <element signature="e#18079#18151#0" />
+            <element signature="e#18098#18117#0" />
+            <element signature="e#18281#18808#0" />
+            <element signature="e#18332#18513#0" />
+            <element signature="e#18530#18547#0" />
+            <element signature="e#18564#18620#0" />
+            <element signature="e#18717#18773#0" />
+            <element signature="e#18810#18883#0" />
+            <element signature="e#19213#19232#0" />
+            <element signature="e#19395#19412#0" />
+            <element signature="e#19452#19469#0" />
+            <element signature="e#19491#19560#0" />
+            <element signature="e#19788#19824#0" />
+            <element signature="e#19886#24206#0" />
+            <element signature="e#19954#20062#0" />
+            <element signature="e#20031#20059#0" />
+            <element signature="e#20156#20182#0" />
+            <element signature="e#20396#20445#0" />
+            <element signature="e#20505#20616#0" />
+            <element signature="e#20619#21312#0" />
+            <element signature="e#20639#20896#0" />
+            <element signature="e#20734#20810#0" />
+            <element signature="e#20823#20896#0" />
+            <element signature="e#20898#21061#0" />
+            <element signature="e#20949#21039#0" />
+            <element signature="e#21063#21214#0" />
+            <element signature="e#21104#21192#0" />
+            <element signature="e#21216#21309#0" />
+            <element signature="e#21315#21355#0" />
+            <element signature="e#21824#22223#0" />
+            <element signature="e#21850#22034#0" />
+            <element signature="e#21898#21926#0" />
+            <element signature="e#22006#22034#0" />
+            <element signature="e#22036#22220#0" />
+            <element signature="e#22084#22112#0" />
+            <element signature="e#22192#22220#0" />
+            <element signature="e#22278#22345#0" />
+            <element signature="e#22356#22492#0" />
+            <element signature="e#22433#22461#0" />
+            <element signature="e#22656#23068#0" />
+            <element signature="e#22695#22773#0" />
+            <element signature="e#22810#22847#0" />
+            <element signature="e#22900#23040#0" />
+            <element signature="e#23150#23331#0" />
+            <element signature="e#23238#23266#0" />
+            <element signature="e#23283#23328#0" />
+            <element signature="e#23373#24180#0" />
+            <element signature="e#23393#23493#0" />
+            <element signature="e#23465#23493#0" />
+            <element signature="e#23495#23595#0" />
+            <element signature="e#23567#23595#0" />
+            <element signature="e#23597#24177#0" />
+            <element signature="e#23694#24024#0" />
+            <element signature="e#23792#23862#0" />
+            <element signature="e#23933#24020#0" />
+            <element signature="e#24085#24113#0" />
+            <element signature="e#24143#24177#0" />
+            <element signature="e#24265#24418#0" />
+            <element signature="e#24420#24491#0" />
+            <element signature="e#25049#25952#0" />
+            <element signature="e#25131#25171#0" />
+            <element signature="e#25237#25592#0" />
+            <element signature="e#25292#25338#0" />
+            <element signature="e#25400#25589#0" />
+            <element signature="e#25494#25550#0" />
+            <element signature="e#25595#25669#0" />
+            <element signature="e#25857#25917#0" />
+            <element signature="e#25973#25990#0" />
+            <element signature="e#26044#27006#0" />
+            <element signature="e#26081#26104#0" />
+            <element signature="e#26128#26898#0" />
+            <element signature="e#26156#26567#0" />
+            <element signature="e#26196#26230#0" />
+            <element signature="e#26306#26379#0" />
+            <element signature="e#26501#26540#0" />
+            <element signature="e#26586#26636#0" />
+            <element signature="e#26677#26895#0" />
+            <element signature="e#26688#26736#0" />
+            <element signature="e#26739#26891#0" />
+            <element signature="e#26960#26989#0" />
+            <element signature="e#27046#27061#0" />
+            <element signature="e#27063#27138#0" />
+            <element signature="e#27248#27413#0" />
+            <element signature="e#27320#27355#0" />
+            <element signature="e#27415#27494#0" />
+            <element signature="e#27717#27754#0" />
+            <element signature="e#27756#27841#0" />
+            <element signature="e#28010#28034#0" />
+            <element signature="e#28150#28175#0" />
+            <element signature="e#28177#28255#0" />
+            <element signature="e#29063#29274#0" />
+            <element signature="e#29078#29253#0" />
+            <element signature="e#29120#29250#0" />
+            <element signature="e#29380#29404#0" />
+            <element signature="e#29406#29482#0" />
+            <element signature="e#29894#30192#0" />
+            <element signature="e#29909#30172#0" />
+            <element signature="e#29944#30169#0" />
+            <element signature="e#30054#30075#0" />
+            <element signature="e#30130#30151#0" />
+            <element signature="e#30298#30322#0" />
+            <element signature="e#30324#30400#0" />
+            <element signature="e#30800#30879#0" />
+            <element signature="e#30815#30859#0" />
+            <element signature="e#30842#30856#0" />
+            <element signature="e#30881#30957#0" />
+            <element signature="e#31046#31064#0" />
+            <element signature="e#31066#31133#0" />
+            <element signature="e#31301#31339#0" />
+            <element signature="e#31341#31420#0" />
+            <element signature="e#31644#31788#0" />
+            <element signature="e#31682#31746#0" />
+            <element signature="e#31790#31868#0" />
+            <element signature="e#31992#32321#0" />
+            <element signature="e#32033#32200#0" />
+            <element signature="e#32037#32089#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/sync/rwmutex.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="117" selection-start-line="117" selection-end-line="117" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/codec/packet.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="109" selection-start-line="109" selection-end-line="109" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/runtime/panic.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="846" selection-start-line="846" selection-end-line="846" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/udp/session.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="5" column="15" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/udp/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+          <folding>
+            <element signature="e#13#67#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/tcp/session.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="16" column="18" selection-start-line="16" selection-start-column="14" selection-end-line="16" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/ws/session.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="56" column="9" lean-forward="true" selection-start-line="56" selection-start-column="9" selection-end-line="56" selection-end-column="9" />
+          <folding>
+            <element signature="e#12#188#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/demo/ws/client/client.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="23" column="44" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="44" />
+        <state relative-caret-position="189">
+          <caret line="13" column="19" lean-forward="true" selection-start-line="13" selection-start-column="19" selection-end-line="13" selection-end-column="19" />
           <folding>
             <element signature="e#14#160#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/peer/ws/server.go">
+    <entry file="file://$PROJECT_DIR$/demo/ws/server/server.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="56" column="51" selection-start-line="56" selection-start-column="51" selection-end-line="56" selection-end-column="51" />
+        <state relative-caret-position="240">
+          <caret line="18" column="10" lean-forward="true" selection-start-line="18" selection-start-column="10" selection-end-line="18" selection-end-column="10" />
+          <folding>
+            <element signature="e#14#152#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/message.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="19" selection-start-line="18" selection-start-column="1" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/session.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="9" column="5" lean-forward="true" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
+          <folding>
+            <element signature="e#15#54#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

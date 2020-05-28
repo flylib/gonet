@@ -11,7 +11,6 @@ import (
 type session struct {
 	//核心会话标志
 	SessionIdentify
-	MsgControllers
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -24,13 +23,13 @@ type session struct {
 
 //新会话
 func newSession(conn net.Conn) *session {
-	ses := SessionManager.GetIdleSession()
+	ses := sessions.GetIdleSession()
 	if ses == nil {
 		ses = &session{
 			conn: conn,
 			buf:  make([]byte, codec.MTU),
 		}
-		SessionManager.AddSession(ses)
+		sessions.AddSession(ses)
 	} else {
 		ses.(*session).conn = conn
 	}
@@ -62,7 +61,7 @@ func (s *session) recvLoop() {
 		if err != nil {
 			logs.Error("session_%v closed,reason is %v", s.ID(), err)
 			//recycle session
-			SessionManager.RecycleSession(s)
+			sessions.RecycleSession(s)
 			break
 		}
 		controllerIdx, msg, err := codec.ParserPacket(s.buf[:n])

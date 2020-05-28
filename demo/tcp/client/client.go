@@ -10,15 +10,17 @@ import (
 
 func main() {
 	p := goNet.NewPeer(
-		goNet.WithPeerType(goNet.PEERTYPE_CLIENT),
-		goNet.WithAddr(":8087"),
-	)
+		goNet.Options{
+			PeerType: goNet.PEERTYPE_CLIENT,
+			Addr:     ":8087",
+		})
 	p.Start()
-	fmt.Println("session count=", goNet.SessionManager.GetSessionCount())
-	s := goNet.SessionManager.GetSessionById(1)
-	fmt.Println(s.ID())
-	for {
-		time.Sleep(time.Second)
-		s.Send(goNet.Ping{TimeStamp: time.Now().Unix()})
+	fmt.Println("session count=", goNet.sessions.GetSessionCount())
+	session, exist := goNet.sessions.FindSession(1)
+	if exist {
+		for {
+			time.Sleep(time.Second)
+			session.Send(goNet.Ping{TimeStamp: time.Now().Unix()})
+		}
 	}
 }

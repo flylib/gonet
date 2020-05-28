@@ -6,7 +6,6 @@ import (
 	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
 	"sync"
-	"sync/atomic"
 )
 
 // webSocket session
@@ -23,12 +22,9 @@ func init() {
 }
 
 func newSession(conn *websocket.Conn) *session {
-	atomic.AddUint64(&SessionManager.AutoIncrement, 1)
-	ses := SessionManager.Get().(*session)
-	ses.SetID(SessionManager.AutoIncrement)
-	ses.conn = conn
-	SessionManager.AddSession(ses)
-	return ses
+	newSession := AddSession().(*session)
+	newSession.conn = conn
+	return newSession
 }
 
 func (s *session) Socket() interface{} {
@@ -56,7 +52,7 @@ func (s *session) recvLoop() {
 		if err != nil || t == websocket.CloseMessage {
 			logs.Warn("session_%d closed, err: %s", s.ID(), err)
 			s.Close()
-			SessionManager.RecycleSession(s)
+			RecycleSession(s)
 			break
 		}
 		controllerIdx, msg, err := codec.ParserWSPacket(data)

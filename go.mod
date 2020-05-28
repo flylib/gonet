@@ -3,6 +3,7 @@ module github.com/Quantumoffices/goNet
 go 1.13
 
 require (
+	github.com/Quantumoffices/beego v1.13.2
 	github.com/astaxie/beego v1.12.1
 	github.com/davyxu/goobjfmt v0.1.0
 	github.com/gogo/protobuf v1.3.1

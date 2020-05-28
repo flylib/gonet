@@ -21,14 +21,14 @@ type session struct {
 
 //新会话
 func newSession(conn *net.UDPConn, remote *net.UDPAddr) *session {
-	ses := SessionManager.GetIdleSession()
+	ses := sessions.GetIdleSession()
 	if ses == nil {
 		ses = &session{
 			conn:   conn,
 			remote: remote,
 			buf:    make([]byte, codec.MTU),
 		}
-		SessionManager.AddSession(ses)
+		sessions.AddSession(ses)
 	} else {
 		ses.(*session).conn = conn
 	}

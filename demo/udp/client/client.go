@@ -11,8 +11,8 @@ import (
 func main() {
 	p := goNet.NewPeer(goNet.WithAddr(":88"))
 	p.Start()
-	fmt.Println("session count=", goNet.SessionManager.GetSessionCount())
-	s := goNet.SessionManager.GetSessionById(1)
+	fmt.Println("session count=", goNet.sessions.GetSessionCount())
+	s := goNet.sessions.FindSession(1)
 	fmt.Println(s.ID())
 	for {
 		time.Sleep(time.Second)
