@@ -58,7 +58,7 @@ func SendPacket(w io.Writer, msg interface{}) error {
 	// Size==len(body)
 	binary.LittleEndian.PutUint16(pktData, uint16(len(body)))
 	// ID
-	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.GetMsgIdxByType(reflect.TypeOf(msg))))
+	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.FindMsgIDByType(reflect.TypeOf(msg))))
 	// Value
 	copy(pktData[headerSize:], body)
 
@@ -77,7 +77,7 @@ func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 	// Size==len(body)
 	binary.LittleEndian.PutUint16(pktData, uint16(len(body)))
 	// ID
-	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.GetMsgIdxByType(reflect.TypeOf(msg))))
+	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.FindMsgIDByType(reflect.TypeOf(msg))))
 	// Value
 	copy(pktData[headerSize:], body)
 
@@ -108,5 +108,5 @@ func SendWSPacket(w *websocket.Conn, msg interface{}) error {
 		return err
 	}
 	return w.WriteMessage(websocket.TextMessage,
-		bytes.Join([][]byte{[]byte(strconv.Itoa(int(goNet.GetMsgIdxByType(reflect.TypeOf(msg))))), body}, []byte{10}))
+		bytes.Join([][]byte{[]byte(strconv.Itoa(goNet.FindMsgIDByType(reflect.TypeOf(msg)))), body}, []byte{10}))
 }

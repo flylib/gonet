@@ -23,8 +23,8 @@ func encodeMessage(msg interface{}) ([]byte, error) {
 }
 
 // 解码消息
-func decodeMessage(msgIdx int, data []byte) (interface{}, error) {
-	msg := GetMsgByIdx(msgIdx)
+func decodeMessage(msgID int, data []byte) (interface{}, error) {
+	msg := FindMsg(msgID)
 	err := defaultCodec.Decode(data, msg)
 	return msg, err
 }

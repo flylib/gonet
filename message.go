@@ -6,16 +6,22 @@ import (
 )
 
 var (
-	msgTypes            = make([]reflect.Type, 8)    //index:msgIdx value:msgType
-	msgTypeIdx          = make(map[reflect.Type]int) //key:msgType value:msgIdx
-	msgIdxControllerIdx = make(map[int]int)          //key:msgIdx value:controllerIdx
+	msgTypeList = make([]reflect.Type, 8)    //index:msgIdx value:msgType
+	msgMap      = make(map[reflect.Type]int) //key:msgType value:msgIdx
+	msgCtlMap   = make(map[int]int)          //key:msgIdx value:controllerIdx
+)
+var (
+	msgSessionConnect = SessionConnect{}
+	msgSessionClose   = SessionClose{}
+	msgPing           = Ping{}
+	msgPong           = Pong{}
 )
 
 func init() {
-	RegisterMsg(1, SYSTEM_CONTROLLER_IDX, SessionConnect{})
-	RegisterMsg(2, SYSTEM_CONTROLLER_IDX, SessionClose{})
-	RegisterMsg(3, SYSTEM_CONTROLLER_IDX, Ping{})
-	RegisterMsg(4, SYSTEM_CONTROLLER_IDX, Pong{})
+	RegisterMsg(1, SYSTEM_CONTROLLER_IDX, msgSessionConnect)
+	RegisterMsg(2, SYSTEM_CONTROLLER_IDX, msgSessionClose)
+	RegisterMsg(3, SYSTEM_CONTROLLER_IDX, msgPing)
+	RegisterMsg(4, SYSTEM_CONTROLLER_IDX, msgPong)
 }
 
 //心跳
@@ -33,33 +39,33 @@ type SessionClose struct {
 }
 
 //注册消息
-func RegisterMsg(msgIndex, controllerIndex int, msg interface{}) {
-	if msgIndex > math.MaxUint16 {
+func RegisterMsg(msgID, controllerIndex int, msg interface{}) {
+	if msgID > math.MaxUint16 {
 		panic("msg index over allowed range")
 	}
-	more := msgIndex - len(msgTypes) + 1
+	more := msgID - len(msgTypeList) + 1
 	//extending
 	if more > 0 {
 		moreMsgTList := make([]reflect.Type, more)
-		msgTypes = append(msgTypes, moreMsgTList...)
+		msgTypeList = append(msgTypeList, moreMsgTList...)
 	}
-	if msgTypes[msgIndex] != nil {
+	if msgTypeList[msgID] != nil {
 		panic("msg existed!")
 	}
 	t := reflect.TypeOf(msg)
-	msgTypes[msgIndex] = t
-	msgTypeIdx[t] = msgIndex
-	msgIdxControllerIdx[msgIndex] = controllerIndex
+	msgTypeList[msgID] = t
+	msgMap[t] = msgID
+	msgCtlMap[msgID] = controllerIndex
 }
 
-func GetMsgByIdx(msgIndex int) interface{} {
-	return reflect.New(msgTypes[msgIndex]).Interface()
+func FindMsg(msgID int) interface{} {
+	return reflect.New(msgTypeList[msgID]).Interface()
 }
 
-func GetMsgIdxByType(t reflect.Type) int {
-	return msgTypeIdx[t]
+func FindMsgIDByType(t reflect.Type) int {
+	return msgMap[t]
 }
 
 func GetMsgBelongToControllerIdx(msgIndex int) int {
-	return msgIdxControllerIdx[msgIndex]
+	return msgCtlMap[msgIndex]
 }

@@ -29,12 +29,9 @@ type (
 
 		//数据存储
 		Value(obj ...interface{}) interface{}
-	}
 
-	//会话功能
-	SessionAbility interface {
-		SetID(id uint64)
-		JoinController(index int, c Controller)
+		//加入或者更新消息控制模块
+		JoinOrUpdateController(index int, c Controller)
 	}
 
 	//核心会话标志
@@ -56,7 +53,6 @@ type (
 		autoIncrement uint64 //流水号
 		sync.Map
 		*sync.Pool
-		sessionType reflect.Type //会话类型
 	}
 )
 
@@ -76,36 +72,23 @@ func FindSession(id uint64) (Session, bool) {
 	return nil, false
 }
 
-func AddSession( /*conn io.Closer*/ ) Session {
+func AddSession() Session {
 	ses := sessions.Get()
-	sessionAbility := ses.(SessionAbility)
 	atomic.AddUint64(&sessions.autoIncrement, 1)
-	sessionAbility.SetID(sessions.autoIncrement)
+	ses.(interface{ setID(id uint64) }).setID(sessions.autoIncrement)
 	sessions.Store(sessions.autoIncrement, ses)
-	sessionAbility.JoinController(SYSTEM_CONTROLLER_IDX, systemController)
-
 	session := ses.(Session)
+	session.JoinOrUpdateController(SYSTEM_CONTROLLER_IDX, systemController)
 	//notify session connect
-	SubmitMsgToAntsPool(systemController, session, &SessionConnect{})
+	SubmitMsgToAntsPool(systemController, session, &msgSessionConnect)
 	return session
-}
-
-//回收到空闲会话池
-func (s *sessionManager) RecycleSession(ses Session) {
-	ses.Close()
-	s.Delete(ses.ID())
-	s.Put(ses)
-	//notify session close
-	SubmitMsgToAntsPool(systemController, ses, &SessionClose{})
 }
 
 func RecycleSession(ses Session) {
 	ses.Close()
-	//delete(s.sessions, ses.ID())
 	sessions.Delete(ses.ID())
 	sessions.Put(ses)
-	//notify session close
-	SubmitMsgToAntsPool(systemController, ses, &SessionClose{})
+	SubmitMsgToAntsPool(systemController, ses, &msgSessionClose)
 }
 
 func SessionCount() int {
@@ -129,7 +112,7 @@ func (s *SessionIdentify) ID() uint64 {
 	return s.id
 }
 
-func (s *SessionIdentify) SetID(id uint64) {
+func (s *SessionIdentify) setID(id uint64) {
 	s.id = id
 }
 
@@ -140,7 +123,7 @@ func (s *SessionStore) Value(v ...interface{}) interface{} {
 	return s.obj
 }
 
-func (s *SessionController) JoinController(index int, c Controller) {
+func (s *SessionController) JoinOrUpdateController(index int, c Controller) {
 	if s.controllers == nil {
 		s.controllers = make([]Controller, 0, 3)
 	}
