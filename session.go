@@ -124,6 +124,9 @@ func (s *SessionStore) Value(v ...interface{}) interface{} {
 }
 
 func (s *SessionController) JoinOrUpdateController(index int, c Controller) {
+	if index < 0 {
+		return
+	}
 	if s.controllers == nil {
 		s.controllers = make([]Controller, 0, 3)
 	}

@@ -6,18 +6,18 @@ import (
 )
 
 const (
-	POOL_DEFAULT_SIZE = 1
+	Default_Pool_Size = 10
 )
 
-var antsPool *ants.Pool
+var AntsPool *ants.Pool
 
 func init() {
-	antsPool, _ = ants.NewPool(POOL_DEFAULT_SIZE)
+	AntsPool, _ = ants.NewPool(Default_Pool_Size)
 }
 
 //提交到协程池处理消息
 func SubmitMsgToAntsPool(c Controller, s Session, msg interface{}) {
-	if err := antsPool.Submit(func() {
+	if err := AntsPool.Submit(func() {
 		c.OnMsg(s, msg)
 	}); err != nil {
 		logs.Error("antsPool commit message error,reason is ", err.Error())
