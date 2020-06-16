@@ -51,7 +51,6 @@ func (s *session) recvLoop() {
 		t, data, err := s.conn.ReadMessage()
 		if err != nil || t == websocket.CloseMessage {
 			logs.Warn("session_%d closed, err: %s", s.ID(), err)
-			s.Close()
 			RecycleSession(s)
 			break
 		}
