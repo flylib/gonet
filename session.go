@@ -96,6 +96,11 @@ func HandleEvent(e Event) {
 	}
 }
 
+//调整处理者的数量
+func TuneHandlerCount(count int) {
+	sessions.handler.Tune(count)
+}
+
 func FindSession(id uint64) (Session, bool) {
 	value, ok := sessions.Load(id)
 	if ok {

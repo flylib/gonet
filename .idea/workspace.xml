@@ -2,14 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/antspool.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/packet.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/route.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/msg.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/tcp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/session.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/../../pkg/mod/" />
@@ -40,11 +32,62 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/peer/ws/session.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="63" column="23" lean-forward="true" selection-start-line="63" selection-start-column="23" selection-end-line="63" selection-end-column="23" />
+            <state relative-caret-position="264">
+              <caret line="58" column="21" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo/ws/server/server.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="216">
+              <caret line="8" selection-start-line="8" selection-end-line="8" />
+              <folding>
+                <element signature="e#14#152#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/demo/ws/client/client.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="626">
+              <caret line="35" lean-forward="true" selection-start-line="35" selection-end-line="35" />
+              <folding>
+                <element signature="e#14#160#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/codec/packet.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="372">
+              <caret line="105" column="30" selection-start-line="105" selection-start-column="17" selection-end-line="105" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/codec/codecs.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="369">
+              <caret line="22" column="1" lean-forward="true" selection-start-line="22" selection-start-column="1" selection-end-line="22" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://C:/Go/src/builtin/builtin.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="504">
+              <caret line="259" column="5" selection-start-line="259" selection-start-column="5" selection-end-line="259" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -52,8 +95,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/msg.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-843">
-              <caret line="19" column="13" lean-forward="true" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+            <state relative-caret-position="324">
+              <caret line="12" column="5" lean-forward="true" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
               <folding>
                 <element signature="e#15#44#0" expanded="true" />
               </folding>
@@ -61,63 +104,72 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/peer/ws/client.go">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/session.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
-              <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+            <state relative-caret-position="677">
+              <caret line="98" column="10" selection-start-line="98" selection-start-column="10" selection-end-line="98" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/route.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="542">
+              <caret line="35" column="30" lean-forward="true" selection-start-line="35" selection-start-column="30" selection-end-line="35" selection-end-column="30" />
               <folding>
-                <element signature="e#12#144#0" expanded="true" />
+                <element signature="e#15#66#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/peer/ws/server.go">
+        <entry file="file://$PROJECT_DIR$/../../pkg/mod/github.com/panjf2000/ants/v2@v2.3.1/pool.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="17" column="1" lean-forward="true" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+            <state relative-caret-position="442">
+              <caret line="165" column="31" lean-forward="true" selection-start-line="165" selection-start-column="31" selection-end-line="165" selection-end-column="31" />
+              <folding>
+                <element signature="e#2098#2905#0" />
+                <element signature="e#2203#2903#0" />
+                <element signature="e#2247#2261#0" />
+                <element signature="e#2606#2644#0" />
+                <element signature="e#2873#2900#0" />
+                <element signature="e#3011#3792#0" />
+                <element signature="e#3027#3064#0" />
+                <element signature="e#3120#3139#0" />
+                <element signature="e#3187#3226#0" />
+                <element signature="e#3247#3300#0" />
+                <element signature="e#3313#3396#0" />
+                <element signature="e#3437#3520#0" />
+                <element signature="e#3457#3517#0" />
+                <element signature="e#3544#3598#0" />
+                <element signature="e#3604#3651#0" />
+                <element signature="e#3954#4138#0" />
+                <element signature="e#3997#4024#0" />
+                <element signature="e#4079#4108#0" />
+                <element signature="e#4638#4651#0" />
+                <element signature="e#4754#4845#0" />
+                <element signature="e#4906#4998#0" />
+                <element signature="e#4965#4996#0" />
+                <element signature="e#5180#5215#0" />
+                <element signature="e#5317#5353#0" />
+                <element signature="e#5460#6130#0" />
+                <element signature="e#5502#5554#0" />
+                <element signature="e#5609#5631#0" />
+                <element signature="e#5662#5700#0" />
+                <element signature="e#5706#6118#0" />
+                <element signature="e#5735#5773#0" />
+                <element signature="e#5868#5906#0" />
+                <element signature="e#5981#6034#0" />
+                <element signature="e#6075#6096#0" />
+                <element signature="e#6260#6636#0" />
+                <element signature="e#6328#6347#0" />
+                <element signature="e#6445#6482#0" />
+              </folding>
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/logo.jpg">
-          <provider selected="true" editor-type-id="images" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/go.sum">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/option.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="27">
-              <caret line="13" column="26" lean-forward="true" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/peer.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="52" column="30" lean-forward="true" selection-start-line="52" selection-start-column="30" selection-end-line="52" selection-end-column="30" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ali_pay.JPG">
-          <provider selected="true" editor-type-id="images" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/LICENSE">
-          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -163,8 +215,8 @@
         <option value="$PROJECT_DIR$/antspool.go" />
         <option value="$PROJECT_DIR$/controller.go" />
         <option value="$PROJECT_DIR$/route.go" />
-        <option value="$PROJECT_DIR$/session.go" />
         <option value="$PROJECT_DIR$/peer/ws/session.go" />
+        <option value="$PROJECT_DIR$/session.go" />
       </list>
     </option>
   </component>
@@ -186,42 +238,6 @@
             <path>
               <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
               <item name="goNet" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goNet" type="462c0819:PsiDirectoryNode" />
-              <item name="demo" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goNet" type="462c0819:PsiDirectoryNode" />
-              <item name="demo" type="462c0819:PsiDirectoryNode" />
-              <item name="ws" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goNet" type="462c0819:PsiDirectoryNode" />
-              <item name="demo" type="462c0819:PsiDirectoryNode" />
-              <item name="ws" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goNet" type="462c0819:PsiDirectoryNode" />
-              <item name="demo" type="462c0819:PsiDirectoryNode" />
-              <item name="ws" type="462c0819:PsiDirectoryNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goNet" type="462c0819:PsiDirectoryNode" />
-              <item name="peer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goNet" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goNet" type="462c0819:PsiDirectoryNode" />
-              <item name="peer" type="462c0819:PsiDirectoryNode" />
-              <item name="ws" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -383,7 +399,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.14316703" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.16160521" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.03253796" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.1681128" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -601,13 +617,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
           <caret line="846" selection-start-line="846" selection-end-line="846" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/codec/codecs.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -938,103 +947,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../pkg/mod/github.com/panjf2000/ants/v2@v2.3.1/pool.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="33" column="5" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
-          <folding>
-            <element signature="e#2098#2905#0" />
-            <element signature="e#2203#2903#0" />
-            <element signature="e#2247#2261#0" />
-            <element signature="e#2606#2644#0" />
-            <element signature="e#2873#2900#0" />
-            <element signature="e#3011#3792#0" />
-            <element signature="e#3027#3064#0" />
-            <element signature="e#3120#3139#0" />
-            <element signature="e#3187#3226#0" />
-            <element signature="e#3247#3300#0" />
-            <element signature="e#3313#3396#0" />
-            <element signature="e#3437#3520#0" />
-            <element signature="e#3457#3517#0" />
-            <element signature="e#3544#3598#0" />
-            <element signature="e#3604#3651#0" />
-            <element signature="e#3954#4138#0" />
-            <element signature="e#3997#4024#0" />
-            <element signature="e#4079#4108#0" />
-            <element signature="e#4236#4281#0" />
-            <element signature="e#4359#4392#0" />
-            <element signature="e#4461#4507#0" />
-            <element signature="e#4582#4698#0" />
-            <element signature="e#4638#4651#0" />
-            <element signature="e#4754#4845#0" />
-            <element signature="e#4906#4998#0" />
-            <element signature="e#4965#4996#0" />
-            <element signature="e#5180#5215#0" />
-            <element signature="e#5317#5353#0" />
-            <element signature="e#5460#6130#0" />
-            <element signature="e#5502#5554#0" />
-            <element signature="e#5609#5631#0" />
-            <element signature="e#5662#5700#0" />
-            <element signature="e#5706#6118#0" />
-            <element signature="e#5735#5773#0" />
-            <element signature="e#5868#5906#0" />
-            <element signature="e#5981#6034#0" />
-            <element signature="e#6075#6096#0" />
-            <element signature="e#6260#6636#0" />
-            <element signature="e#6328#6347#0" />
-            <element signature="e#6445#6482#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/antspool.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
           <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/codec/packet.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="89" column="5" selection-start-line="89" selection-start-column="5" selection-end-line="89" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo/ws/server/server.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="11" column="61" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="61" />
-          <folding>
-            <element signature="e#14#152#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo/ws/client/client.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="19" column="39" lean-forward="true" selection-start-line="19" selection-start-column="39" selection-end-line="19" selection-end-column="39" />
-          <folding>
-            <element signature="e#14#160#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/route.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="35" column="30" lean-forward="true" selection-start-line="35" selection-start-column="30" selection-end-line="35" selection-end-column="30" />
-          <folding>
-            <element signature="e#15#66#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/session.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="372">
-          <caret line="173" column="42" selection-start-line="173" selection-start-column="37" selection-end-line="173" selection-end-column="42" />
         </state>
       </provider>
     </entry>
@@ -1084,20 +1000,123 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://C:/Go/src/builtin/builtin.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="259" column="5" selection-start-line="259" selection-start-column="5" selection-end-line="259" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/codec/codecs.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="22" column="1" lean-forward="true" selection-start-line="22" selection-start-column="1" selection-end-line="22" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/codec/packet.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="372">
+          <caret line="105" column="30" selection-start-line="105" selection-start-column="17" selection-end-line="105" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/peer/ws/session.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="58" column="21" selection-start-line="58" selection-start-column="17" selection-end-line="58" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo/ws/server/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+          <folding>
+            <element signature="e#14#152#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo/ws/client/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="626">
+          <caret line="35" lean-forward="true" selection-start-line="35" selection-end-line="35" />
+          <folding>
+            <element signature="e#14#160#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/msg.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-843">
-          <caret line="19" column="13" lean-forward="true" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+        <state relative-caret-position="324">
+          <caret line="12" column="5" lean-forward="true" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
           <folding>
             <element signature="e#15#44#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/peer/ws/session.go">
+    <entry file="file://$PROJECT_DIR$/route.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="63" column="23" lean-forward="true" selection-start-line="63" selection-start-column="23" selection-end-line="63" selection-end-column="23" />
+        <state relative-caret-position="542">
+          <caret line="35" column="30" lean-forward="true" selection-start-line="35" selection-start-column="30" selection-end-line="35" selection-end-column="30" />
+          <folding>
+            <element signature="e#15#66#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../pkg/mod/github.com/panjf2000/ants/v2@v2.3.1/pool.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="165" column="31" lean-forward="true" selection-start-line="165" selection-start-column="31" selection-end-line="165" selection-end-column="31" />
+          <folding>
+            <element signature="e#2098#2905#0" />
+            <element signature="e#2203#2903#0" />
+            <element signature="e#2247#2261#0" />
+            <element signature="e#2606#2644#0" />
+            <element signature="e#2873#2900#0" />
+            <element signature="e#3011#3792#0" />
+            <element signature="e#3027#3064#0" />
+            <element signature="e#3120#3139#0" />
+            <element signature="e#3187#3226#0" />
+            <element signature="e#3247#3300#0" />
+            <element signature="e#3313#3396#0" />
+            <element signature="e#3437#3520#0" />
+            <element signature="e#3457#3517#0" />
+            <element signature="e#3544#3598#0" />
+            <element signature="e#3604#3651#0" />
+            <element signature="e#3954#4138#0" />
+            <element signature="e#3997#4024#0" />
+            <element signature="e#4079#4108#0" />
+            <element signature="e#4638#4651#0" />
+            <element signature="e#4754#4845#0" />
+            <element signature="e#4906#4998#0" />
+            <element signature="e#4965#4996#0" />
+            <element signature="e#5180#5215#0" />
+            <element signature="e#5317#5353#0" />
+            <element signature="e#5460#6130#0" />
+            <element signature="e#5502#5554#0" />
+            <element signature="e#5609#5631#0" />
+            <element signature="e#5662#5700#0" />
+            <element signature="e#5706#6118#0" />
+            <element signature="e#5735#5773#0" />
+            <element signature="e#5868#5906#0" />
+            <element signature="e#5981#6034#0" />
+            <element signature="e#6075#6096#0" />
+            <element signature="e#6260#6636#0" />
+            <element signature="e#6328#6347#0" />
+            <element signature="e#6445#6482#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/session.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="677">
+          <caret line="98" column="10" selection-start-line="98" selection-start-column="10" selection-end-line="98" selection-end-column="10" />
         </state>
       </provider>
     </entry>
