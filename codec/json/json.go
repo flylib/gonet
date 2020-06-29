@@ -1,9 +1,11 @@
 package json
 
 import (
-	"encoding/json"
 	"github.com/Quantumoffices/goNet/codec"
+	"github.com/json-iterator/go" //高性能json编码库
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type jsonCodec struct {
 }
@@ -15,7 +17,6 @@ func (j *jsonCodec) Type() string {
 
 // 将结构体编码为JSON的字节数组
 func (j *jsonCodec) Encode(v interface{}) (data []byte, err error) {
-
 	return json.Marshal(v)
 
 }

@@ -8,7 +8,7 @@ require (
 	github.com/davyxu/goobjfmt v0.1.0
 	github.com/gogo/protobuf v1.3.1
 	github.com/gorilla/websocket v1.4.1
+	github.com/json-iterator/go v1.1.10
 	github.com/panjf2000/ants/v2 v2.3.1
 	github.com/shiena/ansicolor v0.0.0-20151119151921-a422bbe96644 // indirect
-	github.com/sirupsen/logrus v1.4.2
 )
