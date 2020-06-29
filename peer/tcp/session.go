@@ -74,7 +74,7 @@ func (s *session) recvLoop() {
 			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
 			continue
 		}
-		SubmitMsgToAntsPool(controller, s, msg)
+		HandleEvent(controller, s, msg)
 	}
 }
 

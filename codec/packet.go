@@ -30,13 +30,13 @@ const (
 func ParserPacket(data []byte) (int, interface{}, error) {
 	// 小于包头
 	if len(data) < packetLen {
-		return goNet.SYSTEM_CONTROLLER_IDX, nil, errors.New("packet size too min")
+		return goNet.System_Route_ID, nil, errors.New("packet size too min")
 	}
 	// 读取Size
 	size := binary.LittleEndian.Uint16(data)
 	// 出错，等待下次数据
 	if size > MTU {
-		return goNet.SYSTEM_CONTROLLER_IDX, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
+		return goNet.System_Route_ID, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
 	}
 	// 读取消息ID
 	msgId := int(binary.LittleEndian.Uint16(data[packetLen:]))
@@ -92,14 +92,14 @@ func ParserWSPacket(pkt []byte) (int, interface{}, error) {
 		if d == '\n' {
 			msgID, err := strconv.Atoi(string(pkt[:index]))
 			if err != nil {
-				return goNet.SYSTEM_CONTROLLER_IDX, nil, err
+				return goNet.System_Route_ID, nil, err
 			}
 			controllerIdx := goNet.GetMsgBelongToControllerIdx(msgID)
 			msg, err := decodeMessage(msgID, pkt[index+1:])
 			return controllerIdx, msg, err
 		}
 	}
-	return goNet.SYSTEM_CONTROLLER_IDX, nil, errors.New("parser message error.EOF")
+	return goNet.System_Route_ID, nil, errors.New("parser message error.EOF")
 }
 
 func SendWSPacket(w *websocket.Conn, msg interface{}) error {

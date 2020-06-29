@@ -12,7 +12,7 @@ import (
 type session struct {
 	SessionIdentify
 	SessionStore
-	SessionController
+	SessionRoute
 	conn *websocket.Conn
 	sync.RWMutex
 }
@@ -64,6 +64,6 @@ func (s *session) recvLoop() {
 			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
 			continue
 		}
-		SubmitMsgToAntsPool(controller, s, msg)
+		HandleEvent(CreateEvent(s, controller, msg))
 	}
 }

@@ -5,16 +5,13 @@ import (
 	"time"
 )
 
-const SYSTEM_CONTROLLER_IDX = 0
+const System_Route_ID = 0
 
-var systemController Controller
+//系统消息路由
+var sysRoute Route = &SystemController{}
 
-func init() {
-	systemController = &SystemController{}
-}
-
-//控制器
-type Controller interface {
+//消息路由接口
+type Route interface {
 	OnMsg(session Session, msg interface{})
 }
 
@@ -36,10 +33,9 @@ func (*SystemController) OnMsg(session Session, msg interface{}) {
 	}
 }
 
-//替换系统控制器
-func UpdateSystemController(c Controller) {
+func UpdateSysRoute(c Route) {
 	if c == nil {
 		return
 	}
-	systemController = c
+	sysRoute = c
 }

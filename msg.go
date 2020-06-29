@@ -18,10 +18,10 @@ var (
 )
 
 func init() {
-	RegisterMsg(1, SYSTEM_CONTROLLER_IDX, msgSessionConnect)
-	RegisterMsg(2, SYSTEM_CONTROLLER_IDX, msgSessionClose)
-	RegisterMsg(3, SYSTEM_CONTROLLER_IDX, msgPing)
-	RegisterMsg(4, SYSTEM_CONTROLLER_IDX, msgPong)
+	RegisterMsg(1, System_Route_ID, msgSessionConnect)
+	RegisterMsg(2, System_Route_ID, msgSessionClose)
+	RegisterMsg(3, System_Route_ID, msgPing)
+	RegisterMsg(4, System_Route_ID, msgPong)
 }
 
 //心跳
