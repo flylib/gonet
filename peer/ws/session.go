@@ -59,7 +59,7 @@ func (s *session) recvLoop() {
 			logs.Warn("msg parser error,reason is %v", err)
 			continue
 		}
-		controller, err := s.GetController(controllerIdx)
+		controller, err := s.GetRoute(controllerIdx)
 		if err != nil {
 			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
 			continue

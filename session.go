@@ -36,8 +36,8 @@ type (
 		//数据存储
 		Value(obj ...interface{}) interface{}
 
-		//加入或者更新消息控制模块
-		JoinOrUpdateController(index int, c Route)
+		//加入或者更新路由
+		JoinOrUpdateRoute(index int, c Route)
 	}
 
 	//核心会话标志
@@ -115,7 +115,7 @@ func AddSession() Session {
 	ses.(interface{ setID(id uint64) }).setID(sessions.autoIncrement)
 	sessions.Store(sessions.autoIncrement, ses)
 	session := ses.(Session)
-	session.JoinOrUpdateController(System_Route_ID, sysRoute)
+	session.JoinOrUpdateRoute(System_Route_ID, sysRoute)
 	//notify session connect
 	HandleEvent(CreateEvent(session, sysRoute, &msgSessionConnect))
 	return session
@@ -160,7 +160,7 @@ func (s *SessionStore) Value(v ...interface{}) interface{} {
 	return s.obj
 }
 
-func (s *SessionRoute) JoinOrUpdateController(index int, c Route) {
+func (s *SessionRoute) JoinOrUpdateRoute(index int, c Route) {
 	if index < 0 {
 		return
 	}
@@ -176,7 +176,7 @@ func (s *SessionRoute) JoinOrUpdateController(index int, c Route) {
 	s.route[index] = c
 }
 
-func (s *SessionRoute) GetController(index int) (Route, error) {
+func (s *SessionRoute) GetRoute(index int) (Route, error) {
 	if index >= len(s.route) || s.route[index] == nil {
 		return nil, errors.New("not found route")
 	}
