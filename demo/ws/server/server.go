@@ -9,11 +9,11 @@ import (
 func main() {
 	p := goNet.NewPeer(
 		goNet.Options{
-			Addr:          "ws://192.168.0.125:8086/center/ws",
+			Addr:          "ws://192.168.0.125:8083/center/ws",
 			PeerType:      goNet.PEERTYPE_SERVER,
 			ReadDeadline:  0,
 			WriteDeadline: 0,
-			PoolSize:      0,
+			EventChanSize: 0,
 			PanicHandler:  nil,
 			AllowMaxConn:  0,
 		})

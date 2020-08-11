@@ -42,9 +42,9 @@ func ParserPacket(data []byte) (int, interface{}, error) {
 	msgId := int(binary.LittleEndian.Uint16(data[packetLen:]))
 	//内容
 	content := data[headerSize : headerSize+size]
-	controllerIdx := goNet.GetMsgBelongToControllerIdx(msgId)
+	routeID := goNet.FindRouteID(msgId)
 	msg, err := decodeMessage(msgId, content)
-	return controllerIdx, msg, err
+	return routeID, msg, err
 }
 
 //----------------------------------------------【发送包】--------------------------------------------------
@@ -58,7 +58,7 @@ func SendPacket(w io.Writer, msg interface{}) error {
 	// Size==len(body)
 	binary.LittleEndian.PutUint16(pktData, uint16(len(body)))
 	// ID
-	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.FindMsgIDByType(reflect.TypeOf(msg))))
+	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.FindMsgID(reflect.TypeOf(msg))))
 	// Value
 	copy(pktData[headerSize:], body)
 
@@ -77,7 +77,7 @@ func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 	// Size==len(body)
 	binary.LittleEndian.PutUint16(pktData, uint16(len(body)))
 	// ID
-	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.FindMsgIDByType(reflect.TypeOf(msg))))
+	binary.LittleEndian.PutUint16(pktData[2:], uint16(goNet.FindMsgID(reflect.TypeOf(msg))))
 	// Value
 	copy(pktData[headerSize:], body)
 
@@ -94,9 +94,9 @@ func ParserWSPacket(pkt []byte) (int, interface{}, error) {
 			if err != nil {
 				return goNet.System_Route_ID, nil, err
 			}
-			controllerIdx := goNet.GetMsgBelongToControllerIdx(msgID)
+			routeID := goNet.FindRouteID(msgID)
 			msg, err := decodeMessage(msgID, pkt[index+1:])
-			return controllerIdx, msg, err
+			return routeID, msg, err
 		}
 	}
 	return goNet.System_Route_ID, nil, errors.New("parser message error.EOF")
@@ -108,5 +108,5 @@ func SendWSPacket(w *websocket.Conn, msg interface{}) error {
 		return err
 	}
 	return w.WriteMessage(websocket.TextMessage,
-		bytes.Join([][]byte{[]byte(strconv.Itoa(goNet.FindMsgIDByType(reflect.TypeOf(msg)))), body}, []byte{10}))
+		bytes.Join([][]byte{[]byte(strconv.Itoa(goNet.FindMsgID(reflect.TypeOf(msg)))), body}, []byte{10}))
 }

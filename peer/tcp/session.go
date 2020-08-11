@@ -1,9 +1,9 @@
 package tcp
 
 import (
-	"github.com/Quantumoffices/beego/logs"
 	. "github.com/Quantumoffices/goNet"
 	"github.com/Quantumoffices/goNet/codec"
+	"github.com/astaxie/beego/logs"
 	"net"
 )
 

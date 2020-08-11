@@ -2,8 +2,6 @@ package goNet
 
 import (
 	"errors"
-	"github.com/astaxie/beego/logs"
-	"github.com/panjf2000/ants/v2"
 	"reflect"
 	"sync"
 	"sync/atomic"
@@ -55,51 +53,46 @@ type (
 	}
 	//会话管理
 	sessionManager struct {
-		autoIncrement uint64 //流水号
 		sync.Map
 		*sync.Pool
-		handler *ants.Pool //消息处理线程
-	}
-	//事件
-	Event struct {
-		session    Session     //会话
-		controller Route       //控制器
-		msg        interface{} //消息
+		autoIncrement uint64 //流水号
+		//handler       *ants.Pool //消息处理线程
 	}
 )
 
 //构造事件
-func CreateEvent(s Session, c Route, msg interface{}) Event {
-	return Event{
-		session:    s,
-		controller: c,
-		msg:        msg,
-	}
-}
+//func NewEvent(s Session, c Route, msg interface{}) Event {
+//	return Event{
+//		From:    s,
+//		Handler: c,
+//		Msg:     msg,
+//	}
+//}
 
 func NewSessionManager() *sessionManager {
-	handlers, _ := ants.NewPool(Default_Handler_Count)
+	//handlers, _ := ants.NewPool(Default_Handler_Count)
 	return &sessionManager{
 		Pool: &sync.Pool{New: func() interface{} {
 			return reflect.New(sessionType).Interface()
 		}},
-		handler: handlers,
+		//handler: handlers,
+		//ch:      make(chan Event),
 	}
 }
 
 //处理事件
-func HandleEvent(e Event) {
-	if err := sessions.handler.Submit(func() {
-		e.controller.OnMsg(e.session, e.msg)
-	}); err != nil {
-		logs.Error("antsPool commit message error,reason is ", err.Error())
-	}
-}
+//func HandleEvent(e Event) {
+//	if err := sessions.handler.Submit(func() {
+//		e.controller.OnMsg(e.session, e.msg)
+//	}); err != nil {
+//		logs.Error("antsPool commit message error,reason is ", err.Error())
+//	}
+//}
 
 //调整处理者的数量
-func TuneHandlerCount(count int) {
-	sessions.handler.Tune(count)
-}
+//func TuneHandlerCount(count int) {
+//	sessions.handler.Tune(count)
+//}
 
 func FindSession(id uint64) (Session, bool) {
 	value, ok := sessions.Load(id)
@@ -117,7 +110,8 @@ func AddSession() Session {
 	session := ses.(Session)
 	session.JoinOrUpdateRoute(System_Route_ID, sysRoute)
 	//notify session connect
-	HandleEvent(CreateEvent(session, sysRoute, &msgSessionConnect))
+	//HandleEvent(NewEvent(session, sysRoute, &msgSessionConnect))
+	CommitWorkerPool(Event{From: session, Router: sysRoute, Msg: &msgSessionConnect})
 	return session
 }
 
@@ -125,7 +119,8 @@ func RecycleSession(s Session) {
 	s.Close()
 	sessions.Delete(s.ID())
 	sessions.Put(s)
-	HandleEvent(CreateEvent(s, sysRoute, &msgSessionClose))
+	//HandleEvent(NewEvent(s, sysRoute, &msgSessionClose))
+	CommitWorkerPool(Event{From: s, Router: sysRoute, Msg: &msgSessionClose})
 }
 
 func SessionCount() int {
@@ -160,27 +155,28 @@ func (s *SessionStore) Value(v ...interface{}) interface{} {
 	return s.obj
 }
 
-func (s *SessionRoute) JoinOrUpdateRoute(index int, c Route) {
-	if index < 0 {
+func (s *SessionRoute) JoinOrUpdateRoute(id int, c Route) {
+	if id < 0 {
 		return
 	}
 	if s.route == nil {
 		s.route = make([]Route, 0, 3)
 	}
-	more := index - len(s.route) + 1
+	more := id - len(s.route) + 1
 	//extend
 	if more > 0 {
 		moreControllers := make([]Route, more)
 		s.route = append(s.route, moreControllers...)
 	}
-	s.route[index] = c
+	s.route[id] = c
 }
 
-func (s *SessionRoute) GetRoute(index int) (Route, error) {
-	if index >= len(s.route) || s.route[index] == nil {
+//@Param route id
+func (s *SessionRoute) GetRoute(routeID int) (Route, error) {
+	if routeID >= len(s.route) || s.route[routeID] == nil {
 		return nil, errors.New("not found route")
 	}
-	return s.route[index], nil
+	return s.route[routeID], nil
 }
 
 func RegisterSessionType(ses interface{}) {

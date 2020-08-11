@@ -23,7 +23,6 @@ func init() {
 	//响应头
 	//var header http.Header = make(map[string][]string)
 	//header.Add("Access-Control-Allow-Origin", "*")
-
 	s := &server{
 		PeerIdentify: identify,
 		upGrader: websocket.Upgrader{

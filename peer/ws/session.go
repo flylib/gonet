@@ -54,16 +54,17 @@ func (s *session) recvLoop() {
 			RecycleSession(s)
 			break
 		}
-		controllerIdx, msg, err := codec.ParserWSPacket(data)
+		routeID, msg, err := codec.ParserWSPacket(data)
 		if err != nil {
 			logs.Warn("msg parser error,reason is %v", err)
 			continue
 		}
-		controller, err := s.GetRoute(controllerIdx)
+		route, err := s.GetRoute(routeID)
 		if err != nil {
-			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
+			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), routeID, err)
 			continue
 		}
-		HandleEvent(CreateEvent(s, controller, msg))
+		//HandleEvent(NewEvent(s, controller, msg))
+		CommitWorkerPool(Event{From: s, Router: route, Msg: msg})
 	}
 }

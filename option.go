@@ -24,9 +24,9 @@ type Options struct {
 	PeerType PeerType
 	//SetWriteDeadline sets the write deadline or read deadline on the underlying connection.
 	ReadDeadline, WriteDeadline time.Duration
-	//set the routine pool size
-	//0.mean use default set
-	PoolSize int
+	//event chan size
+	//0.mean not cache
+	EventChanSize int
 	// PanicHandler is used to handle panics from each worker goroutine.
 	PanicHandler func(interface{})
 	//Maximum number of connections allowed

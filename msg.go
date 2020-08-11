@@ -58,14 +58,17 @@ func RegisterMsg(msgID, controllerIndex int, msg interface{}) {
 	msgCtlMap[msgID] = controllerIndex
 }
 
+//@Param msg id
 func FindMsg(msgID int) interface{} {
 	return reflect.New(msgTypeList[msgID]).Interface()
 }
 
-func FindMsgIDByType(t reflect.Type) int {
+//@Param msg type
+func FindMsgID(t reflect.Type) int {
 	return msgMap[t]
 }
 
-func GetMsgBelongToControllerIdx(msgIndex int) int {
-	return msgCtlMap[msgIndex]
+//@Param msg id
+func FindRouteID(msgID int) int {
+	return msgCtlMap[msgID]
 }
