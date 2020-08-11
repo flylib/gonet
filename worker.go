@@ -99,7 +99,7 @@ func (w *workerPool) handling(e Event) {
 		}
 	} else {
 		//不做精确控制
-		if w.size > 1 {
+		if w.size > int32(runtime.NumCPU()) {
 			w.destroyWorker()
 		}
 	}
