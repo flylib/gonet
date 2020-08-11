@@ -100,7 +100,7 @@ func (w *workerPool) handling(e Event) {
 	} else {
 		//不做精确控制
 		if w.size > 1 {
-			w.createWorker(1)
+			w.destroyWorker()
 		}
 	}
 	w.eventChannel <- e
