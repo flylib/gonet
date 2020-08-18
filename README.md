@@ -37,82 +37,60 @@
 ### **1.** git clone到 GOPATH/src目录下
 
 ```
-git clone https://github.com/Quantumoffices/goNet.git
+git clone https://github.com/zjllib/goNet.git
 ```
 
 ## 使用样例参考
 - 服务端
 ```go
-package main
-
-import (
-	"goNet"
-	_ "goNet/codec/json"
-	_ "goNet/peer/tcp"
-)
-
-func main() {
-	p := goNet.NewPeer("server",":8087")
+	p := goNet.NewPeer(
+		goNet.Options{
+			Addr:          "ws://:8083/echo",
+			PeerType:      goNet.PEERTYPE_SERVER,
+		})
 	p.Start()
-}
-
 ```
 - 客户端
 ```go
-package main
-
-import (
-	"goNet"
-	_ "goNet/codec/json"
-	_ "goNet/peer/tcp"
-)
-
-func main() {
-	p := goNet.NewPeer("client", ":8087")
-	p.Start()
-       //todo something
-}
+	p := goNet.NewPeer(
+				goNet.Options{
+					Addr: "ws://:8083/echo",
+					PeerType: goNet.PEERTYPE_CLIENT,
+				})
+			p.Start()
 ```
 - 消息处理实现及注册
 ```go
-package msg
-import (
-	"goNet"
+//101~200  登录注册模块
+const (
+	MsgID_LoginReq = 101
+	MsgID_LoginOut = 102
 )
-//消息注册
+
+//消息注入
 func init() {
-	goNet.RegisterMessage(0, Ping{})
-	goNet.RegisterMessage(1, Pong{})
+	goNet.RegisterMsg(MsgID_LoginReq, goNet.SYSTEM_CONTROLLER_IDX, LoginReq{})
+	goNet.RegisterMsg(MsgID_LoginOut, goNet.SYSTEM_CONTROLLER_IDX, LoginOut{})
 }
+////实现消息控制器
+//type Controller interface {
+//  	OnMsg(session Session, msg interface{})
+ // }
 
-//心跳
-type Ping struct {
-	TimeStamp int64 `json:"time_stamp",xml:"time_stamp"`
-}
-type Pong struct {
-	TimeStamp int64 `json:"time_stamp",xml:"time_stamp"`
-}
-type SessionClose struct {
-}
-
-//消息需要实现 goNet.Message接口
-func (p *Ping) Handle(session Session) {
-	logrus.Infof("session_%v ping at time=%v", session.ID(), time.Unix(p.TimeStamp, 0).String())
-	session.Send(Pong{TimeStamp: time.Now().Unix(),})
-}
-func (p *Pong) Handle(session Session) {
-	logrus.Infof("session_%v pong at time=%v", session.ID(), time.Unix(p.TimeStamp, 0).String())
-}
-
-func (s *SessionClose) Handle(session Session) {
-	logrus.Errorf("session_%v closed", session.ID())
+func (u *Controller) OnMsg(session goNet.Session, data interface{}) {
+	switch msg := data.(type) {
+	case *proto.LoginReq: //登录请求
+	  //todo something
+	case *proto.LoginOut: //退出登录
+    //todo something
+	}
 }
 ```
 ## 在线游戏demo
 - **使用etcd+mysql+beego+goNet+cocos creator制作**  
 服务端：大厅服+游戏服+服务注册  
 客户端：大厅+子游戏模式  
-http://www.quantumstudio.cn:8080/client-release-signed.apk
+http://116.62.245.150:8087/web-desktop/
 ![display](./display_lkby.gif)
 ## 测试
 ## FAQ
