@@ -5,10 +5,11 @@ import (
 	"time"
 )
 
-const System_Route_ID = 0
+//默认ID
+const DefaultRouteID = 0
 
 //系统消息路由
-var sysRoute Route = &SystemController{}
+var defaultRoute Route = &DefaultRoute{}
 
 //消息路由接口
 type Route interface {
@@ -16,10 +17,10 @@ type Route interface {
 }
 
 //系统控制模块
-type SystemController struct {
+type DefaultRoute struct {
 }
 
-func (*SystemController) OnMsg(session Session, msg interface{}) {
+func (*DefaultRoute) OnMsg(session Session, msg interface{}) {
 	switch data := msg.(type) {
 	case *SessionConnect:
 		logs.Info("session_%v connected", session.ID())
@@ -37,5 +38,10 @@ func UpdateSysRoute(c Route) {
 	if c == nil {
 		return
 	}
-	sysRoute = c
+	defaultRoute = c
+}
+
+//获取消息所在route
+func FindMsgOnRoute(msgID int) int {
+	return mMsgRoute[msgID]
 }

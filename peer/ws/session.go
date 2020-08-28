@@ -64,7 +64,6 @@ func (s *session) recvLoop() {
 			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), routeID, err)
 			continue
 		}
-		//HandleEvent(NewEvent(s, controller, msg))
-		CommitWorkerPool(Event{From: s, Router: route, Msg: msg})
+		HandleEvent(CreateEvent(EventNetWorkIO, s, route, msg))
 	}
 }

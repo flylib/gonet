@@ -24,7 +24,10 @@ func encodeMessage(msg interface{}) ([]byte, error) {
 
 // 解码消息
 func decodeMessage(msgID int, data []byte) (interface{}, error) {
-	msg := FindMsg(msgID)
-	err := defaultCodec.Decode(data, msg)
+	msg, err := InstanceMsg(msgID)
+	if err != nil {
+		return msg, err
+	}
+	err = defaultCodec.Decode(data, msg)
 	return msg, err
 }

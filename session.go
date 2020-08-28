@@ -1,7 +1,6 @@
 package goNet
 
 import (
-	"errors"
 	"reflect"
 	"sync"
 	"sync/atomic"
@@ -56,43 +55,16 @@ type (
 		sync.Map
 		*sync.Pool
 		autoIncrement uint64 //流水号
-		//handler       *ants.Pool //消息处理线程
 	}
 )
 
-//构造事件
-//func NewEvent(s Session, c Route, msg interface{}) Event {
-//	return Event{
-//		From:    s,
-//		Handler: c,
-//		Msg:     msg,
-//	}
-//}
-
 func NewSessionManager() *sessionManager {
-	//handlers, _ := ants.NewPool(Default_Handler_Count)
 	return &sessionManager{
 		Pool: &sync.Pool{New: func() interface{} {
 			return reflect.New(sessionType).Interface()
 		}},
-		//handler: handlers,
-		//ch:      make(chan Event),
 	}
 }
-
-//处理事件
-//func HandleEvent(e Event) {
-//	if err := sessions.handler.Submit(func() {
-//		e.controller.OnMsg(e.session, e.msg)
-//	}); err != nil {
-//		logs.Error("antsPool commit message error,reason is ", err.Error())
-//	}
-//}
-
-//调整处理者的数量
-//func TuneHandlerCount(count int) {
-//	sessions.handler.Tune(count)
-//}
 
 func FindSession(id uint64) (Session, bool) {
 	value, ok := sessions.Load(id)
@@ -108,10 +80,8 @@ func AddSession() Session {
 	ses.(interface{ setID(id uint64) }).setID(sessions.autoIncrement)
 	sessions.Store(sessions.autoIncrement, ses)
 	session := ses.(Session)
-	session.JoinOrUpdateRoute(System_Route_ID, sysRoute)
-	//notify session connect
-	//HandleEvent(NewEvent(session, sysRoute, &msgSessionConnect))
-	CommitWorkerPool(Event{From: session, Router: sysRoute, Msg: &msgSessionConnect})
+	session.JoinOrUpdateRoute(DefaultRouteID, defaultRoute)
+	HandleEvent(Event{from: session, route: defaultRoute, data: &msgSessionConnect})
 	return session
 }
 
@@ -119,8 +89,7 @@ func RecycleSession(s Session) {
 	s.Close()
 	sessions.Delete(s.ID())
 	sessions.Put(s)
-	//HandleEvent(NewEvent(s, sysRoute, &msgSessionClose))
-	CommitWorkerPool(Event{From: s, Router: sysRoute, Msg: &msgSessionClose})
+	HandleEvent(Event{from: s, route: defaultRoute, data: &msgSessionClose})
 }
 
 func SessionCount() int {
@@ -174,7 +143,7 @@ func (s *SessionRoute) JoinOrUpdateRoute(id int, c Route) {
 //@Param route id
 func (s *SessionRoute) GetRoute(routeID int) (Route, error) {
 	if routeID >= len(s.route) || s.route[routeID] == nil {
-		return nil, errors.New("not found route")
+		return nil, ErrNotFoundRoute
 	}
 	return s.route[routeID], nil
 }
