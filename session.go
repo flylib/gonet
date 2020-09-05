@@ -11,10 +11,6 @@ var (
 	sessionType reflect.Type
 )
 
-const (
-	Default_Handler_Count = 10
-)
-
 type (
 	//会话
 	Session interface {
