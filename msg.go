@@ -9,7 +9,7 @@ var (
 	arrMsgTypes = make([]reflect.Type, 8)    //index:msgIdx value:msgType
 	maxMsgIndex = 0                          //最大消息索引
 	mMsgType    = make(map[reflect.Type]int) //key:msgType value:msgID
-	mMsgRoute   = make(map[int]int)          //key:msgID value:controllerID
+	mMsgActor   = make(map[int]int)          //key:msgID value:actorID
 )
 
 var (
@@ -20,10 +20,10 @@ var (
 )
 
 func init() {
-	RegisterMsg(1, DefaultRouteID, msgSessionConnect)
-	RegisterMsg(2, DefaultRouteID, msgSessionClose)
-	RegisterMsg(3, DefaultRouteID, msgPing)
-	RegisterMsg(4, DefaultRouteID, msgPong)
+	RegisterMsg(1, DefaultActorID, msgSessionConnect)
+	RegisterMsg(2, DefaultActorID, msgSessionClose)
+	RegisterMsg(3, DefaultActorID, msgPing)
+	RegisterMsg(4, DefaultActorID, msgPong)
 }
 
 //心跳
@@ -41,7 +41,7 @@ type SessionClose struct {
 }
 
 //注册消息
-func RegisterMsg(msgID, controllerIndex int, msg interface{}) {
+func RegisterMsg(msgID, actorID int, msg interface{}) {
 	if msgID > math.MaxUint16 {
 		panic("msg index over allowed range")
 	}
@@ -57,7 +57,7 @@ func RegisterMsg(msgID, controllerIndex int, msg interface{}) {
 	t := reflect.TypeOf(msg)
 	arrMsgTypes[msgID] = t
 	mMsgType[t] = msgID
-	mMsgRoute[msgID] = controllerIndex
+	mMsgActor[msgID] = actorID
 	maxMsgIndex = len(arrMsgTypes) - 1
 }
 
@@ -74,13 +74,18 @@ func GetMsgID(t reflect.Type) int {
 	return mMsgType[t]
 }
 
+//获取消息所在Actor
+func FindMsgInActor(msgID int) int {
+	return mMsgActor[msgID]
+}
+
 ////////////////////
 ////   EVENT   ////
 ///////////////////
 
 //事件分类
 const (
-	EventNetWorkIO  EventType = iota //default,网络i/o
+	EventNetWorkIO  EventType = iota //default,网络io
 	EventWorkerExit                  //退出worker
 	EventWorkerAdd                   //新增worker
 )
@@ -89,18 +94,19 @@ type EventType int8
 
 //事件
 type Event struct {
-	eventType EventType   //事件分类
-	from      Session     //来自
-	route     Route       //路由(处理器)
-	data      interface{} //消息-事件内容
+	eventType EventType //事件分类
+	Actor     Actor     //路由(处理器)
+	context
 }
 
 //创建事件
-func CreateEvent(t EventType, session Session, route Route, data interface{}) Event {
+func NewEvent(t EventType, session Session, Actor Actor, data interface{}) Event {
 	return Event{
 		eventType: t,
-		from:      session,
-		route:     route,
-		data:      data,
+		Actor:     Actor,
+		context: context{
+			session: session,
+			data:    data,
+		},
 	}
 }

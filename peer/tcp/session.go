@@ -64,14 +64,14 @@ func (s *session) recvLoop() {
 			sessions.RecycleSession(s)
 			break
 		}
-		controllerIdx, msg, err := codec.ParserPacket(s.buf[:n])
+		actorIDx, msg, err := codec.ParserPacket(s.buf[:n])
 		if err != nil {
 			logs.Warn("msg parser error,reason is %v", err)
 			continue
 		}
-		controller, err := s.GetController(controllerIdx)
+		controller, err := s.GetController(actorIDx)
 		if err != nil {
-			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), controllerIdx, err)
+			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), actorIDx, err)
 			continue
 		}
 		HandleEvent(controller, s, msg)

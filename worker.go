@@ -102,14 +102,14 @@ func (w *WorkerPool) run() {
 						}
 					}
 				}()
-				logs.Info("new worker wait")
+
 				for e := range w.eventChannel {
 					logs.Info("new msg")
 					if e.eventType == EventWorkerExit {
 						w.decPoolSize()
 						return
 					}
-					e.route.OnMsg(e.from, e.data)
+					e.Actor.Receive(e)
 				}
 			}()
 		}

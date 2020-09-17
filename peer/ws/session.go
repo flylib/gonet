@@ -12,7 +12,7 @@ import (
 type session struct {
 	SessionIdentify
 	SessionStore
-	SessionRoute
+	SessionActor
 	conn *websocket.Conn
 	sync.RWMutex
 }
@@ -54,16 +54,16 @@ func (s *session) recvLoop() {
 			RecycleSession(s)
 			break
 		}
-		routeID, msg, err := codec.ParserWSPacket(data)
+		actorID, msg, err := codec.ParserWSPacket(data)
 		if err != nil {
 			logs.Warn("msg parser error,reason is %v", err)
 			continue
 		}
-		route, err := s.GetRoute(routeID)
+		actor, err := s.GetActor(actorID)
 		if err != nil {
-			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), routeID, err)
+			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), actorID, err)
 			continue
 		}
-		HandleEvent(CreateEvent(EventNetWorkIO, s, route, msg))
+		HandleEvent(NewEvent(EventNetWorkIO, s, actor, msg))
 	}
 }

@@ -30,21 +30,21 @@ const (
 func ParserPacket(data []byte) (int, interface{}, error) {
 	// 小于包头
 	if len(data) < packetLen {
-		return goNet.DefaultRouteID, nil, errors.New("packet size too min")
+		return goNet.DefaultActorID, nil, errors.New("packet size too min")
 	}
 	// 读取Size
 	size := binary.LittleEndian.Uint16(data)
 	// 出错，等待下次数据
 	if size > MTU {
-		return goNet.DefaultRouteID, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
+		return goNet.DefaultActorID, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
 	}
 	// 读取消息ID
 	msgId := int(binary.LittleEndian.Uint16(data[packetLen:]))
 	//内容
 	content := data[headerSize : headerSize+size]
-	routeID := goNet.FindMsgOnRoute(msgId)
+	ActorID := goNet.FindMsgInActor(msgId)
 	msg, err := decodeMessage(msgId, content)
-	return routeID, msg, err
+	return ActorID, msg, err
 }
 
 //----------------------------------------------【发送包】--------------------------------------------------
@@ -92,14 +92,14 @@ func ParserWSPacket(pkt []byte) (int, interface{}, error) {
 		if d == '\n' {
 			msgID, err := strconv.Atoi(string(pkt[:index]))
 			if err != nil {
-				return goNet.DefaultRouteID, nil, err
+				return goNet.DefaultActorID, nil, err
 			}
-			routeID := goNet.FindMsgOnRoute(msgID)
+			ActorID := goNet.FindMsgInActor(msgID)
 			msg, err := decodeMessage(msgID, pkt[index+1:])
-			return routeID, msg, err
+			return ActorID, msg, err
 		}
 	}
-	return goNet.DefaultRouteID, nil, errors.New("parser message error.EOF")
+	return goNet.DefaultActorID, nil, errors.New("parser message error.EOF")
 }
 
 func SendWSPacket(w *websocket.Conn, msg interface{}) error {

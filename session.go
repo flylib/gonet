@@ -30,7 +30,7 @@ type (
 		Value(obj ...interface{}) interface{}
 
 		//加入或者更新路由
-		JoinOrUpdateRoute(index int, c Route)
+		JoinOrUpdateActor(index int, c Actor)
 	}
 
 	//核心会话标志
@@ -43,8 +43,8 @@ type (
 		obj interface{}
 	}
 	//消息路由
-	SessionRoute struct {
-		route []Route
+	SessionActor struct {
+		Actor []Actor
 	}
 	//会话管理
 	sessionManager struct {
@@ -71,13 +71,13 @@ func FindSession(id uint64) (Session, bool) {
 }
 
 func AddSession() Session {
-	ses := sessions.Get()
+	newSession := sessions.Get()
 	atomic.AddUint64(&sessions.autoIncrement, 1)
-	ses.(interface{ setID(id uint64) }).setID(sessions.autoIncrement)
-	sessions.Store(sessions.autoIncrement, ses)
-	session := ses.(Session)
-	session.JoinOrUpdateRoute(DefaultRouteID, defaultRoute)
-	HandleEvent(Event{from: session, route: defaultRoute, data: &msgSessionConnect})
+	newSession.(interface{ setID(id uint64) }).setID(sessions.autoIncrement)
+	sessions.Store(sessions.autoIncrement, newSession)
+	session := newSession.(Session)
+	session.JoinOrUpdateActor(DefaultActorID, defaultActor)
+	HandleEvent(Event{from: session, Actor: defaultActor, data: &msgSessionConnect})
 	return session
 }
 
@@ -85,7 +85,7 @@ func RecycleSession(s Session) {
 	s.Close()
 	sessions.Delete(s.ID())
 	sessions.Put(s)
-	HandleEvent(Event{from: s, route: defaultRoute, data: &msgSessionClose})
+	HandleEvent(Event{from: s, Actor: defaultActor, data: &msgSessionClose})
 }
 
 func SessionCount() int {
@@ -120,28 +120,28 @@ func (s *SessionStore) Value(v ...interface{}) interface{} {
 	return s.obj
 }
 
-func (s *SessionRoute) JoinOrUpdateRoute(id int, c Route) {
+func (s *SessionActor) JoinOrUpdateActor(id int, c Actor) {
 	if id < 0 {
 		return
 	}
-	if s.route == nil {
-		s.route = make([]Route, 0, 3)
+	if s.Actor == nil {
+		s.Actor = make([]Actor, 0, 3)
 	}
-	more := id - len(s.route) + 1
+	more := id - len(s.Actor) + 1
 	//extend
 	if more > 0 {
-		moreControllers := make([]Route, more)
-		s.route = append(s.route, moreControllers...)
+		moreControllers := make([]Actor, more)
+		s.Actor = append(s.Actor, moreControllers...)
 	}
-	s.route[id] = c
+	s.Actor[id] = c
 }
 
-//@Param route id
-func (s *SessionRoute) GetRoute(routeID int) (Route, error) {
-	if routeID >= len(s.route) || s.route[routeID] == nil {
-		return nil, ErrNotFoundRoute
+//@Param Actor id
+func (s *SessionActor) GetActor(ActorID int) (Actor, error) {
+	if ActorID >= len(s.Actor) || s.Actor[ActorID] == nil {
+		return nil, ErrNotFoundActor
 	}
-	return s.route[routeID], nil
+	return s.Actor[ActorID], nil
 }
 
 func RegisterSessionType(ses interface{}) {
