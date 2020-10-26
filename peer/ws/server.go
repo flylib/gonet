@@ -60,8 +60,9 @@ func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	logs.Info("new connect from ", conn.RemoteAddr())
-	ses := newSession(conn)
-	ses.recvLoop()
+	session := newSession(conn)
+	go session.recvLoop()
+	go session.sendLoop()
 }
 
 func (s *server) Stop() {

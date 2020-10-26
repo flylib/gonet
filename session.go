@@ -72,12 +72,17 @@ func FindSession(id uint64) (Session, bool) {
 
 func AddSession() Session {
 	newSession := sessions.Get()
-	atomic.AddUint64(&sessions.autoIncrement, 1)
+	atomic.AddUint64(&sessions.autoIncrement, 1) //++
 	newSession.(interface{ setID(id uint64) }).setID(sessions.autoIncrement)
 	sessions.Store(sessions.autoIncrement, newSession)
 	session := newSession.(Session)
 	session.JoinOrUpdateActor(DefaultActorID, defaultActor)
-	HandleEvent(Event{from: session, Actor: defaultActor, data: &msgSessionConnect})
+	HandleEvent(Event{
+		Actor: defaultActor,
+		context: context{
+			session: session,
+			data:    &msgSessionConnect,
+		}})
 	return session
 }
 
@@ -85,7 +90,12 @@ func RecycleSession(s Session) {
 	s.Close()
 	sessions.Delete(s.ID())
 	sessions.Put(s)
-	HandleEvent(Event{from: s, Actor: defaultActor, data: &msgSessionClose})
+	HandleEvent(Event{
+		Actor: defaultActor,
+		context: context{
+			session: s,
+			data:    &msgSessionClose,
+		}})
 }
 
 func SessionCount() int {

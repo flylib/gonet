@@ -15,7 +15,7 @@ var workers WorkerPool
 //处理池
 type WorkerPool struct {
 	//事件管道
-	eventChannel chan Event
+	eventCh chan Event
 	//因提交事件阻塞的协程数量
 	blockingNum int32
 	//当前池协程数量(池大小)
@@ -37,9 +37,9 @@ func InitWorkerPool(panicHandler func(interface{}), eventChannelSize int) {
 		maxPoolSize:  int32(runtime.NumCPU() * 10),
 	}
 	if eventChannelSize < 1 {
-		workers.eventChannel = make(chan Event) //无缓存通道
+		workers.eventCh = make(chan Event) //无缓存通道
 	} else {
-		workers.eventChannel = make(chan Event, eventChannelSize) //有缓存通道
+		workers.eventCh = make(chan Event, eventChannelSize) //有缓存通道
 	}
 	workers.run()
 	workers.createWorker(1)
@@ -78,7 +78,7 @@ func (w *WorkerPool) handling(e Event) {
 	} else if w.size > int32(runtime.NumCPU()) {
 		w.destroyWorker()
 	}
-	w.eventChannel <- e
+	w.eventCh <- e
 	w.decBlocking()
 }
 
@@ -103,7 +103,7 @@ func (w *WorkerPool) run() {
 					}
 				}()
 
-				for e := range w.eventChannel {
+				for e := range w.eventCh {
 					logs.Info("new msg")
 					if e.eventType == EventWorkerExit {
 						w.decPoolSize()

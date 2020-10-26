@@ -34,8 +34,9 @@ func (c *client) Start() {
 	}
 	c.session = newSession(conn)
 	go c.session.recvLoop()
+	go c.session.sendLoop()
 }
 
 func (c *client) Stop() {
-	c.session.conn.SetReadDeadline(time.Now())
+	c.session.socket.SetReadDeadline(time.Now())
 }

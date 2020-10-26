@@ -5,7 +5,6 @@ import (
 	"github.com/Quantumoffices/goNet/codec"
 	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
-	"sync"
 )
 
 // webSocket session
@@ -13,8 +12,9 @@ type session struct {
 	SessionIdentify
 	SessionStore
 	SessionActor
-	conn *websocket.Conn
-	sync.RWMutex
+	socket *websocket.Conn
+	sendCh chan interface{}
+	closed bool
 }
 
 func init() {
@@ -23,38 +23,59 @@ func init() {
 
 func newSession(conn *websocket.Conn) *session {
 	newSession := AddSession().(*session)
-	newSession.conn = conn
+	newSession.socket = conn
+	newSession.sendCh = make(chan interface{}, 1)
 	return newSession
 }
 
 func (s *session) Socket() interface{} {
-	return s.conn
+	return s.socket
 }
 
 func (s *session) Close() {
-	if err := s.conn.Close(); err != nil {
+	if s.closed {
+		return
+	}
+	s.closed = true
+	if err := s.socket.Close(); err != nil {
 		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 }
 
+//websocket does not support sending messages concurrently
 func (s *session) Send(msg interface{}) {
-	s.Lock()
-	defer s.Unlock()
-	if err := codec.SendWSPacket(s.conn, msg); err != nil {
-		logs.Error("sesssion_%v send msg error,reason is %v", s.ID(), err)
+	//sending empty messages is not allowed
+	if !s.closed && msg == nil {
+		return
+	}
+	s.sendCh <- msg
+}
+
+//write
+func (s *session) sendLoop() {
+	for msg := range s.sendCh {
+		if msg == nil {
+			break
+		}
+		if err := codec.SendWSPacket(s.socket, msg); err != nil {
+			logs.Error("sesssion_%v send msg error,reason is %v", s.ID(), err)
+			break
+		}
 	}
 }
 
-// 接收循环
+//read
 func (s *session) recvLoop() {
 	for {
-		t, data, err := s.conn.ReadMessage()
-		if err != nil || t == websocket.CloseMessage {
-			logs.Warn("session_%d closed, err: %s", s.ID(), err)
+		msgType, pkt, err := s.socket.ReadMessage()
+		if err != nil || msgType == websocket.CloseMessage {
+			logs.Warn("session_%d closed, %s", s.ID(), err)
 			RecycleSession(s)
+			//exit send goroutine
+			s.sendCh <- nil
 			break
 		}
-		actorID, msg, err := codec.ParserWSPacket(data)
+		actorID, msg, err := codec.ParserWSPacket(pkt)
 		if err != nil {
 			logs.Warn("msg parser error,reason is %v", err)
 			continue

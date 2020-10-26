@@ -13,6 +13,22 @@ import (
 
 // /lottery/api/v1/ws
 func main() {
+	p := goNet.NewPeer(
+		goNet.Options{
+			Addr: "ws://192.168.0.125:8083/center/ws",
+			//Addr:     "ws://192.168.0.125:4160/lottery/api/v1/ws",
+			PeerType: goNet.PEERTYPE_CLIENT,
+			//ReadDeadline:  0,
+			//WriteDeadline: 0,
+			//PoolSize:      0,
+			//PanicHandler:  nil,
+			//AllowMaxConn:  0,
+		})
+	p.Start()
+	for {
+		time.Sleep(time.Second)
+	}
+
 	for {
 		go func() {
 			p := goNet.NewPeer(

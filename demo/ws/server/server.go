@@ -4,6 +4,7 @@ import (
 	"github.com/Quantumoffices/goNet"
 	_ "github.com/Quantumoffices/goNet/codec/json"
 	_ "github.com/Quantumoffices/goNet/peer/ws"
+	"time"
 )
 
 func main() {
@@ -12,5 +13,13 @@ func main() {
 			Addr:     "ws://192.168.0.125:8083/center/ws",
 			PeerType: goNet.PEERTYPE_SERVER,
 		})
-	p.Start()
+	go p.Start()
+	for {
+		time.Sleep(time.Second * 6)
+		session, ok := goNet.FindSession(uint64(goNet.SessionCount()))
+		if ok {
+			session.Close()
+		}
+		time.Sleep(time.Minute)
+	}
 }
