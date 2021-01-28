@@ -1,6 +1,9 @@
 package codec
 
-import . "github.com/Quantumoffices/goNet"
+import (
+	"fmt"
+	. "github.com/Quantumoffices/goNet"
+)
 
 type Codec interface {
 	Encode(v interface{}) (data []byte, err error)
@@ -23,11 +26,11 @@ func encodeMessage(msg interface{}) ([]byte, error) {
 }
 
 // 解码消息
-func decodeMessage(msgID int, data []byte) (interface{}, error) {
-	msg, err := InstanceMsg(msgID)
-	if err != nil {
-		return msg, err
+func decodeMessage(msgID uint32, data []byte) (interface{}, error) {
+	msg := GetMsg(msgID)
+	if msg == nil {
+		return nil, fmt.Errorf("msg_%d not found", msgID)
 	}
-	err = defaultCodec.Decode(data, msg)
+	err := defaultCodec.Decode(data, msg)
 	return msg, err
 }

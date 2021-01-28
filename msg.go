@@ -1,15 +1,16 @@
 package goNet
 
 import (
-	"math"
 	"reflect"
 )
 
 var (
-	arrMsgTypes = make([]reflect.Type, 8)    //index:msgIdx value:msgType
-	maxMsgIndex = 0                          //最大消息索引
-	mMsgType    = make(map[reflect.Type]int) //key:msgType value:msgID
-	mMsgActor   = make(map[int]int)          //key:msgID value:actorID
+	//msgID:msgType
+	mMsg = map[uint32]reflect.Type{}
+	//msgType:msgID
+	mMsgType = map[reflect.Type]uint32{}
+	//msgID:sceneID
+	mScene = map[uint32]int8{}
 )
 
 var (
@@ -20,10 +21,17 @@ var (
 )
 
 func init() {
-	RegisterMsg(1, DefaultActorID, msgSessionConnect)
-	RegisterMsg(2, DefaultActorID, msgSessionClose)
-	RegisterMsg(3, DefaultActorID, msgPing)
-	RegisterMsg(4, DefaultActorID, msgPong)
+	RegisterMsg(1, DefaultSceneID, msgSessionConnect)
+	RegisterMsg(2, DefaultSceneID, msgSessionClose)
+	RegisterMsg(3, DefaultSceneID, msgPing)
+	RegisterMsg(4, DefaultSceneID, msgPong)
+}
+
+//消息体
+type Msg struct {
+	SceneID int8        `json:"scene_id"` //对应场景
+	ID      uint32      `json:"id"`
+	Data    interface{} `json:"data"`
 }
 
 //心跳
@@ -40,48 +48,26 @@ type SessionConnect struct {
 type SessionClose struct {
 }
 
-//注册消息
-func RegisterMsg(msgID, actorID int, msg interface{}) {
-	if msgID > math.MaxUint16 {
-		panic("msg index over allowed range")
-	}
-	between := msgID - len(arrMsgTypes) + 1
-	//扩容
-	if between > 0 {
-		more := make([]reflect.Type, between)
-		arrMsgTypes = append(arrMsgTypes, more...)
-	}
-	if arrMsgTypes[msgID] != nil {
-		panic("Duplicate message")
-	}
-	t := reflect.TypeOf(msg)
-	arrMsgTypes[msgID] = t
-	mMsgType[t] = msgID
-	mMsgActor[msgID] = actorID
-	maxMsgIndex = len(arrMsgTypes) - 1
-}
-
-//实例化消息
-func InstanceMsg(msgID int) (interface{}, error) {
-	if msgID > maxMsgIndex || arrMsgTypes[msgID] == nil {
-		return nil, ErrNotFoundMsg
-	}
-	return reflect.New(arrMsgTypes[msgID]).Interface(), nil
+//绑定场景消息
+func RegisterMsg(sceneID int8, msgID uint32, msg interface{}) {
+	mScene[msgID] = sceneID
+	msgType := reflect.TypeOf(msg)
+	mMsg[msgID] = msgType
+	mMsgType[msgType] = msgID
 }
 
 //获取消息ID
-func GetMsgID(t reflect.Type) int {
-	return mMsgType[t]
+func GetMsgID(msg interface{}) uint32 {
+	return mMsgType[reflect.TypeOf(msg)]
 }
 
-//获取消息所在Actor
-func FindMsgInActor(msgID int) int {
-	return mMsgActor[msgID]
+//获取消息所在场景ID
+func GetMsgSceneID(msgID uint32) int8 {
+	return mScene[msgID]
 }
-
-////////////////////
-////   EVENT   ////
-///////////////////
+func GetMsg(msgID uint32) interface{} {
+	return reflect.New(mMsg[msgID]).Interface()
+}
 
 //事件分类
 const (

@@ -76,7 +76,7 @@ func AddSession() Session {
 	newSession.(interface{ setID(id uint64) }).setID(sessions.autoIncrement)
 	sessions.Store(sessions.autoIncrement, newSession)
 	session := newSession.(Session)
-	session.JoinOrUpdateActor(DefaultActorID, defaultActor)
+	session.JoinOrUpdateActor(DefaultSceneID, defaultActor)
 	HandleEvent(Event{
 		Actor: defaultActor,
 		context: context{

@@ -15,28 +15,28 @@ import (
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+                   +              +                 +
-//+  消息总长度（2）  + 消息ID（2）  + 消息内容        +
+//+  消息总长度（2）  + 消息ID（4）  + 消息内容        +
 //+                   +              +                 +
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 const (
-	MTU        = 1500                // 最大传输单元
-	packetLen  = 2                   // 包体大小字段
-	msgIDLen   = 2                   // 消息ID字段
-	headerSize = msgIDLen + msgIDLen //包头部分
+	MTU         = 1500                      // 最大传输单元
+	packetLen   = 2                         // 包体大小字段
+	msgIDOffset = 4                         // 消息ID字段
+	headerSize  = msgIDOffset + msgIDOffset //包头部分
 )
 
 //----------------------------------------------【解析包】--------------------------------------------------
 func ParserPacket(data []byte) (int, interface{}, error) {
 	// 小于包头
 	if len(data) < packetLen {
-		return goNet.DefaultActorID, nil, errors.New("packet size too min")
+		return goNet.DefaultSceneID, nil, errors.New("packet size too min")
 	}
 	// 读取Size
 	size := binary.LittleEndian.Uint16(data)
 	// 出错，等待下次数据
 	if size > MTU {
-		return goNet.DefaultActorID, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
+		return goNet.DefaultSceneID, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
 	}
 	// 读取消息ID
 	msgId := int(binary.LittleEndian.Uint16(data[packetLen:]))
@@ -87,26 +87,26 @@ func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 }
 
 //----------------------------------------------【ws】--------------------------------------------------
-func ParserWSPacket(pkt []byte) (int, interface{}, error) {
-	for index, d := range pkt {
-		if d == '\n' {
-			msgID, err := strconv.Atoi(string(pkt[:index]))
-			if err != nil {
-				return goNet.DefaultActorID, nil, err
-			}
-			ActorID := goNet.FindMsgInActor(msgID)
-			msg, err := decodeMessage(msgID, pkt[index+1:])
-			return ActorID, msg, err
-		}
+func ParserWSPacket(pkt []byte) (*goNet.Msg, error) {
+	msgID := Bytes2Uint32(pkt[:msgIDOffset])
+	sceneID := goNet.GetMsgSceneID(msgID)
+	msg, err := decodeMessage(msgID, pkt[msgIDOffset+1:])
+	if err != nil {
+		return nil, err
 	}
-	return goNet.DefaultActorID, nil, errors.New("parser message error.EOF")
+	return &goNet.Msg{SceneID: sceneID, ID: msgID, Data: msg}, err
 }
 
 func SendWSPacket(w *websocket.Conn, msg interface{}) error {
-	body, err := encodeMessage(msg)
+	arrBytes, err := encodeMessage(msg)
 	if err != nil {
 		return err
 	}
-	return w.WriteMessage(websocket.TextMessage,
-		bytes.Join([][]byte{[]byte(strconv.Itoa(goNet.GetMsgID(reflect.TypeOf(msg)))), body}, []byte{10}))
+	pktData := make([]byte, msgIDOffset+len(arrBytes))
+	binary.LittleEndian.PutUint32(pktData[msgIDOffset:], goNet.GetMsgID(reflect.TypeOf(msg)))
+	return w.WriteMessage(websocket.TextMessage, pktData)
+}
+
+func Bytes2Uint32(buf []byte) uint32 {
+	return binary.LittleEndian.Uint32(buf)
 }

@@ -75,7 +75,7 @@ func (s *session) recvLoop() {
 			s.sendCh <- nil
 			break
 		}
-		actorID, msg, err := codec.ParserWSPacket(pkt)
+		msg, err := codec.ParserWSPacket(pkt)
 		if err != nil {
 			logs.Warn("msg parser error,reason is %v", err)
 			continue

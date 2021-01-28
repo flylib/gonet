@@ -6,7 +6,7 @@ import (
 )
 
 //默认ID
-const DefaultActorID = 0
+const DefaultSceneID = 0
 
 //系统消息路由
 var defaultActor Actor = &DefaultActor{}
