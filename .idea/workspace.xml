@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/actor.go" beforeDir="false" afterPath="$PROJECT_DIR$/actor.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/codecs.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/codecs.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/packet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/msg.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/peer/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/session.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
@@ -95,11 +93,11 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../src/github.com/astaxie/beego" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
+    <property name="settings.editor.selected.configurable" value="go.vgo" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -269,9 +267,26 @@
     <proxy>https://mirrors.aliyun.com/goproxy/</proxy>
   </component>
   <component name="WindowStateProjectService">
-    <state x="461" y="167" key="SettingsEditor" timestamp="1611763921316">
-      <screen x="0" y="0" width="1920" height="1050" />
+    <state width="1877" height="229" key="GridCell.Tab.0.bottom" timestamp="1611813550203">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state width="1877" height="229" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1611813550203" />
+    <state width="1877" height="229" key="GridCell.Tab.0.center" timestamp="1611813550201">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="229" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1611813550201" />
+    <state width="1877" height="229" key="GridCell.Tab.0.left" timestamp="1611813550200">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="229" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1611813550200" />
+    <state width="1877" height="229" key="GridCell.Tab.0.right" timestamp="1611813550202">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="229" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1611813550202" />
+    <state x="461" y="165" key="SettingsEditor" timestamp="1611799148593">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1611799148593" />
     <state x="461" y="167" key="SettingsEditor/0.0.1920.1050@0.0.1920.1050" timestamp="1611763921316" />
     <state x="623" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1611793972547">
       <screen x="0" y="0" width="1920" height="1050" />

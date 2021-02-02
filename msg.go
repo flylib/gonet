@@ -10,7 +10,7 @@ var (
 	//msgType:msgID
 	mMsgType = map[reflect.Type]uint32{}
 	//msgID:sceneID
-	mScene = map[uint32]int8{}
+	mScene = map[uint32]uint8{}
 )
 
 var (
@@ -29,7 +29,8 @@ func init() {
 
 //消息体
 type Msg struct {
-	SceneID int8        `json:"scene_id"` //对应场景
+	Session
+	SceneID uint8       `json:"scene_id"` //对应场景
 	ID      uint32      `json:"id"`
 	Data    interface{} `json:"data"`
 }
@@ -49,7 +50,7 @@ type SessionClose struct {
 }
 
 //绑定场景消息
-func RegisterMsg(sceneID int8, msgID uint32, msg interface{}) {
+func RegisterMsg(sceneID uint8, msgID uint32, msg interface{}) {
 	mScene[msgID] = sceneID
 	msgType := reflect.TypeOf(msg)
 	mMsg[msgID] = msgType
@@ -62,7 +63,7 @@ func GetMsgID(msg interface{}) uint32 {
 }
 
 //获取消息所在场景ID
-func GetMsgSceneID(msgID uint32) int8 {
+func GetMsgSceneID(msgID uint32) uint8 {
 	return mScene[msgID]
 }
 func GetMsg(msgID uint32) interface{} {
@@ -83,16 +84,4 @@ type Event struct {
 	eventType EventType //事件分类
 	Actor     Actor     //路由(处理器)
 	context
-}
-
-//创建事件
-func NewEvent(t EventType, session Session, Actor Actor, data interface{}) Event {
-	return Event{
-		eventType: t,
-		Actor:     Actor,
-		context: context{
-			session: session,
-			data:    data,
-		},
-	}
 }

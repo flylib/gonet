@@ -28,9 +28,6 @@ type (
 
 		//数据存储
 		Value(obj ...interface{}) interface{}
-
-		//加入或者更新路由
-		JoinOrUpdateActor(index int, c Actor)
 	}
 
 	//核心会话标志
@@ -42,9 +39,9 @@ type (
 	SessionStore struct {
 		obj interface{}
 	}
-	//消息路由
-	SessionActor struct {
-		Actor []Actor
+	//场景通道
+	SessionSceneChan struct {
+		messageQueues []chan Msg //消息队列
 	}
 	//会话管理
 	sessionManager struct {
@@ -130,24 +127,13 @@ func (s *SessionStore) Value(v ...interface{}) interface{} {
 	return s.obj
 }
 
-func (s *SessionActor) JoinOrUpdateActor(id int, c Actor) {
-	if id < 0 {
-		return
-	}
-	if s.Actor == nil {
-		s.Actor = make([]Actor, 0, 3)
-	}
-	more := id - len(s.Actor) + 1
-	//extend
-	if more > 0 {
-		moreControllers := make([]Actor, more)
-		s.Actor = append(s.Actor, moreControllers...)
-	}
-	s.Actor[id] = c
+//增加场景消息订阅
+func (s *SessionSceneChan) AddSceneSubscribe(sceneID uint8, ch <-chan Msg) {
+	ch := make(chan Msg)
 }
 
 //@Param Actor id
-func (s *SessionActor) GetActor(ActorID int) (Actor, error) {
+func (s *SessionSceneChan) GetActor(ActorID int) (Actor, error) {
 	if ActorID >= len(s.Actor) || s.Actor[ActorID] == nil {
 		return nil, ErrNotFoundActor
 	}
