@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	"runtime"
 	"sync/atomic"
+	"time"
 )
 
 //////////////////////////
@@ -15,7 +16,7 @@ var workers WorkerPool
 //处理池
 type WorkerPool struct {
 	//事件管道
-	eventCh chan Event
+	reciveCh chan *Msg
 	//因提交事件阻塞的协程数量
 	blockingNum int32
 	//当前池协程数量(池大小)
@@ -30,24 +31,53 @@ type WorkerPool struct {
 }
 
 //初始化协程池
-func InitWorkerPool(panicHandler func(interface{}), eventChannelSize int) {
-	workers = WorkerPool{
+func NewWorkerPool(panicHandler func(interface{})) (pool WorkerPool) {
+	pool = WorkerPool{
 		createNotify: make(chan interface{}),
 		panicHandler: panicHandler,
-		maxPoolSize:  int32(runtime.NumCPU() * 10),
+		size:         int32(runtime.NumCPU()),
+		reciveCh:     make(chan *Msg),
 	}
-	if eventChannelSize < 1 {
-		workers.eventCh = make(chan Event) //无缓存通道
-	} else {
-		workers.eventCh = make(chan Event, eventChannelSize) //有缓存通道
-	}
-	workers.run()
-	workers.createWorker(1)
+	pool.run()
+	pool.createWorker(1)
+	pool.tick()
+	return pool
+}
+
+func (w *WorkerPool) tick() {
+	go func() {
+		minDecPoolSize := int32(float64(w.maxPoolSize) * 0.5)
+		count := 0
+		for {
+			count++
+			//每隔1分检查一下
+			time.Sleep(time.Minute)
+			//两倍扩容速度
+			if w.blockingNum > 10 {
+				curSize := w.size
+				if curSize*2 < w.maxPoolSize {
+					w.createWorker(curSize)
+				} else {
+					w.createWorker(atomic.LoadInt32(&w.maxPoolSize) - atomic.LoadInt32(&w.size))
+				}
+			}
+			//每30分钟检查一次缩容，0.85倍缩容
+			if count > 30 {
+				count = 0
+				curPoolSize := atomic.LoadInt32(&w.size)
+				if curPoolSize > minDecPoolSize {
+					destroyPoolSize := int32(float64(curPoolSize) * 0.85)
+					w.destroyWorker(destroyPoolSize)
+				}
+			}
+		}
+	}()
 }
 
 func (w *WorkerPool) incBlocking() {
 	atomic.AddInt32(&w.blockingNum, 1)
 }
+
 func (w *WorkerPool) decBlocking() {
 	atomic.AddInt32(&w.blockingNum, -1)
 }
@@ -57,35 +87,27 @@ func (w *WorkerPool) incPoolSize() {
 func (w *WorkerPool) decPoolSize() {
 	atomic.AddInt32(&w.size, -1)
 }
-func (w *WorkerPool) createWorker(count int) {
-	go func() {
-		for i := 0; i < count; i++ {
-			w.createNotify <- Event{eventType: EventWorkerAdd}
-		}
-	}()
-}
 
-func (w *WorkerPool) destroyWorker() {
-	w.createNotify <- Event{eventType: EventWorkerExit}
-}
-
-//处理事件
-func (w *WorkerPool) handling(e Event) {
-	w.incBlocking()
-	//todo 按需调整池大小,不做精确控制
-	if w.blockingNum > int32(runtime.NumCPU()) && w.size < w.maxPoolSize {
-		w.createWorker(1)
-	} else if w.size > int32(runtime.NumCPU()) {
-		w.destroyWorker()
+func (w *WorkerPool) createWorker(count int32) {
+	for i := int32(0); i < count; i++ {
+		w.createNotify <- i
 	}
-	w.eventCh <- e
-	w.decBlocking()
+}
+func (w *WorkerPool) destroyWorker(count int32) {
+	for i := int32(0); i < count; i++ {
+		w.reciveCh <- &Msg{
+			ID: MsgIDDecPoolSize,
+		}
+	}
 }
 
 //运行
 func (w *WorkerPool) run() {
 	go func() {
 		for range w.createNotify {
+			if w.size >= w.maxPoolSize {
+				continue
+			}
 			w.incPoolSize()
 			go func() {
 				//panic handling
@@ -102,21 +124,24 @@ func (w *WorkerPool) run() {
 						}
 					}
 				}()
-
-				for e := range w.eventCh {
-					logs.Info("new msg")
-					if e.eventType == EventWorkerExit {
+				for msg := range w.reciveCh {
+					if msg.ID == MsgIDDecPoolSize {
 						w.decPoolSize()
 						return
 					}
-					e.Actor.Receive(e)
+					scene := msg.GetScene(msg.SceneID)
+					if scene != nil {
+						scene.Handler(msg)
+					}
 				}
 			}()
 		}
 	}()
 }
 
-//处理事件
-func HandleEvent(event Event) {
-	workers.handling(event)
+//放进工作池
+func PushWorkerPool(msg *Msg) {
+	workers.incBlocking()
+	workers.reciveCh <- msg
+	workers.decBlocking()
 }

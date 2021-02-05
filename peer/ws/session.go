@@ -11,6 +11,7 @@ import (
 type session struct {
 	SessionIdentify //标志
 	SessionStore    //存储
+	SessionScene
 	*websocket.Conn //socket
 	sendCh          chan interface{}
 	closed          bool //关闭标志
@@ -79,11 +80,13 @@ func (s *session) recvLoop() {
 			logs.Warn("msg parser error,reason is %v", err)
 			continue
 		}
-		actor, err := s.GetActor(actorID)
-		if err != nil {
-			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), actorID, err)
-			continue
-		}
-		HandleEvent(NewEvent(EventNetWorkIO, s, actor, msg))
+		msg.Session = s
+		//actor, err := s.GetActor(actorID)
+		//if err != nil {
+		//	logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), actorID, err)
+		//	continue
+		//}
+		//HandleEvent(NewEvent(EventNetWorkIO, s, actor, msg))
+		PushWorkerPool(msg)
 	}
 }

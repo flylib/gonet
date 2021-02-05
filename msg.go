@@ -16,16 +16,22 @@ var (
 var (
 	msgSessionConnect = SessionConnect{}
 	msgSessionClose   = SessionClose{}
-	msgPing           = Ping{}
-	msgPong           = Pong{}
+	//msgPing           = Ping{}
+	//msgPong           = Pong{}
 )
 
-func init() {
-	RegisterMsg(1, DefaultSceneID, msgSessionConnect)
-	RegisterMsg(2, DefaultSceneID, msgSessionClose)
-	RegisterMsg(3, DefaultSceneID, msgPing)
-	RegisterMsg(4, DefaultSceneID, msgPong)
-}
+const (
+	MsgIDDecPoolSize uint32 = iota
+	MsgIDSessionConnect
+	MsgIDSessionClose
+)
+
+//func init() {
+//	//RegisterMsg(DefaultSceneID, MsgIDSessionConnect, msgSessionConnect)
+//	//RegisterMsg(DefaultSceneID, MsgIDSessionClose, msgSessionClose)
+//	//RegisterMsg(3, DefaultSceneID, msgPing)
+//	//RegisterMsg(4, DefaultSceneID, msgPong)
+//}
 
 //消息体
 type Msg struct {
@@ -36,12 +42,12 @@ type Msg struct {
 }
 
 //心跳
-type Ping struct {
-	TimeStamp int64 `json:"time_stamp",xml:"time_stamp"`
-}
-type Pong struct {
-	TimeStamp int64 `json:"time_stamp",xml:"time_stamp"`
-}
+//type Ping struct {
+//	TimeStamp int64 `json:"time_stamp",xml:"time_stamp"`
+//}
+//type Pong struct {
+//	TimeStamp int64 `json:"time_stamp",xml:"time_stamp"`
+//}
 
 //会话
 type SessionConnect struct {
@@ -68,20 +74,4 @@ func GetMsgSceneID(msgID uint32) uint8 {
 }
 func GetMsg(msgID uint32) interface{} {
 	return reflect.New(mMsg[msgID]).Interface()
-}
-
-//事件分类
-const (
-	EventNetWorkIO  EventType = iota //default,网络io
-	EventWorkerExit                  //退出worker
-	EventWorkerAdd                   //新增worker
-)
-
-type EventType int8
-
-//事件
-type Event struct {
-	eventType EventType //事件分类
-	Actor     Actor     //路由(处理器)
-	context
 }

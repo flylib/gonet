@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	sessions    = NewSessionManager()
+	sessionMgr  = NewSessionManager()
 	sessionType reflect.Type
 )
 
@@ -16,18 +16,18 @@ type (
 	Session interface {
 		//原始套接字
 		Socket() interface{}
-
 		// 发送消息，消息需要以指针格式传入
 		Send(msg interface{})
-
 		// 断开
 		Close()
-
 		// ID b
 		ID() uint64
-
 		//数据存储
 		Value(obj ...interface{}) interface{}
+		//添加场景
+		AddScene(sceneID uint8, scene Scene)
+		//获取场景
+		GetScene(sceneID uint8) Scene
 	}
 
 	//核心会话标志
@@ -39,9 +39,9 @@ type (
 	SessionStore struct {
 		obj interface{}
 	}
-	//场景通道
-	SessionSceneChan struct {
-		messageQueues []chan Msg //消息队列
+	//会话当前所在场景
+	SessionScene struct {
+		scenes []Scene
 	}
 	//会话管理
 	sessionManager struct {
@@ -60,7 +60,7 @@ func NewSessionManager() *sessionManager {
 }
 
 func FindSession(id uint64) (Session, bool) {
-	value, ok := sessions.Load(id)
+	value, ok := sessionMgr.Load(id)
 	if ok {
 		return value.(Session), ok
 	}
@@ -68,36 +68,37 @@ func FindSession(id uint64) (Session, bool) {
 }
 
 func AddSession() Session {
-	newSession := sessions.Get()
-	atomic.AddUint64(&sessions.autoIncrement, 1) //++
-	newSession.(interface{ setID(id uint64) }).setID(sessions.autoIncrement)
-	sessions.Store(sessions.autoIncrement, newSession)
+	newSession := sessionMgr.Get()
+	atomic.AddUint64(&sessionMgr.autoIncrement, 1) //++
+	newSession.(interface{ setID(id uint64) }).setID(sessionMgr.autoIncrement)
+	sessionMgr.Store(sessionMgr.autoIncrement, newSession)
 	session := newSession.(Session)
-	session.JoinOrUpdateActor(DefaultSceneID, defaultActor)
-	HandleEvent(Event{
-		Actor: defaultActor,
-		context: context{
-			session: session,
-			data:    &msgSessionConnect,
-		}})
+	//notify
+	msg := &Msg{
+		Session: session,
+		ID:      MsgIDSessionConnect,
+		Data:    SessionConnect{},
+	}
+	PushWorkerPool(msg)
 	return session
 }
 
 func RecycleSession(s Session) {
 	s.Close()
-	sessions.Delete(s.ID())
-	sessions.Put(s)
-	HandleEvent(Event{
-		Actor: defaultActor,
-		context: context{
-			session: s,
-			data:    &msgSessionClose,
-		}})
+	sessionMgr.Delete(s.ID())
+	sessionMgr.Put(s)
+	//notify
+	msg := &Msg{
+		Session: s,
+		ID:      MsgIDSessionConnect,
+		Data:    SessionClose{},
+	}
+	PushWorkerPool(msg)
 }
 
 func SessionCount() int {
 	sum := 0
-	sessions.Range(func(key, value interface{}) bool {
+	sessionMgr.Range(func(key, value interface{}) bool {
 		sum++
 		return true
 	})
@@ -106,8 +107,8 @@ func SessionCount() int {
 
 //广播
 func Broadcast(msg interface{}) {
-	sessions.Range(func(_, value interface{}) bool {
-		value.(Session).Send(msg)
+	sessionMgr.Range(func(_, item interface{}) bool {
+		item.(Session).Send(msg)
 		return true
 	})
 }
@@ -128,16 +129,23 @@ func (s *SessionStore) Value(v ...interface{}) interface{} {
 }
 
 //增加场景消息订阅
-func (s *SessionSceneChan) AddSceneSubscribe(sceneID uint8, ch <-chan Msg) {
-	ch := make(chan Msg)
+func (s *SessionScene) AddScene(sceneID uint8, scene Scene) {
+	if s.scenes == nil {
+		s.scenes = make([]Scene, int(sceneID)+1)
+	}
+	more := sceneID + 1 - uint8(len(s.scenes))
+	for i := uint8(0); i < more; i++ {
+		s.scenes = append(s.scenes, nil)
+	}
+	s.scenes[sceneID] = scene
 }
 
-//@Param Actor id
-func (s *SessionSceneChan) GetActor(ActorID int) (Actor, error) {
-	if ActorID >= len(s.Actor) || s.Actor[ActorID] == nil {
-		return nil, ErrNotFoundActor
+//增加场景消息订阅
+func (s *SessionScene) GetScene(sceneID uint8) Scene {
+	if uint8(len(s.scenes)) < sceneID {
+		return nil
 	}
-	return s.Actor[ActorID], nil
+	return s.scenes[sceneID]
 }
 
 func RegisterSessionType(ses interface{}) {

@@ -69,6 +69,6 @@ func NewPeer(opts Options) Peer {
 	peer.(interface{ SetAddr(string) }).SetAddr(opts.Addr)
 	peer.(interface{ SetOptions(Options) }).SetOptions(opts)
 	//init worker pool
-	InitWorkerPool(opts.PanicHandler, opts.EventChanSize)
+	NewWorkerPool(opts.PanicHandler, opts.EventChanSize)
 	return peer
 }

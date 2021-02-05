@@ -38,5 +38,5 @@ func (c *client) Start() {
 }
 
 func (c *client) Stop() {
-	c.session.socket.SetReadDeadline(time.Now())
+	c.session.Conn.SetReadDeadline(time.Now())
 }

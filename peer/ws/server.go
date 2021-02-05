@@ -61,6 +61,7 @@ func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	}
 	logs.Info("new connect from ", conn.RemoteAddr())
 	session := newSession(conn)
+
 	go session.recvLoop()
 	go session.sendLoop()
 }

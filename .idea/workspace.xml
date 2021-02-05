@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;">
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/actor.go" beforeDir="false" afterPath="$PROJECT_DIR$/actor.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/display_lkby.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/errors.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/msg.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/peer/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/session.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,25 +45,6 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>sync.</find>
-      <find>systemController</find>
-      <find>JoinOrUpdateController</find>
-      <find>websocket</find>
-      <find>HandleEvent</find>
-      <find>github.com/Quantumoffices/beego</find>
-      <find>Route</find>
-      <find>controllerID</find>
-      <find>recvLoop</find>
-      <find>Event{from: s, Actor: defaultActor, data: &amp;msgSessionClose}</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>Ac</replace>
-      <replace>Actor</replace>
-      <replace>actorID</replace>
-    </replaceStrings>
-  </component>
   <component name="GOROOT" path="C:\Go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -65,12 +52,6 @@
   </component>
   <component name="GoLibraries">
     <option name="indexEntireGoPath" value="false" />
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="540" />
-    <option name="y" value="103" />
-    <option name="width" value="1400" />
-    <option name="height" value="1000" />
   </component>
   <component name="ProjectId" id="1UonKaYFvF9shPXlhOluzELBNIk" />
   <component name="ProjectViewState">
@@ -260,13 +241,22 @@
     <MESSAGE value="优化" />
     <MESSAGE value="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;" />
     <MESSAGE value="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;" />
-    <option name="LAST_COMMIT_MESSAGE" value="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;" />
+    <MESSAGE value="1" />
+    <option name="LAST_COMMIT_MESSAGE" value="1" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
     <proxy>https://mirrors.aliyun.com/goproxy/</proxy>
   </component>
   <component name="WindowStateProjectService">
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1612515610921">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1612515610921" />
+    <state x="536" y="83" key="CommitChangelistDialog2" timestamp="1612517928728">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="536" y="83" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1612517928728" />
     <state width="1877" height="229" key="GridCell.Tab.0.bottom" timestamp="1611813550203">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -288,6 +278,10 @@
     </state>
     <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1611799148593" />
     <state x="461" y="167" key="SettingsEditor/0.0.1920.1050@0.0.1920.1050" timestamp="1611763921316" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1612263208344">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1612263208344" />
     <state x="623" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1611793972547">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
