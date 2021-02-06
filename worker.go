@@ -11,32 +11,36 @@ import (
 ////    WORKER POOL   ////
 //////////////////////////
 
+const (
+	receiveQueueSize = 128 //接受队列大小
+)
+
 var workers WorkerPool
+
+func initWorkerPool(option Option) {
+	workers = NewWorkerPool(option.maxWorkerPoolSize)
+}
 
 //处理池
 type WorkerPool struct {
-	//事件管道
-	reciveCh chan *Msg
-	//因提交事件阻塞的协程数量
-	blockingNum int32
 	//当前池协程数量(池大小)
-	size int32
-	//创建协程通知
-	createNotify chan interface{}
-	//异常处理函数
-	panicHandler func(interface{})
 	//池限制大小
-	//默认 runtime.NumCPU() * 10
-	maxPoolSize int32
+	size, maxSize int32
+	//接受消息通道
+	receiveMsgCh chan *Msg
+	//创建协程通知
+	createWorkerCh chan int
 }
 
 //初始化协程池
-func NewWorkerPool(panicHandler func(interface{})) (pool WorkerPool) {
+func NewWorkerPool(maxPoolSize int32) (pool WorkerPool) {
+	if maxPoolSize < 1 {
+		maxPoolSize = 1
+	}
 	pool = WorkerPool{
-		createNotify: make(chan interface{}),
-		panicHandler: panicHandler,
-		size:         int32(runtime.NumCPU()),
-		reciveCh:     make(chan *Msg),
+		createWorkerCh: make(chan int),
+		maxSize:        maxPoolSize,
+		receiveMsgCh:   make(chan *Msg, receiveQueueSize),
 	}
 	pool.run()
 	pool.createWorker(1)
@@ -46,41 +50,36 @@ func NewWorkerPool(panicHandler func(interface{})) (pool WorkerPool) {
 
 func (w *WorkerPool) tick() {
 	go func() {
-		minDecPoolSize := int32(float64(w.maxPoolSize) * 0.5)
+		minDecPoolSize := int32(float64(w.maxSize) * 0.5)
 		count := 0
 		for {
 			count++
 			//每隔1分检查一下
 			time.Sleep(time.Minute)
 			//两倍扩容速度
-			if w.blockingNum > 10 {
+			if len(w.receiveMsgCh) == cap(w.receiveMsgCh) && atomic.LoadInt32(&w.size) < atomic.LoadInt32(&w.maxSize) {
 				curSize := w.size
-				if curSize*2 < w.maxPoolSize {
+				if curSize*2 < w.maxSize {
 					w.createWorker(curSize)
 				} else {
-					w.createWorker(atomic.LoadInt32(&w.maxPoolSize) - atomic.LoadInt32(&w.size))
+					w.createWorker(w.maxSize - w.size)
 				}
 			}
 			//每30分钟检查一次缩容，0.85倍缩容
 			if count > 30 {
 				count = 0
-				curPoolSize := atomic.LoadInt32(&w.size)
-				if curPoolSize > minDecPoolSize {
-					destroyPoolSize := int32(float64(curPoolSize) * 0.85)
-					w.destroyWorker(destroyPoolSize)
+				if len(w.receiveMsgCh) < 1 {
+					curPoolSize := atomic.LoadInt32(&w.size)
+					if curPoolSize > minDecPoolSize {
+						destroyPoolSize := int32(float64(curPoolSize) * 0.85)
+						w.destroyWorker(destroyPoolSize)
+					}
 				}
 			}
 		}
 	}()
 }
 
-func (w *WorkerPool) incBlocking() {
-	atomic.AddInt32(&w.blockingNum, 1)
-}
-
-func (w *WorkerPool) decBlocking() {
-	atomic.AddInt32(&w.blockingNum, -1)
-}
 func (w *WorkerPool) incPoolSize() {
 	atomic.AddInt32(&w.size, 1)
 }
@@ -90,12 +89,12 @@ func (w *WorkerPool) decPoolSize() {
 
 func (w *WorkerPool) createWorker(count int32) {
 	for i := int32(0); i < count; i++ {
-		w.createNotify <- i
+		w.createWorkerCh <- 1
 	}
 }
 func (w *WorkerPool) destroyWorker(count int32) {
 	for i := int32(0); i < count; i++ {
-		w.reciveCh <- &Msg{
+		w.receiveMsgCh <- &Msg{
 			ID: MsgIDDecPoolSize,
 		}
 	}
@@ -104,8 +103,8 @@ func (w *WorkerPool) destroyWorker(count int32) {
 //运行
 func (w *WorkerPool) run() {
 	go func() {
-		for range w.createNotify {
-			if w.size >= w.maxPoolSize {
+		for range w.createWorkerCh {
+			if w.size >= w.maxSize {
 				continue
 			}
 			w.incPoolSize()
@@ -114,17 +113,12 @@ func (w *WorkerPool) run() {
 				defer func() {
 					w.decPoolSize()
 					if info := recover(); info != nil {
-						if w.panicHandler != nil {
-							w.panicHandler(info)
-						} else {
-							logs.Error("worker exits from a panic: %v\n", info)
-							var buf [4096]byte
-							n := runtime.Stack(buf[:], false)
-							logs.Error("worker exits from panic: %s\n", string(buf[:n]))
-						}
+						var buf [4096]byte
+						n := runtime.Stack(buf[:], false)
+						logs.Error("worker exits from panic: %s\n", string(buf[:n]))
 					}
 				}()
-				for msg := range w.reciveCh {
+				for msg := range w.receiveMsgCh {
 					if msg.ID == MsgIDDecPoolSize {
 						w.decPoolSize()
 						return
@@ -141,7 +135,5 @@ func (w *WorkerPool) run() {
 
 //放进工作池
 func PushWorkerPool(msg *Msg) {
-	workers.incBlocking()
-	workers.reciveCh <- msg
-	workers.decBlocking()
+	workers.receiveMsgCh <- msg
 }

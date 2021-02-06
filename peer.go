@@ -21,16 +21,14 @@ type (
 		addr string
 		//类型
 		peerType PeerType
-		//配置
-		options Options
 	}
 	//端类型
 	PeerType string
 )
 
 const (
-	PEERTYPE_SERVER PeerType = "server" //服务端
-	PEERTYPE_CLIENT PeerType = "client" //客户端
+	PeertypeServer PeerType = "server" //服务端
+	PeertypeClient PeerType = "client" //客户端
 )
 
 func init() {
@@ -50,25 +48,25 @@ func (p *PeerIdentify) Type() PeerType {
 func (p *PeerIdentify) SetType(t PeerType) {
 	p.peerType = t
 }
-func (p *PeerIdentify) SetOptions(o Options) {
-	p.options = o
-}
-func (p *PeerIdentify) Options(o Options) {
-	p.options = o
-}
 
 func RegisterPeer(peer Peer) {
 	peers[peer.(interface{ Type() PeerType }).Type()] = peer
 }
 
-func NewPeer(opts Options) Peer {
-	peer, ok := peers[opts.PeerType]
-	if !ok {
-		panic(opts.PeerType + "does not exist")
+func NewServer(addr string, opts ...options) Peer {
+	peer := peers[PeertypeServer]
+	peer.(interface{ SetAddr(string) }).SetAddr(addr)
+	option := Option{}
+	for _, f := range opts {
+		f(&option)
 	}
-	peer.(interface{ SetAddr(string) }).SetAddr(opts.Addr)
-	peer.(interface{ SetOptions(Options) }).SetOptions(opts)
-	//init worker pool
-	NewWorkerPool(opts.PanicHandler, opts.EventChanSize)
+	initWorkerPool(option)
+	return peer
+}
+
+func NewClient(addr string, opts Option) Peer {
+	peer := peers[PeertypeClient]
+	peer.(interface{ SetAddr(string) }).SetAddr(addr)
+	peer.(interface{ SetOptions(Option) }).SetOptions(opts)
 	return peer
 }

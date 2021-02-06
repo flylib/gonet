@@ -18,7 +18,7 @@ type session struct {
 }
 
 func init() {
-	RegisterSessionType(session{})
+	SetSessionType(session{})
 }
 
 func newSession(conn *websocket.Conn) *session {
@@ -71,7 +71,6 @@ func (s *session) recvLoop() {
 		if err != nil || msgType == websocket.CloseMessage {
 			logs.Warn("session_%d closed, %s", s.ID(), err)
 			RecycleSession(s)
-			//exit send goroutine
 			s.sendCh <- nil
 			break
 		}
@@ -81,12 +80,6 @@ func (s *session) recvLoop() {
 			continue
 		}
 		msg.Session = s
-		//actor, err := s.GetActor(actorID)
-		//if err != nil {
-		//	logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), actorID, err)
-		//	continue
-		//}
-		//HandleEvent(NewEvent(EventNetWorkIO, s, actor, msg))
 		PushWorkerPool(msg)
 	}
 }

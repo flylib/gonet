@@ -1,16 +1,12 @@
 package codec
 
 import (
-	"bytes"
 	"encoding/binary"
-	"errors"
-	"fmt"
 	"github.com/Quantumoffices/goNet"
 	"github.com/gorilla/websocket"
 	"io"
 	"net"
 	"reflect"
-	"strconv"
 )
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -27,25 +23,25 @@ const (
 )
 
 //----------------------------------------------【解析包】--------------------------------------------------
-func ParserPacket(data []byte) (int, interface{}, error) {
-	// 小于包头
-	if len(data) < packetLen {
-		return goNet.DefaultSceneID, nil, errors.New("packet size too min")
-	}
-	// 读取Size
-	size := binary.LittleEndian.Uint16(data)
-	// 出错，等待下次数据
-	if size > MTU {
-		return goNet.DefaultSceneID, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
-	}
-	// 读取消息ID
-	msgId := int(binary.LittleEndian.Uint16(data[packetLen:]))
-	//内容
-	content := data[headerSize : headerSize+size]
-	ActorID := goNet.FindMsgInActor(msgId)
-	msg, err := decodeMessage(msgId, content)
-	return ActorID, msg, err
-}
+//func ParserPacket(data []byte) (int, interface{}, error) {
+//	// 小于包头
+//	if len(data) < packetLen {
+//		return 0, nil, errors.New("packet size too min")
+//	}
+//	// 读取Size
+//	size := binary.LittleEndian.Uint16(data)
+//	// 出错，等待下次数据
+//	if size > MTU {
+//		return goNet.DefaultSceneID, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
+//	}
+//	// 读取消息ID
+//	msgId := int(binary.LittleEndian.Uint16(data[packetLen:]))
+//	//内容
+//	content := data[headerSize : headerSize+size]
+//	ActorID := goNet.GetMsgSceneID(msgId)
+//	msg, err := decodeMessage(msgId, content)
+//	return ActorID, msg, err
+//}
 
 //----------------------------------------------【发送包】--------------------------------------------------
 func SendPacket(w io.Writer, msg interface{}) error {

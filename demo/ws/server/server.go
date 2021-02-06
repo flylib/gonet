@@ -11,7 +11,7 @@ func main() {
 	p := goNet.NewPeer(
 		goNet.Options{
 			Addr:     "ws://192.168.0.125:8083/center/ws",
-			PeerType: goNet.PEERTYPE_SERVER,
+			PeerType: goNet.PeertypeServer,
 		})
 	go p.Start()
 	for {

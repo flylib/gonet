@@ -77,7 +77,7 @@ func AddSession() Session {
 	msg := &Msg{
 		Session: session,
 		ID:      MsgIDSessionConnect,
-		Data:    SessionConnect{},
+		Data:    &msgSessionConnect,
 	}
 	PushWorkerPool(msg)
 	return session
@@ -91,7 +91,7 @@ func RecycleSession(s Session) {
 	msg := &Msg{
 		Session: s,
 		ID:      MsgIDSessionConnect,
-		Data:    SessionClose{},
+		Data:    &msgSessionClose,
 	}
 	PushWorkerPool(msg)
 }
@@ -148,6 +148,6 @@ func (s *SessionScene) GetScene(sceneID uint8) Scene {
 	return s.scenes[sceneID]
 }
 
-func RegisterSessionType(ses interface{}) {
+func SetSessionType(ses interface{}) {
 	sessionType = reflect.TypeOf(ses)
 }

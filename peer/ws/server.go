@@ -19,7 +19,7 @@ type server struct {
 
 func init() {
 	identify := PeerIdentify{}
-	identify.SetType(PEERTYPE_SERVER)
+	identify.SetType(PeertypeServer)
 	//响应头
 	//var header http.Header = make(map[string][]string)
 	//header.Add("Access-Control-Allow-Origin", "*")

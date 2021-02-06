@@ -3,12 +3,16 @@
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/actor.go" beforeDir="false" afterPath="$PROJECT_DIR$/actor.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/display_lkby.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/errors.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/packet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/tcp/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/server/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/client/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/msg.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/peer.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/tcp/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/udp/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/peer/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/peer/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/session.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
@@ -45,7 +49,7 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" path="C:\Go" />
+  <component name="GOROOT" path="D:\env\Go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="SIGN_OFF_COMMIT" value="true" />
@@ -249,6 +253,10 @@
     <proxy>https://mirrors.aliyun.com/goproxy/</proxy>
   </component>
   <component name="WindowStateProjectService">
+    <state x="552" y="183" key="#GOROOT" timestamp="1612537508792">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="552" y="183" key="#GOROOT/0.0.1920.1050@0.0.1920.1050" timestamp="1612537508792" />
     <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1612515610921">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -282,10 +290,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1612263208344" />
-    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1611793972547">
+    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1612628176757">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1611793972547" />
+    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1612628176757" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

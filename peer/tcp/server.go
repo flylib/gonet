@@ -40,6 +40,6 @@ func (s *server) Stop() {
 
 func init() {
 	identify := PeerIdentify{}
-	identify.SetType(PEERTYPE_SERVER)
+	identify.SetType(PeertypeServer)
 	RegisterPeer(&server{PeerIdentify: identify})
 }

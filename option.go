@@ -17,19 +17,27 @@ const (
 )
 
 //options
-type Options struct {
-	//listen or dial addr
-	Addr string
-	//peer type
-	PeerType PeerType
-	//SetWriteDeadline sets the write deadline or read deadline on the underlying connection.
-	ReadDeadline, WriteDeadline time.Duration
-	//event chan size
-	//0.mean not cache
-	EventChanSize int
-	// PanicHandler is used to handle panics from each worker goroutine.
-	PanicHandler func(interface{})
-	//Maximum number of connections allowed
-	//0.mean no limit
-	AllowMaxConn int
+type Option struct {
+	//关联地址
+	addr string
+	//读写超时
+	readDeadline, writeDeadline time.Duration
+	//0意味着无限制
+	maxSessionCount int
+	//最小限制是1
+	maxWorkerPoolSize int32
+}
+
+type options func(o *Option)
+
+func WithMaxSessions(max int) options {
+	return func(o *Option) {
+		o.maxSessionCount = max
+	}
+}
+
+func WithMaxWorkerPoolSize(max int32) options {
+	return func(o *Option) {
+		o.maxWorkerPoolSize = max
+	}
 }

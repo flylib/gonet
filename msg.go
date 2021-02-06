@@ -16,8 +16,6 @@ var (
 var (
 	msgSessionConnect = SessionConnect{}
 	msgSessionClose   = SessionClose{}
-	//msgPing           = Ping{}
-	//msgPong           = Pong{}
 )
 
 const (
@@ -26,13 +24,6 @@ const (
 	MsgIDSessionClose
 )
 
-//func init() {
-//	//RegisterMsg(DefaultSceneID, MsgIDSessionConnect, msgSessionConnect)
-//	//RegisterMsg(DefaultSceneID, MsgIDSessionClose, msgSessionClose)
-//	//RegisterMsg(3, DefaultSceneID, msgPing)
-//	//RegisterMsg(4, DefaultSceneID, msgPong)
-//}
-
 //消息体
 type Msg struct {
 	Session
@@ -40,14 +31,6 @@ type Msg struct {
 	ID      uint32      `json:"id"`
 	Data    interface{} `json:"data"`
 }
-
-//心跳
-//type Ping struct {
-//	TimeStamp int64 `json:"time_stamp",xml:"time_stamp"`
-//}
-//type Pong struct {
-//	TimeStamp int64 `json:"time_stamp",xml:"time_stamp"`
-//}
 
 //会话
 type SessionConnect struct {

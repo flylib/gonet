@@ -12,7 +12,7 @@ type server struct {
 
 func init() {
 	identify := PeerIdentify{}
-	identify.SetType(PEERTYPE_SERVER)
+	identify.SetType(PeertypeServer)
 	s := &server{
 		PeerIdentify: identify,
 	}
