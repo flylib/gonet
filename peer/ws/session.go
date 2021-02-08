@@ -12,9 +12,9 @@ type session struct {
 	SessionIdentify //标志
 	SessionStore    //存储
 	SessionScene
-	*websocket.Conn //socket
-	sendCh          chan interface{}
-	closed          bool //关闭标志
+	socket *websocket.Conn //socket
+	sendCh chan interface{}
+	closed bool //关闭标志
 }
 
 func init() {
@@ -23,13 +23,13 @@ func init() {
 
 func newSession(conn *websocket.Conn) *session {
 	newSession := AddSession().(*session)
-	newSession.Conn = conn
+	newSession.socket = conn
 	newSession.sendCh = make(chan interface{}, 1)
 	return newSession
 }
 
 func (s *session) Socket() interface{} {
-	return s.Conn
+	return s.socket
 }
 
 func (s *session) Close() {
@@ -37,7 +37,7 @@ func (s *session) Close() {
 		return
 	}
 	s.closed = true
-	if err := s.Conn.Close(); err != nil {
+	if err := s.socket.Close(); err != nil {
 		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)
 	}
 }
@@ -57,7 +57,7 @@ func (s *session) sendLoop() {
 		if msg == nil {
 			break
 		}
-		if err := codec.SendWSPacket(s.Conn, msg); err != nil {
+		if err := codec.SendWSPacket(s.socket, msg); err != nil {
 			logs.Error("sesssion_%v send msg error,reason is %v", s.ID(), err)
 			break
 		}
@@ -67,7 +67,7 @@ func (s *session) sendLoop() {
 //read
 func (s *session) recvLoop() {
 	for {
-		wsMsgKind, pkt, err := s.Conn.ReadMessage()
+		wsMsgKind, pkt, err := s.socket.ReadMessage()
 		if err != nil || wsMsgKind == websocket.CloseMessage {
 			logs.Warn("session_%d closed, %s", s.ID(), err)
 			RecycleSession(s)

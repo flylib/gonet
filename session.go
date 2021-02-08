@@ -20,11 +20,11 @@ type (
 		Send(msg interface{})
 		// 断开
 		Close()
-		// ID b
+		// ID
 		ID() uint64
 		//数据存储
 		Value(obj ...interface{}) interface{}
-		//添加场景
+		//添加场景,如果场景相同会进行覆盖
 		JoinScene(sceneID uint8, scene Scene)
 		//获取场景
 		GetScene(sceneID uint8) Scene
@@ -59,7 +59,7 @@ func NewSessionManager() *sessionManager {
 	}
 }
 
-func FindSession(id uint64) (Session, bool) {
+func GetSession(id uint64) (Session, bool) {
 	value, ok := sessionMgr.Load(id)
 	if ok {
 		return value.(Session), ok

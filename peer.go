@@ -54,18 +54,15 @@ func RegisterPeer(peer Peer) {
 }
 
 func NewServer(addr string, opts ...options) Peer {
-	peer := peers[PeertypeServer]
-	peer.(interface{ SetAddr(string) }).SetAddr(addr)
-	option := Option{}
-	for _, f := range opts {
-		f(&option)
-	}
-	initWorkerPool(option)
-	return peer
+	return newPeer(PeertypeServer, addr, opts...)
 }
 
 func NewClient(addr string, opts ...options) Peer {
-	peer := peers[PeertypeClient]
+	return newPeer(PeertypeClient, addr, opts...)
+}
+
+func newPeer(peerType PeerType, addr string, opts ...options) Peer {
+	peer := peers[peerType]
 	peer.(interface{ SetAddr(string) }).SetAddr(addr)
 	option := Option{}
 	for _, f := range opts {

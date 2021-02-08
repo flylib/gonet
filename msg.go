@@ -18,6 +18,7 @@ var (
 	msgSessionClose   = SessionClose{}
 )
 
+//系统消息
 const (
 	MsgIDDecPoolSize uint32 = iota
 	MsgIDSessionConnect
@@ -62,5 +63,8 @@ func GetMsgSceneID(msgID uint32) uint8 {
 	return mSceneIDs[msgID]
 }
 func GetMsg(msgID uint32) interface{} {
-	return reflect.New(mMsg[msgID]).Interface()
+	if msg, ok := mMsg[msgID]; ok {
+		return reflect.New(msg).Interface()
+	}
+	return nil
 }

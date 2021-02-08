@@ -86,7 +86,7 @@ func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 func ParserWSPacket(pkt []byte) (*goNet.Msg, error) {
 	msgID := Bytes2Uint32(pkt[:msgIDOffset])
 	sceneID := goNet.GetMsgSceneID(msgID)
-	msg, err := decodeMessage(msgID, pkt[msgIDOffset+1:])
+	msg, err := decodeMessage(msgID, pkt[msgIDOffset:])
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +98,10 @@ func SendWSPacket(w *websocket.Conn, msg interface{}) error {
 	if err != nil {
 		return err
 	}
-	pktData := make([]byte, msgIDOffset+len(arrBytes))
-	binary.LittleEndian.PutUint32(pktData[msgIDOffset:], goNet.GetMsgID(reflect.TypeOf(msg)))
+	pktData := make([]byte, msgIDOffset, msgIDOffset+len(arrBytes))
+	msgID := goNet.GetMsgID(msg)
+	binary.LittleEndian.PutUint32(pktData, msgID)
+	pktData = append(pktData, arrBytes...)
 	return w.WriteMessage(websocket.TextMessage, pktData)
 }
 

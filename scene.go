@@ -19,7 +19,7 @@ func AddCommonScene(sceneID uint8, scene Scene) {
 }
 
 func getCommonScene(sceneID uint8) Scene {
-	if uint8(len(commonScenes)) < sceneID {
+	if uint8(len(commonScenes)) <= sceneID {
 		return nil
 	}
 	return commonScenes[sceneID]
