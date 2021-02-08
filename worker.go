@@ -126,6 +126,11 @@ func (w *WorkerPool) run() {
 					scene := msg.GetScene(msg.SceneID)
 					if scene != nil {
 						scene.Handler(msg)
+						continue
+					}
+					scene = GetCommonScene(msg.SceneID)
+					if scene != nil {
+						scene.Handler(msg)
 					}
 				}
 			}()

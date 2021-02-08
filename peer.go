@@ -64,9 +64,13 @@ func NewServer(addr string, opts ...options) Peer {
 	return peer
 }
 
-func NewClient(addr string, opts Option) Peer {
+func NewClient(addr string, opts ...options) Peer {
 	peer := peers[PeertypeClient]
 	peer.(interface{ SetAddr(string) }).SetAddr(addr)
-	peer.(interface{ SetOptions(Option) }).SetOptions(opts)
+	option := Option{}
+	for _, f := range opts {
+		f(&option)
+	}
+	initWorkerPool(option)
 	return peer
 }

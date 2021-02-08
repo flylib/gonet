@@ -40,6 +40,9 @@ type SessionClose struct {
 
 //绑定场景消息
 func RegisterMsg(sceneID uint8, msgID uint32, msg interface{}) {
+	if _, ok := mScene[msgID]; ok {
+		panic("msg duplicate")
+	}
 	mScene[msgID] = sceneID
 	msgType := reflect.TypeOf(msg)
 	mMsg[msgID] = msgType

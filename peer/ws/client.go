@@ -15,7 +15,7 @@ type client struct {
 
 func init() {
 	identify := PeerIdentify{}
-	identify.SetType(PEERTYPE_CLIENT)
+	identify.SetType(PeertypeClient)
 	c := &client{
 		PeerIdentify: identify,
 	}

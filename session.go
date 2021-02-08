@@ -142,7 +142,7 @@ func (s *SessionScene) AddScene(sceneID uint8, scene Scene) {
 
 //增加场景消息订阅
 func (s *SessionScene) GetScene(sceneID uint8) Scene {
-	if uint8(len(s.scenes)) < sceneID {
+	if uint8(len(s.scenes)) <= sceneID {
 		return nil
 	}
 	return s.scenes[sceneID]
