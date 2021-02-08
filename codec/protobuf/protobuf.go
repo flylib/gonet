@@ -1,8 +1,8 @@
 package gogopb
 
 import (
-	"github.com/Quantumoffices/goNet/codec"
 	"github.com/gogo/protobuf/proto"
+	"github.com/zjllib/goNet/codec"
 )
 
 type protobufCodec struct {

@@ -1,10 +1,10 @@
 package ws
 
 import (
-	. "github.com/Quantumoffices/goNet"
-	"github.com/Quantumoffices/goNet/codec"
 	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
+	. "github.com/zjllib/goNet"
+	"github.com/zjllib/goNet/codec"
 )
 
 // webSocket session
@@ -67,8 +67,8 @@ func (s *session) sendLoop() {
 //read
 func (s *session) recvLoop() {
 	for {
-		msgType, pkt, err := s.Conn.ReadMessage()
-		if err != nil || msgType == websocket.CloseMessage {
+		wsMsgKind, pkt, err := s.Conn.ReadMessage()
+		if err != nil || wsMsgKind == websocket.CloseMessage {
 			logs.Warn("session_%d closed, %s", s.ID(), err)
 			RecycleSession(s)
 			s.sendCh <- nil

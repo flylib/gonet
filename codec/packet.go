@@ -2,8 +2,8 @@ package codec
 
 import (
 	"encoding/binary"
-	"github.com/Quantumoffices/goNet"
 	"github.com/gorilla/websocket"
+	"github.com/zjllib/goNet"
 	"io"
 	"net"
 	"reflect"

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/Quantumoffices/goNet"
-	_ "github.com/Quantumoffices/goNet/codec/json"
-	_ "github.com/Quantumoffices/goNet/peer/ws"
 	"github.com/astaxie/beego/logs"
+	"github.com/zjllib/goNet"
+	_ "github.com/zjllib/goNet/codec/json"
+	_ "github.com/zjllib/goNet/peer/ws"
 	"time"
 )
 
@@ -23,15 +23,15 @@ func init() {
 
 func main() {
 	server := goNet.NewServer("ws://localhost:8088/center/ws")
-	go server.Start()
-	for {
-		time.Sleep(time.Second * 6)
-		session, ok := goNet.FindSession(uint64(goNet.SessionCount()))
-		if ok {
-			session.Close()
-		}
-		time.Sleep(time.Minute)
-	}
+	server.Start()
+	//for {
+	//	time.Sleep(time.Second * 6)
+	//	session, ok := goNet.FindSession(uint64(goNet.SessionCount()))
+	//	if ok {
+	//		session.Close()
+	//	}
+	//	time.Sleep(time.Minute)
+	//}
 }
 
 type server struct {

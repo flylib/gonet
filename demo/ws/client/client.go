@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/Quantumoffices/goNet"
-	_ "github.com/Quantumoffices/goNet/codec/json"
-	_ "github.com/Quantumoffices/goNet/peer/ws"
+	"github.com/zjllib/goNet"
+	_ "github.com/zjllib/goNet/codec/json"
+	_ "github.com/zjllib/goNet/peer/ws"
 )
 
 //ws://47.57.65.221:8088/game/blockInfo

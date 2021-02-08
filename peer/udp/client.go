@@ -1,7 +1,7 @@
 package udp
 
 import (
-	. "github.com/Quantumoffices/goNet"
+	. "github.com/zjllib/goNet"
 	"net"
 )
 

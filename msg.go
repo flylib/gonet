@@ -8,9 +8,9 @@ var (
 	//msgID:msgType
 	mMsg = map[uint32]reflect.Type{}
 	//msgType:msgID
-	mMsgType = map[reflect.Type]uint32{}
+	mMsgIDs = map[reflect.Type]uint32{}
 	//msgID:sceneID
-	mScene = map[uint32]uint8{}
+	mSceneIDs = map[uint32]uint8{}
 )
 
 var (
@@ -40,23 +40,26 @@ type SessionClose struct {
 
 //绑定场景消息
 func RegisterMsg(sceneID uint8, msgID uint32, msg interface{}) {
-	if _, ok := mScene[msgID]; ok {
+	if msgID < 1 {
+		panic("must be msgID>0")
+	}
+	if _, ok := mSceneIDs[msgID]; ok {
 		panic("msg duplicate")
 	}
-	mScene[msgID] = sceneID
+	mSceneIDs[msgID] = sceneID
 	msgType := reflect.TypeOf(msg)
 	mMsg[msgID] = msgType
-	mMsgType[msgType] = msgID
+	mMsgIDs[msgType] = msgID
 }
 
 //获取消息ID
 func GetMsgID(msg interface{}) uint32 {
-	return mMsgType[reflect.TypeOf(msg)]
+	return mMsgIDs[reflect.TypeOf(msg)]
 }
 
 //获取消息所在场景ID
 func GetMsgSceneID(msgID uint32) uint8 {
-	return mScene[msgID]
+	return mSceneIDs[msgID]
 }
 func GetMsg(msgID uint32) interface{} {
 	return reflect.New(mMsg[msgID]).Interface()

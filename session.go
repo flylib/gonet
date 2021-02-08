@@ -25,7 +25,7 @@ type (
 		//数据存储
 		Value(obj ...interface{}) interface{}
 		//添加场景
-		AddScene(sceneID uint8, scene Scene)
+		JoinScene(sceneID uint8, scene Scene)
 		//获取场景
 		GetScene(sceneID uint8) Scene
 	}
@@ -76,6 +76,7 @@ func AddSession() Session {
 	//notify
 	msg := &Msg{
 		Session: session,
+		SceneID: GetMsgSceneID(MsgIDSessionConnect),
 		ID:      MsgIDSessionConnect,
 		Data:    &msgSessionConnect,
 	}
@@ -90,6 +91,7 @@ func RecycleSession(s Session) {
 	//notify
 	msg := &Msg{
 		Session: s,
+		SceneID: GetMsgSceneID(MsgIDSessionConnect),
 		ID:      MsgIDSessionConnect,
 		Data:    &msgSessionClose,
 	}
@@ -129,7 +131,7 @@ func (s *SessionStore) Value(v ...interface{}) interface{} {
 }
 
 //增加场景消息订阅
-func (s *SessionScene) AddScene(sceneID uint8, scene Scene) {
+func (s *SessionScene) JoinScene(sceneID uint8, scene Scene) {
 	if s.scenes == nil {
 		s.scenes = make([]Scene, int(sceneID)+1)
 	}

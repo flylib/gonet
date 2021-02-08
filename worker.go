@@ -12,7 +12,7 @@ import (
 //////////////////////////
 
 const (
-	receiveQueueSize = 128 //接受队列大小
+	receiveQueueSize = 128 //接收队列大小
 )
 
 var workers WorkerPool
@@ -128,7 +128,7 @@ func (w *WorkerPool) run() {
 						scene.Handler(msg)
 						continue
 					}
-					scene = GetCommonScene(msg.SceneID)
+					scene = getCommonScene(msg.SceneID)
 					if scene != nil {
 						scene.Handler(msg)
 					}

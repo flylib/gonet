@@ -1,8 +1,8 @@
 package binary
 
 import (
-	"github.com/Quantumoffices/goNet/codec"
 	"github.com/davyxu/goobjfmt"
+	"github.com/zjllib/goNet/codec"
 )
 
 type binaryCodec struct {

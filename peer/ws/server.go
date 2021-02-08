@@ -1,9 +1,9 @@
 package ws
 
 import (
-	. "github.com/Quantumoffices/goNet"
 	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
+	. "github.com/zjllib/goNet"
 	"net/http"
 	"net/url"
 )

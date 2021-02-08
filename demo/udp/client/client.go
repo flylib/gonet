@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/Quantumoffices/goNet"
-	_ "github.com/Quantumoffices/goNet/codec/json"
-	_ "github.com/Quantumoffices/goNet/peer/udp"
+	"github.com/zjllib/goNet"
+	_ "github.com/zjllib/goNet/codec/json"
+	_ "github.com/zjllib/goNet/peer/udp"
 	"time"
 )
 

@@ -1,4 +1,4 @@
-module github.com/Quantumoffices/goNet
+module github.com/zjllib/goNet
 
 go 1.13
 

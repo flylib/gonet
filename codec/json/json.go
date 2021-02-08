@@ -1,8 +1,8 @@
 package json
 
 import (
-	"github.com/Quantumoffices/goNet/codec"
 	"github.com/json-iterator/go" //高性能json编码库
+	"github.com/zjllib/goNet/codec"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
