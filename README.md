@@ -43,46 +43,44 @@ git clone https://github.com/zjllib/goNet.git
 ## 使用样例参考
 - 服务端
 ```go
-	p := goNet.NewPeer(
-		goNet.Options{
-			Addr:          "ws://:8083/echo",
-			PeerType:      goNet.PEERTYPE_SERVER,
-		})
-	p.Start()
+	func main() {
+	server := goNet.NewServer("ws://localhost:8088/center/ws")
+	server.Start()
+}
 ```
 - 客户端
 ```go
-	p := goNet.NewPeer(
-				goNet.Options{
-					Addr: "ws://:8083/echo",
-					PeerType: goNet.PEERTYPE_CLIENT,
-				})
-			p.Start()
+	client := goNet.NewClient("ws://localhost:8088/center/ws")
+	client.Start()
 ```
 - 消息处理实现及注册
 ```go
-//101~200  登录注册模块
+//系统消息
 const (
-	MsgID_LoginReq = 101
-	MsgID_LoginOut = 102
+	MsgIDDecPoolSize uint32 = iota
+	MsgIDSessionConnect
+	MsgIDSessionClose
 )
-
 //消息注入
 func init() {
-	goNet.RegisterMsg(MsgID_LoginReq, goNet.SYSTEM_CONTROLLER_IDX, LoginReq{})
-	goNet.RegisterMsg(MsgID_LoginOut, goNet.SYSTEM_CONTROLLER_IDX, LoginOut{})
+	goNet.RegisterMsg(SceneLogin, goNet.MsgIDSessionConnect, goNet.SessionConnect{})
+	goNet.RegisterMsg(SceneLogin, goNet.MsgIDSessionClose, goNet.SessionClose{})
+	goNet.RegisterMsg(SceneLogin, proto.MsgIDPing, proto.Ping{})
+	goNet.RegisterMsg(SceneLogin, proto.MsgIDPong, proto.Pong{})
 }
-////实现消息控制器
-//type Controller interface {
-//  	OnMsg(session Session, msg interface{})
- // }
 
-func (u *Controller) OnMsg(session goNet.Session, data interface{}) {
-	switch msg := data.(type) {
-	case *proto.LoginReq: //登录请求
-	  //todo something
-	case *proto.LoginOut: //退出登录
-    //todo something
+//消息处理场景
+type server struct {
+}
+
+func (server) Handler(msg *goNet.Msg) {
+	switch data := msg.Data.(type) {
+	case *goNet.SessionConnect:
+		logs.Info("session_%d connected at %v", msg.Session.ID(), time.Now())
+	case *goNet.SessionClose:
+		logs.Warn("session_%d close at %v", msg.Session.ID(), time.Now())
+	case *proto.Ping:
+		logs.Info("session_%d ping at %d", msg.Session.ID(), data.At)
 	}
 }
 ```
