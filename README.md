@@ -1,7 +1,7 @@
 
 ![goNetlogo](./logo.jpg)
 ## version
- v 1.0.0
+ v 2.0.0
 ## 介绍
 一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[beego](https://github.com/astaxie/beego)两大开框架的设计，使用非常方便简洁，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域的通讯。
 
