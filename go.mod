@@ -1,4 +1,4 @@
-module github.com/zjllib/goNet
+module github.com/zjllib/gonet/v3
 
 go 1.13
 

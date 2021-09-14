@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/packet.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/server/build.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/msg.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer/ws/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scene.go" beforeDir="false" afterPath="$PROJECT_DIR$/scene.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,8 +55,13 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" path="C:\Go" />
+  <component name="GOROOT" path="C:\Program Files\Go" />
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="SIGN_OFF_COMMIT" value="true" />
   </component>
@@ -62,6 +77,8 @@
     <property name="DatabaseDriversLRU" value="mysql" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="GO_FMT" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SHOW_RECENT_CHANGED_LOCATIONS" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -207,16 +224,14 @@
     </todo-panel>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="2" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
@@ -235,6 +250,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="修改启动配置" />
@@ -246,87 +262,22 @@
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
+    <environment>
+      <map>
+        <entry key="GOPROXY" value="https://mirrors.aliyun.com/goproxy/" />
+      </map>
+    </environment>
     <proxy>https://mirrors.aliyun.com/goproxy/</proxy>
   </component>
   <component name="WindowStateProjectService">
-    <state x="552" y="181" key="#GOROOT" timestamp="1612760511129">
+    <state x="752" y="450" key="#GOROOT" timestamp="1631614887868">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="181" key="#GOROOT/0.0.1920.1040@0.0.1920.1040" timestamp="1612760511129" />
-    <state x="552" y="183" key="#GOROOT/0.0.1920.1050@0.0.1920.1050" timestamp="1612537508792" />
-    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1612515610921">
+    <state x="752" y="450" key="#GOROOT/0.0.1920.1040@0.0.1920.1040" timestamp="1631614887868" />
+    <state x="461" y="164" key="SettingsEditor" timestamp="1631614863963">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1612515610921" />
-    <state x="536" y="83" key="CommitChangelistDialog2" timestamp="1612764159888">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="536" y="83" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1612764159888" />
-    <state x="536" y="84" key="CommitChangelistDialog2/0.0.1920.1050@0.0.1920.1050" timestamp="1612628764839" />
-    <state width="656" height="462" key="DebuggerActiveHint" timestamp="1612782102762">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="656" height="462" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1612782102762" />
-    <state width="620" height="466" key="DebuggerActiveHint/0.0.1920.1050@0.0.1920.1050" timestamp="1612712704879" />
-    <state width="1877" height="312" key="GridCell.Tab.0.bottom" timestamp="1612782301889">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="312" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1612782301889" />
-    <state width="1290" height="411" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1612716937406" />
-    <state width="1877" height="312" key="GridCell.Tab.0.center" timestamp="1612782301888">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="312" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1612782301888" />
-    <state width="1290" height="411" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1612716937406" />
-    <state width="1877" height="312" key="GridCell.Tab.0.left" timestamp="1612782301888">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="312" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1612782301888" />
-    <state width="1290" height="411" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1612716937406" />
-    <state width="1877" height="312" key="GridCell.Tab.0.right" timestamp="1612782301889">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="312" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1612782301889" />
-    <state width="1290" height="411" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1612716937406" />
-    <state width="1877" height="472" key="GridCell.Tab.1.bottom" timestamp="1612782259490">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="472" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1612782259490" />
-    <state width="1275" height="384" key="GridCell.Tab.1.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1612716937406" />
-    <state width="1877" height="472" key="GridCell.Tab.1.center" timestamp="1612782259490">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="472" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1612782259490" />
-    <state width="1275" height="384" key="GridCell.Tab.1.center/0.0.1920.1050@0.0.1920.1050" timestamp="1612716937406" />
-    <state width="1877" height="472" key="GridCell.Tab.1.left" timestamp="1612782259490">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="472" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1612782259490" />
-    <state width="1275" height="384" key="GridCell.Tab.1.left/0.0.1920.1050@0.0.1920.1050" timestamp="1612716937406" />
-    <state width="1877" height="472" key="GridCell.Tab.1.right" timestamp="1612782259490">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="472" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1612782259490" />
-    <state width="1275" height="384" key="GridCell.Tab.1.right/0.0.1920.1050@0.0.1920.1050" timestamp="1612716937406" />
-    <state x="461" y="165" key="SettingsEditor" timestamp="1611799148593">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1611799148593" />
-    <state x="461" y="167" key="SettingsEditor/0.0.1920.1050@0.0.1920.1050" timestamp="1611763921316" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1612764165631">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1612764165631" />
-    <state x="552" y="255" key="Vcs.Push.Dialog.v2/0.0.1920.1050@0.0.1920.1050" timestamp="1612628770345" />
-    <state x="636" y="253" width="786" height="534" key="find.popup" timestamp="1612761224738">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="636" y="253" width="786" height="534" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1612761224738" />
-    <state x="623" y="225" width="672" height="672" key="search.everywhere.popup" timestamp="1612781035404">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="672" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1612781035404" />
-    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1612628176757" />
+    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1631614863963" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
