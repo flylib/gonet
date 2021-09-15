@@ -3,7 +3,7 @@ package ws
 import (
 	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
-	. "github.com/zjllib/goNet"
+	. "github.com/zjllib/gonet/v3"
 	"net/http"
 	"net/url"
 )

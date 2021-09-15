@@ -2,7 +2,7 @@ package tcp
 
 import (
 	"github.com/astaxie/beego/logs"
-	. "github.com/zjllib/goNet"
+	. "github.com/zjllib/gonet"
 	"net"
 )
 

@@ -2,7 +2,7 @@ package xml
 
 import (
 	"encoding/xml"
-	"github.com/zjllib/goNet/codec"
+	"github.com/zjllib/gonet/v3"
 )
 
 type xmlCodec struct {

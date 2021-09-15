@@ -1,5 +1,5 @@
 
-![goNetlogo](./logo.jpg)
+![gonetlogo](./logo.jpg)
 ## version
  v 2.0.0
 ## 介绍
@@ -37,20 +37,20 @@
 ### **1.** git clone到 GOPATH/src目录下
 
 ```
-git clone https://github.com/zjllib/goNet.git
+git clone https://github.com/zjllib/gonet.git
 ```
 
 ## 使用样例参考
 - 服务端
 ```go
 	func main() {
-	server := goNet.NewServer("ws://localhost:8088/center/ws")
+	server := gonet.NewServer("ws://localhost:8088/center/ws")
 	server.Start()
 }
 ```
 - 客户端
 ```go
-	client := goNet.NewClient("ws://localhost:8088/center/ws")
+	client := gonet.NewClient("ws://localhost:8088/center/ws")
 	client.Start()
 ```
 - 消息处理实现及注册
@@ -63,21 +63,21 @@ const (
 )
 //消息注入
 func init() {
-	goNet.RegisterMsg(SceneLogin, goNet.MsgIDSessionConnect, goNet.SessionConnect{})
-	goNet.RegisterMsg(SceneLogin, goNet.MsgIDSessionClose, goNet.SessionClose{})
-	goNet.RegisterMsg(SceneLogin, proto.MsgIDPing, proto.Ping{})
-	goNet.RegisterMsg(SceneLogin, proto.MsgIDPong, proto.Pong{})
+	gonet.RegisterMsg(SceneLogin, gonet.MsgIDSessionConnect, gonet.SessionConnect{})
+	gonet.RegisterMsg(SceneLogin, gonet.MsgIDSessionClose, gonet.SessionClose{})
+	gonet.RegisterMsg(SceneLogin, proto.MsgIDPing, proto.Ping{})
+	gonet.RegisterMsg(SceneLogin, proto.MsgIDPong, proto.Pong{})
 }
 
 //消息处理场景
 type server struct {
 }
 
-func (server) Handler(msg *goNet.Msg) {
+func (server) Handler(msg *gonet.Msg) {
 	switch data := msg.Data.(type) {
-	case *goNet.SessionConnect:
+	case *gonet.SessionConnect:
 		logs.Info("session_%d connected at %v", msg.Session.ID(), time.Now())
-	case *goNet.SessionClose:
+	case *gonet.SessionClose:
 		logs.Warn("session_%d close at %v", msg.Session.ID(), time.Now())
 	case *proto.Ping:
 		logs.Info("session_%d ping at %d", msg.Session.ID(), data.At)
@@ -85,7 +85,7 @@ func (server) Handler(msg *goNet.Msg) {
 }
 ```
 ## 在线游戏demo
-- **使用etcd+mysql+beego+goNet+cocos creator制作**  
+- **使用etcd+mysql+beego+gonet+cocos creator制作**  
 服务端：大厅服+游戏服+服务注册  
 客户端：大厅+子游戏模式  
 http://116.62.245.150:8087/web-desktop/

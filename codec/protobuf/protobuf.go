@@ -2,7 +2,7 @@ package gogopb
 
 import (
 	"github.com/gogo/protobuf/proto"
-	"github.com/zjllib/goNet/codec"
+	"github.com/zjllib/gonet/v3"
 )
 
 type protobufCodec struct {

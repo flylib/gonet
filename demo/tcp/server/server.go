@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/zjllib/goNet"
-	_ "github.com/zjllib/goNet/codec/json"
-	_ "github.com/zjllib/goNet/peer/tcp"
+	"github.com/zjllib/gonet"
+	_ "github.com/zjllib/gonet/peer/tcp"
+	_ "github.com/zjllib/gonet/v3/json"
 )
 
 func main() {
-	p := goNet.NewPeer(
-		goNet.WithPeerType(goNet.PeertypeServer),
-		goNet.WithAddr(":8087"),
+	p := gonet.NewPeer(
+		gonet.WithPeerType(gonet.PeertypeServer),
+		gonet.WithAddr(":8087"),
 	)
 	p.Start()
 }

@@ -1,4 +1,4 @@
-package goNet
+package gonet
 
 import (
 	"reflect"
@@ -6,27 +6,12 @@ import (
 	"sync/atomic"
 )
 
-var (
-	sessionMgr  = NewSessionManager()
-	sessionType reflect.Type
-)
+type TransportType reflect.Type
 
 //单次会话
-type Session interface {
-	//原始套接字
-	Socket() interface{}
-	// 发送消息，消息需要以指针格式传入
-	Send(msg interface{})
-	// 断开
-	Close()
-	// ID
-	ID() uint64
-	//数据存储
-	Value(obj ...interface{}) interface{}
-	//添加场景,如果场景相同会进行覆盖
-	JoinScene(sceneID uint8, scene Scene)
-	//获取场景
-	GetScene(sceneID uint8) Scene
+type Session struct {
+	Conn Conn //所属链接
+	body interface{}
 }
 
 type (
@@ -44,77 +29,7 @@ type (
 	SessionScene struct {
 		scenes []Scene
 	}
-	//会话管理
-	sessionManager struct {
-		sync.Map
-		*sync.Pool
-		autoIncrement uint64 //流水号
-	}
 )
-
-func NewSessionManager() *sessionManager {
-	return &sessionManager{
-		Pool: &sync.Pool{New: func() interface{} {
-			return reflect.New(sessionType).Interface()
-		}},
-	}
-}
-
-func GetSession(id uint64) (Session, bool) {
-	value, ok := sessionMgr.Load(id)
-	if ok {
-		return value.(Session), ok
-	}
-	return nil, false
-}
-
-func AddSession() Session {
-	newSession := sessionMgr.Get()
-	atomic.AddUint64(&sessionMgr.autoIncrement, 1) //++
-	newSession.(interface{ setID(id uint64) }).setID(sessionMgr.autoIncrement)
-	sessionMgr.Store(sessionMgr.autoIncrement, newSession)
-	session := newSession.(Session)
-	//notify
-	msg := &Msg{
-		Session: session,
-		SceneID: GetMsgSceneID(MsgIDSessionConnect),
-		ID:      MsgIDSessionConnect,
-		Data:    &msgSessionConnect,
-	}
-	PushWorkerPool(msg)
-	return session
-}
-
-func RecycleSession(s Session) {
-	s.Close()
-	sessionMgr.Delete(s.ID())
-	sessionMgr.Put(s)
-	//notify
-	msg := &Msg{
-		Session: s,
-		SceneID: GetMsgSceneID(MsgIDSessionConnect),
-		ID:      MsgIDSessionConnect,
-		Data:    &msgSessionClose,
-	}
-	PushWorkerPool(msg)
-}
-
-func SessionCount() int {
-	sum := 0
-	sessionMgr.Range(func(key, value interface{}) bool {
-		sum++
-		return true
-	})
-	return sum
-}
-
-//广播
-func Broadcast(msg interface{}) {
-	sessionMgr.Range(func(_, item interface{}) bool {
-		item.(Session).Send(msg)
-		return true
-	})
-}
 
 func (s *SessionIdentify) ID() uint64 {
 	return s.id
@@ -152,5 +67,5 @@ func (s *SessionScene) GetScene(sceneID uint8) Scene {
 }
 
 func SetSessionType(ses interface{}) {
-	sessionType = reflect.TypeOf(ses)
+	peerType = reflect.TypeOf(ses)
 }

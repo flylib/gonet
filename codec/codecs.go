@@ -2,7 +2,7 @@ package codec
 
 import (
 	"fmt"
-	. "github.com/zjllib/goNet"
+	. "github.com/zjllib/gonet"
 )
 
 type Codec interface {

@@ -1,4 +1,4 @@
-package goNet
+package gonet
 
 //共同场景
 var commonScenes []Scene

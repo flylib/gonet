@@ -1,4 +1,4 @@
-package goNet
+package gonet
 
 import (
 	"time"

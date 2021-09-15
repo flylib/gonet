@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/zjllib/goNet"
-	_ "github.com/zjllib/goNet/codec/json"
-	_ "github.com/zjllib/goNet/peer/udp"
+	"github.com/zjllib/gonet"
+	_ "github.com/zjllib/gonet/peer/udp"
+	_ "github.com/zjllib/gonet/v3/json"
 )
 
 func main() {
-	p := goNet.NewPeer(goNet.WithAddr(""))
+	p := gonet.NewPeer(gonet.WithAddr(""))
 	p.Start()
 }

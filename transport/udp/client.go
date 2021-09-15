@@ -1,7 +1,7 @@
 package udp
 
 import (
-	. "github.com/zjllib/goNet"
+	. "github.com/zjllib/gonet"
 	"net"
 )
 

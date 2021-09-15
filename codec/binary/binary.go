@@ -2,7 +2,7 @@ package binary
 
 import (
 	"github.com/davyxu/goobjfmt"
-	"github.com/zjllib/goNet/codec"
+	"github.com/zjllib/gonet/v3"
 )
 
 type binaryCodec struct {

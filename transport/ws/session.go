@@ -3,14 +3,15 @@ package ws
 import (
 	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
-	. "github.com/zjllib/goNet"
-	"github.com/zjllib/goNet/codec"
+	. "github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3/codec"
+	"sync"
 )
 
-// webSocket session
-type session struct {
+// webSocket conn
+type conn struct {
 	SessionIdentify //标志
-	SessionStore    //存储
+	sync.Map        //存储
 	SessionScene
 	socket *websocket.Conn //socket
 	sendCh chan interface{}
@@ -18,21 +19,21 @@ type session struct {
 }
 
 func init() {
-	SetSessionType(session{})
+	SetconnType(conn{})
 }
 
-func newSession(conn *websocket.Conn) *session {
-	newSession := AddSession().(*session)
-	newSession.socket = conn
-	newSession.sendCh = make(chan interface{}, 1)
-	return newSession
+func newconn(conn *websocket.Conn) *conn {
+	newconn := Addconn().(*conn)
+	newconn.socket = conn
+	newconn.sendCh = make(chan interface{}, 1)
+	return newconn
 }
 
-func (s *session) Socket() interface{} {
+func (s *conn) Socket() interface{} {
 	return s.socket
 }
 
-func (s *session) Close() {
+func (s *conn) Close() {
 	if s.closed {
 		return
 	}
@@ -43,7 +44,7 @@ func (s *session) Close() {
 }
 
 //websocket does not support sending messages concurrently
-func (s *session) Send(msg interface{}) {
+func (s *conn) Send(msg interface{}) {
 	//sending empty messages is not allowed
 	if !s.closed && msg == nil {
 		return
@@ -52,7 +53,7 @@ func (s *session) Send(msg interface{}) {
 }
 
 //write
-func (s *session) sendLoop() {
+func (s *conn) sendLoop() {
 	for msg := range s.sendCh {
 		if msg == nil {
 			break
@@ -65,12 +66,12 @@ func (s *session) sendLoop() {
 }
 
 //read
-func (s *session) recvLoop() {
+func (s *conn) recvLoop() {
 	for {
 		wsMsgKind, pkt, err := s.socket.ReadMessage()
 		if err != nil || wsMsgKind == websocket.CloseMessage {
-			logs.Warn("session_%d closed, %s", s.ID(), err)
-			RecycleSession(s)
+			logs.Warn("conn_%d closed, %s", s.ID(), err)
+			Recycleconn(s)
 			s.sendCh <- nil
 			break
 		}
@@ -79,7 +80,7 @@ func (s *session) recvLoop() {
 			logs.Warn("msg parser error,reason is %v", err)
 			continue
 		}
-		msg.Session = s
+		msg.conn = s
 		PushWorkerPool(msg)
 	}
 }

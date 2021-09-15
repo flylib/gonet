@@ -20,9 +20,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]change session to conn">
+      <change afterPath="$PROJECT_DIR$/global.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/conn.go" beforeDir="false" afterPath="$PROJECT_DIR$/conn.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +98,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="go.vgo" />
+    <property name="settings.editor.selected.configurable" value="watcher.settings" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -275,14 +278,18 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="752" y="450" key="#GOROOT/0.0.1920.1040@0.0.1920.1040" timestamp="1631614887868" />
-    <state x="461" y="164" key="SettingsEditor" timestamp="1631614863963">
+    <state x="461" y="164" key="SettingsEditor" timestamp="1631678126985">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1631614863963" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1631615201545">
+    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1631678126985" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1631615481244">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1631615201545" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1631615481244" />
+    <state x="659" y="254" width="596" height="584" key="find.popup" timestamp="1631674468759">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="659" y="254" width="596" height="584" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1631674468759" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

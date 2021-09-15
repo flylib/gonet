@@ -2,7 +2,7 @@ package json
 
 import (
 	"github.com/json-iterator/go" //高性能json编码库
-	"github.com/zjllib/goNet/codec"
+	"github.com/zjllib/gonet/v3"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary

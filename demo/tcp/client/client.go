@@ -2,25 +2,25 @@ package main
 
 import (
 	"fmt"
-	"github.com/zjllib/goNet"
-	_ "github.com/zjllib/goNet/codec/json"
-	_ "github.com/zjllib/goNet/peer/tcp"
+	"github.com/zjllib/gonet"
+	_ "github.com/zjllib/gonet/peer/tcp"
+	_ "github.com/zjllib/gonet/v3/json"
 	"time"
 )
 
 func main() {
-	p := goNet.NewPeer(
-		goNet.Options{
-			PeerType: goNet.PEERTYPE_CLIENT,
+	p := gonet.NewPeer(
+		gonet.Options{
+			PeerType: gonet.PEERTYPE_CLIENT,
 			Addr:     ":8087",
 		})
 	p.Start()
-	fmt.Println("session count=", goNet.sessions.GetSessionCount())
-	session, exist := goNet.sessions.FindSession(1)
+	fmt.Println("session count=", gonet.sessions.GetSessionCount())
+	session, exist := gonet.sessions.FindSession(1)
 	if exist {
 		for {
 			time.Sleep(time.Second)
-			session.Send(goNet.Ping{TimeStamp: time.Now().Unix()})
+			session.Send(gonet.Ping{TimeStamp: time.Now().Unix()})
 		}
 	}
 }

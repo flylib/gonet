@@ -2,20 +2,20 @@ package main
 
 import (
 	"fmt"
-	"github.com/zjllib/goNet"
-	_ "github.com/zjllib/goNet/codec/json"
-	_ "github.com/zjllib/goNet/peer/udp"
+	"github.com/zjllib/gonet"
+	_ "github.com/zjllib/gonet/peer/udp"
+	_ "github.com/zjllib/gonet/v3/json"
 	"time"
 )
 
 func main() {
-	p := goNet.NewPeer(goNet.WithAddr(":88"))
+	p := gonet.NewPeer(gonet.WithAddr(":88"))
 	p.Start()
-	fmt.Println("session count=", goNet.sessions.GetSessionCount())
-	s := goNet.sessions.FindSession(1)
+	fmt.Println("session count=", gonet.sessions.GetSessionCount())
+	s := gonet.sessions.FindSession(1)
 	fmt.Println(s.ID())
 	for {
 		time.Sleep(time.Second)
-		s.Send(goNet.Ping{TimeStamp: time.Now().Unix()})
+		s.Send(gonet.Ping{TimeStamp: time.Now().Unix()})
 	}
 }

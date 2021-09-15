@@ -1,4 +1,4 @@
-package goNet
+package gonet
 
 import "github.com/astaxie/beego/logs"
 
