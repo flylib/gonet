@@ -1,86 +1,55 @@
 package ws
 
 import (
-	"github.com/astaxie/beego/logs"
 	"github.com/gorilla/websocket"
 	. "github.com/zjllib/gonet/v3"
 	"github.com/zjllib/gonet/v3/codec"
-	"sync"
+	"log"
 )
 
 // webSocket conn
-type conn struct {
-	SessionIdentify //标志
-	sync.Map        //存储
-	SessionScene
-	socket *websocket.Conn //socket
-	sendCh chan interface{}
-	closed bool //关闭标志
+type session struct {
+	SessionIdentify
+	SessionStore
+	conn *websocket.Conn
 }
 
 func init() {
-	SetconnType(conn{})
+	SetSessionType(&session{})
 }
 
-func newconn(conn *websocket.Conn) *conn {
-	newconn := Addconn().(*conn)
-	newconn.socket = conn
-	newconn.sendCh = make(chan interface{}, 1)
-	return newconn
+//新会话
+func newSession(conn *websocket.Conn) *session {
+	ses := CreateSession()
+	newSession, _ := ses.(*session)
+	newSession.conn = conn
+	return newSession
 }
 
-func (s *conn) Socket() interface{} {
-	return s.socket
-}
-
-func (s *conn) Close() {
-	if s.closed {
-		return
-	}
-	s.closed = true
-	if err := s.socket.Close(); err != nil {
-		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)
-	}
+func (s *session) Close() error {
+	return s.conn.Close()
 }
 
 //websocket does not support sending messages concurrently
-func (s *conn) Send(msg interface{}) {
-	//sending empty messages is not allowed
-	if !s.closed && msg == nil {
-		return
-	}
-	s.sendCh <- msg
+func (s *session) Send(msg interface{}) error {
+	return codec.SendWSPacket(s.conn, msg)
 }
 
-//write
-func (s *conn) sendLoop() {
-	for msg := range s.sendCh {
-		if msg == nil {
-			break
-		}
-		if err := codec.SendWSPacket(s.socket, msg); err != nil {
-			logs.Error("sesssion_%v send msg error,reason is %v", s.ID(), err)
-			break
-		}
-	}
-}
-
-//read
-func (s *conn) recvLoop() {
+//循环读取消息
+func (s *session) recvLoop() {
 	for {
-		wsMsgKind, pkt, err := s.socket.ReadMessage()
-		if err != nil || wsMsgKind == websocket.CloseMessage {
-			logs.Warn("conn_%d closed, %s", s.ID(), err)
-			Recycleconn(s)
-			s.sendCh <- nil
-			break
+		_, pkt, err := s.conn.ReadMessage()
+		if err != nil {
+			log.Printf("session_%v closed, %v \n", s.ID(), err)
+			RecycleSession(s)
+			return
 		}
 		msg, err := codec.ParserWSPacket(pkt)
 		if err != nil {
-			logs.Warn("msg parser error,reason is %v", err)
+			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
 		}
-		msg.conn = s
+		msg.Session = s
 		PushWorkerPool(msg)
 	}
 }

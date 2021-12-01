@@ -4,20 +4,14 @@ import (
 	"time"
 )
 
-type ProtoCol string
-
-const (
-	TCP  ProtoCol = "tcp"
-	KCP  ProtoCol = "kcp"
-	UDP  ProtoCol = "udp"
-	WS   ProtoCol = "websocket"
-	HTTP ProtoCol = "http"
-	QUIC ProtoCol = "quic"
-	RPC  ProtoCol = "rpc"
-)
+///////////////////////////////
+/////    Option Func   ////////
+//////////////////////////////
 
 //options
 type Option struct {
+	//传输协议
+	tpl TransportProtocol
 	//关联地址
 	addr string
 	//读写超时

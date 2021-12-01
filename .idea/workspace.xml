@@ -19,16 +19,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]change session to conn&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
-      <change afterPath="$PROJECT_DIR$/session_mgr.go" afterDir="false" />
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]v3&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/conn.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/global.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scene.go" beforeDir="false" afterPath="$PROJECT_DIR$/scene.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,6 +65,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="SIGN_OFF_COMMIT" value="true" />
   </component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="2" />
+  </component>
   <component name="GoLibraries">
     <option name="indexEntireGoPath" value="false" />
   </component>
@@ -101,15 +98,15 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="watcher.settings" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\goNet" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="F:\go\project\goNet\demo\pprof" />
       <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="E:\goNet" />
     </key>
   </component>
   <component name="RemoteSynchronizer">
@@ -258,7 +255,8 @@
     <MESSAGE value="1" />
     <MESSAGE value="[update]change session to conn" />
     <MESSAGE value="[update]change session to conn&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <option name="LAST_COMMIT_MESSAGE" value="[update]change session to conn&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
+    <MESSAGE value="[update]v3&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="[update]v3&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -274,10 +272,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="752" y="450" key="#GOROOT/0.0.1920.1040@0.0.1920.1040" timestamp="1631614887868" />
-    <state x="461" y="164" key="SettingsEditor" timestamp="1631678126985">
+    <state x="2" y="145" width="998" height="714" key="SettingsEditor" timestamp="1638495648160">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1631678126985" />
+    <state x="2" y="145" width="998" height="714" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1638495648160" />
     <state width="498" height="446" key="SwitcherDM" timestamp="1638241017495">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -286,21 +284,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1632995689021" />
-    <state x="659" y="254" width="596" height="584" key="find.popup" timestamp="1631674468759">
+    <state x="659" y="254" width="596" height="584" key="find.popup" timestamp="1638496736140">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="659" y="254" width="596" height="584" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1631674468759" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/codec/packet.go</url>
-          <line>90</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <state x="659" y="254" width="596" height="584" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1638496736140" />
   </component>
   <component name="masterDetails">
     <states>

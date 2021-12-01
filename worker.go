@@ -118,21 +118,6 @@ func (w *WorkerPool) run() {
 						logs.Error("worker exits from panic: %s\n", string(buf[:n]))
 					}
 				}()
-				for msg := range w.receiveMsgCh {
-					if msg.ID == MsgIDDecPoolSize {
-						w.decPoolSize()
-						return
-					}
-					scene := msg.GetScene(msg.SceneID)
-					if scene != nil {
-						scene.Handler(msg)
-						continue
-					}
-					scene = getCommonScene(msg.SceneID)
-					if scene != nil {
-						scene.Handler(msg)
-					}
-				}
 			}()
 		}
 	}()

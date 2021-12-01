@@ -14,7 +14,7 @@ type SessionManager struct {
 
 func (s *SessionManager) store(id uint64, session interface{}) {
 	session.(interface{ setID(id uint64) }).setID(id)
-	sys.sessions.Store(id, session)
+	s.sessions.Store(id, session)
 }
 
 func (s *SessionManager) del(id uint64) {

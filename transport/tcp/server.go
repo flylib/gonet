@@ -1,31 +1,31 @@
 package tcp
 
 import (
-	"github.com/astaxie/beego/logs"
-	. "github.com/zjllib/gonet"
+	. "github.com/zjllib/gonet/v3"
 	"net"
 )
 
 type server struct {
-	PeerIdentify
+	ServerIdentify
 	ln net.Listener
 }
 
-func (s *server) Start() {
-	ln, err := net.Listen("tcp", s.Addr())
+func (s *server) Start() error {
+	ln, err := net.Listen(string(TCP), s.Addr())
 	if err != nil {
-		panic(err)
+		return err
 	}
 	s.ln = ln
-
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			logs.Error("#tcp(%v),accept failed,err:%v", s.Type(), err.Error())
-			break
+			continue
 		}
 		go s.newConn(conn)
 	}
+}
+func (s *server) Stop() error {
+	return s.ln.Close()
 }
 
 //新连接
@@ -34,12 +34,8 @@ func (s *server) newConn(conn net.Conn) {
 	ses.recvLoop()
 }
 
-func (s *server) Stop() {
-	s.ln.Close()
-}
-
-func init() {
-	identify := PeerIdentify{}
-	identify.SetType(PeertypeServer)
-	RegisterPeer(&server{PeerIdentify: identify})
-}
+//func SetUP() {
+//	identify := PeerIdentify{}
+//	identify.SetType(PeertypeServer)
+//	RegisterPeer(&server{PeerIdentify: identify})
+//}

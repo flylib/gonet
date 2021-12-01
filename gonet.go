@@ -1,34 +1,49 @@
 package gonet
 
 import (
+	"log"
 	"reflect"
 	"sync"
 	"sync/atomic"
 )
 
 var (
-	sys           System       //系统
-	transportType reflect.Type //传输协议类型
+	sys System //系统
 )
 
 type System struct {
+	sync.Once
 	SessionManager
-	//msgID:msgType
+	//message types
 	msgTypes map[MessageID]reflect.Type
-	//msgType:msgID
+	//message ids
 	msgIDs map[reflect.Type]MessageID
+	//server types
+	sessionType reflect.Type
 }
 
 func init() {
+	log.SetPrefix("[gonet]")
+	log.SetFlags(log.Llongfile | log.LstdFlags)
 	sys = System{
 		SessionManager: SessionManager{
 			pool: sync.Pool{
 				New: func() interface{} {
-					return reflect.New(transportType).Interface()
+					return reflect.New(sys.sessionType).Interface()
 				},
 			},
 		},
 	}
+}
+
+func NewService(opts ...options) Service {
+	option := Option{}
+	for _, f := range opts {
+		f(&option)
+	}
+	peer := peers[option.tpl]
+	peer.(interface{ setAddr(string) }).setAddr(option.addr)
+	return peer
 }
 
 //获取会话
@@ -76,5 +91,39 @@ func Broadcast(msg interface{}) {
 			session.Send(msg)
 		}
 		return true
+	})
+}
+
+//映射消息体
+func RegisterMsg(msgID MessageID, msg interface{}) {
+	sys.Lock()
+	defer sys.Unlock()
+	msgType := reflect.TypeOf(msg)
+	if _, ok := sys.msgTypes[msgID]; ok {
+		panic("error:Duplicate message id")
+	} else {
+		sys.msgTypes[msgID] = msgType
+	}
+	sys.msgIDs[msgType] = msgID
+}
+
+//获取消息ID
+func GetMsgID(msg interface{}) (MessageID, bool) {
+	msgID, ok := sys.msgIDs[reflect.TypeOf(msg)]
+	return MessageID(msgID), ok
+}
+
+//通消息id创建消息体
+func CreateMsg(msgID MessageID) interface{} {
+	if msg, ok := sys.msgTypes[msgID]; ok {
+		return reflect.New(msg).Interface()
+	}
+	return nil
+}
+
+//设置会话类型
+func SetSessionType(session Session) {
+	sys.Do(func() {
+		sys.sessionType = reflect.TypeOf(session)
 	})
 }

@@ -3,7 +3,7 @@ package codec
 import (
 	"encoding/binary"
 	"github.com/gorilla/websocket"
-	"github.com/zjllib/gonet"
+	. "github.com/zjllib/gonet/v3"
 	"io"
 	"net"
 	"reflect"
@@ -11,7 +11,7 @@ import (
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+                   +              +                 +
-//+  消息总长度（2）  + 消息ID（4）  + 消息内容        +
+//+  消息总长度（2）    + 消息ID（4）   + 消息内容         +
 //+                   +              +                 +
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -32,13 +32,13 @@ const (
 //	size := binary.LittleEndian.Uint16(data)
 //	// 出错，等待下次数据
 //	if size > MTU {
-//		return gonet.DefaultSceneID, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
+//		return DefaultSceneID, nil, errors.New(fmt.Sprintf("packet size %v max MTU length", size))
 //	}
 //	// 读取消息ID
 //	msgId := int(binary.LittleEndian.Uint16(data[packetLen:]))
 //	//内容
 //	content := data[headerSize : headerSize+size]
-//	ActorID := gonet.GetMsgSceneID(msgId)
+//	ActorID := GetMsgSceneID(msgId)
 //	msg, err := decodeMessage(msgId, content)
 //	return ActorID, msg, err
 //}
@@ -53,12 +53,15 @@ func SendPacket(w io.Writer, msg interface{}) error {
 	pktData := make([]byte, headerSize+len(body))
 	// Size==len(body)
 	binary.LittleEndian.PutUint16(pktData, uint16(len(body)))
-	// ID
-	binary.LittleEndian.PutUint16(pktData[2:], uint16(gonet.GetMsgID(reflect.TypeOf(msg))))
-	// Value
-	copy(pktData[headerSize:], body)
-
-	_, err = w.Write(pktData)
+	msgID, ok := GetMsgID(reflect.TypeOf(msg))
+	if ok {
+		// ID
+		binary.LittleEndian.PutUint16(pktData[2:], uint16(msgID))
+		// Value
+		copy(pktData[headerSize:], body)
+		_, err = w.Write(pktData)
+		return err
+	}
 	return err
 }
 
@@ -68,29 +71,30 @@ func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 	if err != nil {
 		return err
 	}
-
 	pktData := make([]byte, headerSize+len(body))
 	// Size==len(body)
 	binary.LittleEndian.PutUint16(pktData, uint16(len(body)))
-	// ID
-	binary.LittleEndian.PutUint16(pktData[2:], uint16(gonet.GetMsgID(reflect.TypeOf(msg))))
-	// Value
-	copy(pktData[headerSize:], body)
+	msgID, ok := GetMsgID(reflect.TypeOf(msg))
+	if ok {
+		// ID
+		binary.LittleEndian.PutUint16(pktData[2:], uint16(msgID))
+		// Value
+		copy(pktData[headerSize:], body)
 
-	_, err = w.WriteToUDP(pktData, toAddr)
-
+		_, err = w.WriteToUDP(pktData, toAddr)
+		return err
+	}
 	return err
 }
 
 //----------------------------------------------【ws】--------------------------------------------------
-func ParserWSPacket(pkt []byte) (*gonet.Msg, error) {
+func ParserWSPacket(pkt []byte) (*Message, error) {
 	msgID := Bytes2Uint32(pkt[:msgIDOffset])
-	sceneID := gonet.GetMsgSceneID(msgID)
 	msg, err := decodeMessage(msgID, pkt[msgIDOffset:])
 	if err != nil {
 		return nil, err
 	}
-	return &gonet.Msg{SceneID: sceneID, ID: msgID, Data: msg}, err
+	return &Message{ID: MessageID(msgID), Body: msg}, err
 }
 
 func SendWSPacket(w *websocket.Conn, msg interface{}) error {
@@ -99,10 +103,13 @@ func SendWSPacket(w *websocket.Conn, msg interface{}) error {
 		return err
 	}
 	pktData := make([]byte, msgIDOffset, msgIDOffset+len(arrBytes))
-	msgID := gonet.GetMsgID(msg)
-	binary.LittleEndian.PutUint32(pktData, msgID)
-	pktData = append(pktData, arrBytes...)
-	return w.WriteMessage(websocket.TextMessage, pktData)
+	msgID, ok := GetMsgID(msg)
+	if ok {
+		binary.LittleEndian.PutUint32(pktData, uint32(msgID))
+		pktData = append(pktData, arrBytes...)
+		return w.WriteMessage(websocket.TextMessage, pktData)
+	}
+	return ErrorNotExistMsg
 }
 
 func Bytes2Uint32(buf []byte) uint32 {
