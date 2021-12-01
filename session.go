@@ -1,21 +1,24 @@
 package gonet
 
-import (
-	"reflect"
-	"sync"
-	"sync/atomic"
-)
+///////////////////////////////
+/////    Session POOL   //////
+//////////////////////////////
 
-type TransportType reflect.Type
-
-//单次会话
-type Session struct {
-	Conn Conn //所属链接
-	body interface{}
+//会话
+type Session interface {
+	//ID
+	ID() uint64
+	//断开
+	Close() error
+	//发送消息
+	Send(msg interface{}) error
+	//设置键值对，存储关联数据
+	Store(key string, value interface{})
+	//获取键值对
+	Load(key string) (value interface{}, ok bool)
 }
 
 type (
-
 	//核心会话标志
 	SessionIdentify struct {
 		//id
@@ -33,10 +36,6 @@ type (
 
 func (s *SessionIdentify) ID() uint64 {
 	return s.id
-}
-
-func (s *SessionIdentify) setID(id uint64) {
-	s.id = id
 }
 
 func (s *SessionStore) Value(v ...interface{}) interface{} {
@@ -64,8 +63,4 @@ func (s *SessionScene) GetScene(sceneID uint8) Scene {
 		return nil
 	}
 	return s.scenes[sceneID]
-}
-
-func SetSessionType(ses interface{}) {
-	peerType = reflect.TypeOf(ses)
 }

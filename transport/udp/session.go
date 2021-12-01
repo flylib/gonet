@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	. "github.com/zjllib/gonet"
 	"github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3/codec"
 	"net"
 )
 
@@ -65,25 +66,25 @@ func (s *session) Close() {
 
 // 接收循环
 func (s *session) recvLoop() {
-	//for {
-	//	n, remote, err := s.conn.ReadFromUDP(s.buf)
-	//	logs.Info("recv=", remote.String())
-	//	if err != nil {
-	//		logs.Errorf("#udp.accept failed(%v) %v", s.conn.RemoteAddr(), err.Error())
-	//	}
-	//	var ses Session
-	//	if sid, exit := remotes[remote.String()]; exit {
-	//		ses = SessionManager.GetSessionById(sid)
-	//	} else {
-	//		ses = newSession(s.conn, remote)
-	//	}
-	//	//msg, err := codec.ParserPacket(s.buf[:n])
-	//	//if err != nil {
-	//	//	logs.Warnf("message decode error=%s", err)
-	//	//	continue
-	//	//}
-	//	//SubmitMsgToAntsPool(msg, ses)
-	//}
+	for {
+		n, remote, err := s.conn.ReadFromUDP(s.buf)
+		logs.Info("recv=", remote.String())
+		if err != nil {
+			logs.Errorf("#udp.accept failed(%v) %v", s.conn.RemoteAddr(), err.Error())
+		}
+		var ses session
+		if sid, exit := remotes[remote.String()]; exit {
+			ses = SessionManager.GetSessionById(sid)
+		} else {
+			ses = newSession(s.conn, remote)
+		}
+		//msg, err := codec.ParserPacket(s.buf[:n])
+		//if err != nil {
+		//	logs.Warnf("message decode error=%s", err)
+		//	continue
+		//}
+		//SubmitMsgToAntsPool(msg, ses)
+	}
 }
 
 func (u *session) Value(v ...interface{}) interface{} {

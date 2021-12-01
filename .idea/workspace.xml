@@ -19,13 +19,16 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]change session to conn">
-      <change afterPath="$PROJECT_DIR$/global.go" afterDir="false" />
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]change session to conn&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
+      <change afterPath="$PROJECT_DIR$/session_mgr.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/conn.go" beforeDir="false" afterPath="$PROJECT_DIR$/conn.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/conn.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/global.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scene.go" beforeDir="false" afterPath="$PROJECT_DIR$/scene.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/client.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,14 +212,6 @@
     </task>
     <servers />
   </component>
-  <component name="TestHistory">
-    <history-entry file="TestQueue_in_goNet_test - 2019.12.03 at 17h 37m 33s.xml">
-      <configuration name="TestQueue in goNet/test" configurationId="GoTestRunConfiguration" />
-    </history-entry>
-    <history-entry file="TestQueue_in_goNet_test - 2019.12.03 at 17h 38m 31s.xml">
-      <configuration name="TestQueue in goNet/test" configurationId="GoTestRunConfiguration" />
-    </history-entry>
-  </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
@@ -262,7 +257,8 @@
     <MESSAGE value="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;" />
     <MESSAGE value="1" />
     <MESSAGE value="[update]change session to conn" />
-    <option name="LAST_COMMIT_MESSAGE" value="[update]change session to conn" />
+    <MESSAGE value="[update]change session to conn&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="[update]change session to conn&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -282,10 +278,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1631678126985" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1631615481244">
+    <state width="498" height="446" key="SwitcherDM" timestamp="1638241017495">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1631615481244" />
+    <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1638241017495" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1632995689021">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1632995689021" />
     <state x="659" y="254" width="596" height="584" key="find.popup" timestamp="1631674468759">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

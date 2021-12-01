@@ -4,7 +4,7 @@ package gonet
 var commonScenes []Scene
 
 type Scene interface {
-	Handler(msg *Msg) //场景消息处理入口
+	Handler(msg *Message) //场景消息处理入口
 }
 
 func AddCommonScene(sceneID uint8, scene Scene) {

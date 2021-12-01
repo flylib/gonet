@@ -27,7 +27,7 @@ type WorkerPool struct {
 	//池限制大小
 	size, maxSize int32
 	//接受消息通道
-	receiveMsgCh chan *Msg
+	receiveMsgCh chan *Message
 	//创建协程通知
 	createWorkerCh chan int
 }
@@ -40,7 +40,7 @@ func NewWorkerPool(maxPoolSize int32) (pool WorkerPool) {
 	pool = WorkerPool{
 		createWorkerCh: make(chan int),
 		maxSize:        maxPoolSize,
-		receiveMsgCh:   make(chan *Msg, receiveQueueSize),
+		receiveMsgCh:   make(chan *Message, receiveQueueSize),
 	}
 	pool.run()
 	pool.createWorker(1)
@@ -94,7 +94,7 @@ func (w *WorkerPool) createWorker(count int32) {
 }
 func (w *WorkerPool) destroyWorker(count int32) {
 	for i := int32(0); i < count; i++ {
-		w.receiveMsgCh <- &Msg{
+		w.receiveMsgCh <- &Message{
 			ID: MsgIDDecPoolSize,
 		}
 	}
@@ -139,6 +139,6 @@ func (w *WorkerPool) run() {
 }
 
 //放进工作池
-func PushWorkerPool(msg *Msg) {
+func PushWorkerPool(msg *Message) {
 	workers.receiveMsgCh <- msg
 }
