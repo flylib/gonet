@@ -1,10 +1,9 @@
 package gonet
 
 import (
-	"github.com/astaxie/beego/logs"
+	"log"
 	"runtime"
 	"sync/atomic"
-	"time"
 )
 
 //////////////////////////
@@ -12,20 +11,13 @@ import (
 //////////////////////////
 
 const (
-	receiveQueueSize = 128 //接收队列大小
+	receiveQueueSize = 1024 //默认接收队列大小
 )
-
-var workers WorkerPool
-
-func initWorkerPool(option Option) {
-	workers = NewWorkerPool(option.maxWorkerPoolSize)
-}
 
 //处理池
 type WorkerPool struct {
 	//当前池协程数量(池大小)
-	//池限制大小
-	size, maxSize int32
+	size int32
 	//接受消息通道
 	receiveMsgCh chan *Message
 	//创建协程通知
@@ -33,51 +25,14 @@ type WorkerPool struct {
 }
 
 //初始化协程池
-func NewWorkerPool(maxPoolSize int32) (pool WorkerPool) {
-	if maxPoolSize < 1 {
-		maxPoolSize = 1
-	}
+func NewWorkerPool(size int32) (pool WorkerPool) {
 	pool = WorkerPool{
 		createWorkerCh: make(chan int),
-		maxSize:        maxPoolSize,
 		receiveMsgCh:   make(chan *Message, receiveQueueSize),
 	}
 	pool.run()
-	pool.createWorker(1)
-	pool.tick()
+	pool.createWorker(size)
 	return pool
-}
-
-func (w *WorkerPool) tick() {
-	go func() {
-		minDecPoolSize := int32(float64(w.maxSize) * 0.5)
-		count := 0
-		for {
-			count++
-			//每隔1分检查一下
-			time.Sleep(time.Minute)
-			//两倍扩容速度
-			if len(w.receiveMsgCh) == cap(w.receiveMsgCh) && atomic.LoadInt32(&w.size) < atomic.LoadInt32(&w.maxSize) {
-				curSize := w.size
-				if curSize*2 < w.maxSize {
-					w.createWorker(curSize)
-				} else {
-					w.createWorker(w.maxSize - w.size)
-				}
-			}
-			//每30分钟检查一次缩容，0.85倍缩容
-			if count > 30 {
-				count = 0
-				if len(w.receiveMsgCh) < 1 {
-					curPoolSize := atomic.LoadInt32(&w.size)
-					if curPoolSize > minDecPoolSize {
-						destroyPoolSize := int32(float64(curPoolSize) * 0.85)
-						w.destroyWorker(destroyPoolSize)
-					}
-				}
-			}
-		}
-	}()
 }
 
 func (w *WorkerPool) incPoolSize() {
@@ -88,6 +43,9 @@ func (w *WorkerPool) decPoolSize() {
 }
 
 func (w *WorkerPool) createWorker(count int32) {
+	if count == 0 {
+		count = 1
+	}
 	for i := int32(0); i < count; i++ {
 		w.createWorkerCh <- 1
 	}
@@ -104,9 +62,6 @@ func (w *WorkerPool) destroyWorker(count int32) {
 func (w *WorkerPool) run() {
 	go func() {
 		for range w.createWorkerCh {
-			if w.size >= w.maxSize {
-				continue
-			}
 			w.incPoolSize()
 			go func() {
 				//panic handling
@@ -115,15 +70,16 @@ func (w *WorkerPool) run() {
 					if info := recover(); info != nil {
 						var buf [4096]byte
 						n := runtime.Stack(buf[:], false)
-						logs.Error("worker exits from panic: %s\n", string(buf[:n]))
+						log.Printf("worker exits from panic: %s\n", string(buf[:n]))
 					}
+					w.createWorkerCh <- 1
 				}()
+				for msg := range w.receiveMsgCh {
+					if f, ok := sys.mHandlers[msg.ID]; ok {
+						f(msg)
+					}
+				}
 			}()
 		}
 	}()
-}
-
-//放进工作池
-func PushWorkerPool(msg *Message) {
-	workers.receiveMsgCh <- msg
 }

@@ -1,6 +1,7 @@
 package gonet
 
 import (
+	"container/list"
 	"github.com/zjllib/gonet/v3/codec"
 	"log"
 	"reflect"
@@ -11,6 +12,8 @@ import (
 var (
 	sys System //系统
 )
+
+type Handler func(msg *Message)
 
 type System struct {
 	sync.Once
@@ -25,6 +28,12 @@ type System struct {
 	defaultCodec codec.Codec
 	//服务端
 	server Server
+	//消息缓存
+	msgList list.List
+	//携程池
+	workers WorkerPool
+	//消息钩子
+	mHandlers map[MessageID]Handler
 }
 
 func init() {
@@ -42,6 +51,9 @@ func init() {
 }
 
 func NewServer(opts ...options) Server {
+	if sys.server == nil {
+		panic(ErrorNoTransport)
+	}
 	option := Option{}
 	for _, f := range opts {
 		f(&option)
@@ -56,9 +68,7 @@ func NewServer(opts ...options) Server {
 	default:
 		sys.defaultCodec = codec.JsonCodec{}
 	}
-	if sys.server == nil {
-		panic(ErrorNoTransport)
-	}
+	sys.workers = NewWorkerPool(option.workerPoolSize)
 	sys.server.(interface{ setAddr(string) }).setAddr(option.addr)
 	return sys.server
 }
@@ -154,4 +164,13 @@ func EncodeMessage(msg interface{}) ([]byte, error) {
 // 解码消息
 func DecodeMessage(msg interface{}, data []byte) error {
 	return sys.defaultCodec.Decode(data, msg)
+}
+
+//缓存消息
+func CacheMsg(msg *Message) {
+	if len(sys.workers.receiveMsgCh) >= receiveQueueSize {
+		sys.msgList.PushBack(msg)
+	} else {
+		sys.workers.receiveMsgCh <- msg
+	}
 }

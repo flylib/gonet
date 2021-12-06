@@ -20,8 +20,10 @@ type Option struct {
 	maxSessionCount int
 	//最小限制是1
 	maxWorkerPoolSize int32
-	//contentType
+	//contentType support json/xml/binary/protobuf
 	contentType string
+	//worker pool size
+	workerPoolSize int32
 }
 
 type options func(o *Option)

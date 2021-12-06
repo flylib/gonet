@@ -20,21 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]v3&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
-      <change afterPath="$PROJECT_DIR$/codec/interface.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/binary/binary.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/binary.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/codecs.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/json/json.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/json.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/packet.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/protobuf/protobuf.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/protobuf.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/xml/xml.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/xml.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/errors.go" beforeDir="false" afterPath="$PROJECT_DIR$/errors.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -290,14 +277,18 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="2" y="145" width="998" height="714" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1638495648160" />
-    <state width="498" height="446" key="SwitcherDM" timestamp="1638241017495">
+    <state width="498" height="446" key="SwitcherDM" timestamp="1638779330463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1638241017495" />
+    <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1638779330463" />
     <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1638526343258">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1638526343258" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1638762656623">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1638762656623" />
     <state x="659" y="254" width="596" height="584" key="find.popup" timestamp="1638496736140">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
