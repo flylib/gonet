@@ -2,9 +2,7 @@ package udp
 
 import (
 	"github.com/astaxie/beego/logs"
-	. "github.com/zjllib/gonet"
-	"github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/codec"
+	"github.com/zjllib/gonet/v3/transport"
 	"net"
 )
 
@@ -27,7 +25,7 @@ func newSession(conn *net.UDPConn, remote *net.UDPAddr) *session {
 		ses = &session{
 			conn:   conn,
 			remote: remote,
-			buf:    make([]byte, codec.MTU),
+			buf:    make([]byte, transport.MTU),
 		}
 		sessions.AddSession(ses)
 	} else {
@@ -47,10 +45,10 @@ func (s *session) Send(msg interface{}) {
 	var err error
 	if s.remote == nil {
 		logs.Info("client send msg ")
-		err = codec.SendPacket(s.conn, msg)
+		err = transport.SendPacket(s.conn, msg)
 	} else {
 		logs.Info("server send msg ")
-		err = codec.SendUdpPacket(s.conn, msg, s.remote)
+		err = transport.SendUdpPacket(s.conn, msg, s.remote)
 	}
 	if err != nil {
 		logs.Error("sesssion_%v close error,reason is %v", s.ID(), err)

@@ -1,6 +1,7 @@
 package gonet
 
 import (
+	"github.com/zjllib/gonet/v3/codec"
 	"log"
 	"reflect"
 	"sync"
@@ -20,6 +21,10 @@ type System struct {
 	msgIDs map[reflect.Type]MessageID
 	//server types
 	sessionType reflect.Type
+	//消息编码器
+	defaultCodec codec.Codec
+	//服务端
+	server Server
 }
 
 func init() {
@@ -36,14 +41,26 @@ func init() {
 	}
 }
 
-func NewService(opts ...options) Service {
+func NewServer(opts ...options) Server {
 	option := Option{}
 	for _, f := range opts {
 		f(&option)
 	}
-	peer := peers[option.tpl]
-	peer.(interface{ setAddr(string) }).setAddr(option.addr)
-	return peer
+	switch option.contentType {
+	case codec.Binary:
+		sys.defaultCodec = codec.BinaryCodec{}
+	case codec.Xml:
+		sys.defaultCodec = codec.XmlCodec{}
+	case codec.Protobuf:
+		sys.defaultCodec = codec.JsonCodec{}
+	default:
+		sys.defaultCodec = codec.JsonCodec{}
+	}
+	if sys.server == nil {
+		panic(ErrorNoTransport)
+	}
+	sys.server.(interface{ setAddr(string) }).setAddr(option.addr)
+	return sys.server
 }
 
 //获取会话
@@ -121,9 +138,20 @@ func CreateMsg(msgID MessageID) interface{} {
 	return nil
 }
 
-//设置会话类型
-func SetSessionType(session Session) {
+//初始化服务端
+func RegisterServer(server Server, session Session) {
 	sys.Do(func() {
+		sys.server = server
 		sys.sessionType = reflect.TypeOf(session)
 	})
+}
+
+//编码消息
+func EncodeMessage(msg interface{}) ([]byte, error) {
+	return sys.defaultCodec.Encode(msg)
+}
+
+// 解码消息
+func DecodeMessage(msg interface{}, data []byte) error {
+	return sys.defaultCodec.Decode(data, msg)
 }

@@ -12,13 +12,9 @@ const (
 	RPC  TransportProtocol = "rpc"
 )
 
-var (
-	peers = map[TransportProtocol]Service{}
-)
-
 type (
 	//服务端
-	Service interface {
+	Server interface {
 		// 开启服务
 		Start() error
 		// 停止服务
@@ -40,8 +36,4 @@ func (s *ServerIdentify) Addr() string {
 
 func (s *ServerIdentify) setAddr(addr string) {
 	s.addr = addr
-}
-
-func RegisterPeer(peer Service) {
-	peers[peer.(interface{ Type() PeerType }).Type()] = peer
 }

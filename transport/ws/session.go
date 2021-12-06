@@ -3,7 +3,7 @@ package ws
 import (
 	"github.com/gorilla/websocket"
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/codec"
+	"github.com/zjllib/gonet/v3/transport"
 	"log"
 )
 
@@ -15,7 +15,7 @@ type session struct {
 }
 
 func init() {
-	SetSessionType(&session{})
+	RegisterServer(&server{}, &session{})
 }
 
 //新会话
@@ -32,7 +32,7 @@ func (s *session) Close() error {
 
 //websocket does not support sending messages concurrently
 func (s *session) Send(msg interface{}) error {
-	return codec.SendWSPacket(s.conn, msg)
+	return transport.SendWSPacket(s.conn, msg)
 }
 
 //循环读取消息
@@ -44,7 +44,7 @@ func (s *session) recvLoop() {
 			RecycleSession(s)
 			return
 		}
-		msg, err := codec.ParserWSPacket(pkt)
+		msg, err := transport.ParserWSPacket(pkt)
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue

@@ -1,4 +1,4 @@
-package codec
+package transport
 
 import (
 	"encoding/binary"
@@ -46,7 +46,7 @@ const (
 //----------------------------------------------【发送包】--------------------------------------------------
 func SendPacket(w io.Writer, msg interface{}) error {
 	// 将用户数换为字节数组和消息ID
-	body, err := encodeMessage(msg)
+	body, err := EncodeMessage(msg)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func SendPacket(w io.Writer, msg interface{}) error {
 
 func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 	// 将用户数换为字节数组和消息ID
-	body, err := encodeMessage(msg)
+	body, err := EncodeMessage(msg)
 	if err != nil {
 		return err
 	}
@@ -89,16 +89,17 @@ func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 
 //----------------------------------------------【ws】--------------------------------------------------
 func ParserWSPacket(pkt []byte) (*Message, error) {
-	msgID := Bytes2Uint32(pkt[:msgIDOffset])
-	msg, err := decodeMessage(msgID, pkt[msgIDOffset:])
+	msgID := MessageID(Bytes2Uint32(pkt[:msgIDOffset]))
+	newMsg := CreateMsg(msgID)
+	err := DecodeMessage(newMsg, pkt[msgIDOffset:])
 	if err != nil {
 		return nil, err
 	}
-	return &Message{ID: MessageID(msgID), Body: msg}, err
+	return &Message{ID: MessageID(msgID), Body: newMsg}, err
 }
 
 func SendWSPacket(w *websocket.Conn, msg interface{}) error {
-	arrBytes, err := encodeMessage(msg)
+	arrBytes, err := EncodeMessage(msg)
 	if err != nil {
 		return err
 	}

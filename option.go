@@ -20,6 +20,8 @@ type Option struct {
 	maxSessionCount int
 	//最小限制是1
 	maxWorkerPoolSize int32
+	//contentType
+	contentType string
 }
 
 type options func(o *Option)
@@ -33,5 +35,12 @@ func WithMaxSessions(max int) options {
 func WithMaxWorkerPoolSize(max int32) options {
 	return func(o *Option) {
 		o.maxWorkerPoolSize = max
+	}
+}
+
+// Default content type of the client
+func ContentType(ct string) options {
+	return func(o *Option) {
+		o.contentType = ct
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	. "github.com/zjllib/gonet/v3"
 	"github.com/zjllib/gonet/v3/codec"
+	"github.com/zjllib/gonet/v3/transport"
 	"net"
 )
 
@@ -35,7 +36,7 @@ func (s *session) Socket() interface{} {
 }
 
 func (s *session) Send(msg interface{}) error {
-	return codec.SendPacket(s.conn, msg)
+	return transport.SendPacket(s.conn, msg)
 }
 
 func (s *session) Close() error {
