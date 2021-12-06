@@ -1,44 +1,30 @@
 package main
 
 import (
-	"github.com/astaxie/beego/logs"
-	"github.com/zjllib/gonet"
-	"github.com/zjllib/gonet/demo/ws/proto"
-	_ "github.com/zjllib/gonet/peer/ws"
-	_ "github.com/zjllib/gonet/v3/json"
-	"time"
-)
-
-var loginScene server
-
-const (
-	SceneLogin uint8 = 1
+	"github.com/zjllib/gonet/v3"
+	_ "github.com/zjllib/gonet/v3/transport/ws"
+	"log"
 )
 
 func init() {
-	//登录场景
-	gonet.AddCommonScene(SceneLogin, loginScene)
-	gonet.RegisterMsg(SceneLogin, gonet.MsgIDSessionConnect, gonet.SessionConnect{})
-	gonet.RegisterMsg(SceneLogin, gonet.MsgIDSessionClose, gonet.SessionClose{})
-	gonet.RegisterMsg(SceneLogin, proto.MsgIDPing, proto.Ping{})
-	gonet.RegisterMsg(SceneLogin, proto.MsgIDPong, proto.Pong{})
+	gonet.RegisterMsg(gonet.SessionConnect, nil, Handler)
+	gonet.RegisterMsg(gonet.SessionClose, nil, Handler)
 }
 
 func main() {
-	server := gonet.NewServer("ws://localhost:8088/center/ws")
-	server.Start()
+	server := gonet.NewServer(
+		gonet.Address("ws://localhost:8088/center/ws"),
+		gonet.MaxWorkerPoolSize(20))
+	if err := server.Start(); err != nil {
+		log.Fatal(err)
+	}
 }
 
-type server struct {
-}
+func Handler(msg *gonet.Message) {
+	switch msg.ID {
+	case gonet.SessionConnect:
+	case gonet.SessionClose:
+	default:
 
-func (server) Handler(msg *gonet.Msg) {
-	switch data := msg.Data.(type) {
-	case *gonet.SessionConnect:
-		logs.Info("session_%d connected at %v", msg.Session.ID(), time.Now())
-	case *gonet.SessionClose:
-		logs.Warn("session_%d close at %v", msg.Session.ID(), time.Now())
-	case *proto.Ping:
-		logs.Info("session_%d ping at %d", msg.Session.ID(), data.At)
 	}
 }

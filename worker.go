@@ -25,7 +25,7 @@ type WorkerPool struct {
 }
 
 //初始化协程池
-func NewWorkerPool(size int32) (pool WorkerPool) {
+func newWorkerPool(size int32) (pool WorkerPool) {
 	pool = WorkerPool{
 		createWorkerCh: make(chan int),
 		receiveMsgCh:   make(chan *Message, receiveQueueSize),

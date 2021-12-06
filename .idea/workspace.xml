@@ -21,7 +21,12 @@
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]v3&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,10 +99,13 @@
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="editing.templates" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -119,7 +127,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build client.go (2)">
+  <component name="RunManager" selected="Go Build.go build server.go (2)">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
@@ -186,8 +194,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build client.go (2)" />
         <item itemvalue="Go Build.go build server.go (2)" />
+        <item itemvalue="Go Build.go build client.go (2)" />
         <item itemvalue="Go Build.go build server.go" />
         <item itemvalue="Go Build.go build client.go" />
         <item itemvalue="Go Build.go build main.go" />
@@ -273,14 +281,34 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="752" y="450" key="#GOROOT/0.0.1920.1040@0.0.1920.1040" timestamp="1631614887868" />
-    <state x="2" y="145" width="998" height="714" key="SettingsEditor" timestamp="1638495648160">
+    <state x="797" y="414" key="#com.intellij.codeInsight.template.impl.EditVariableDialog" timestamp="1638783908503">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="2" y="145" width="998" height="714" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1638495648160" />
-    <state width="498" height="446" key="SwitcherDM" timestamp="1638779330463">
+    <state x="797" y="414" key="#com.intellij.codeInsight.template.impl.EditVariableDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1638783908503" />
+    <state width="1877" height="207" key="GridCell.Tab.0.bottom" timestamp="1638780151599">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1638779330463" />
+    <state width="1877" height="207" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1638780151599" />
+    <state width="1877" height="207" key="GridCell.Tab.0.center" timestamp="1638780151599">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="207" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1638780151599" />
+    <state width="1877" height="207" key="GridCell.Tab.0.left" timestamp="1638780151599">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="207" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1638780151599" />
+    <state width="1877" height="207" key="GridCell.Tab.0.right" timestamp="1638780151599">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="207" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1638780151599" />
+    <state x="582" y="228" width="998" height="714" key="SettingsEditor" timestamp="1638784644511">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="582" y="228" width="998" height="714" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1638784644511" />
+    <state width="498" height="446" key="SwitcherDM" timestamp="1638785354287">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1638785354287" />
     <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1638526343258">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

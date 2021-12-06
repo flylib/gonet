@@ -28,13 +28,13 @@ type Option struct {
 
 type options func(o *Option)
 
-func WithMaxSessions(max int) options {
+func MaxSessions(max int) options {
 	return func(o *Option) {
 		o.maxSessionCount = max
 	}
 }
 
-func WithMaxWorkerPoolSize(max int32) options {
+func MaxWorkerPoolSize(max int32) options {
 	return func(o *Option) {
 		o.maxWorkerPoolSize = max
 	}
@@ -44,5 +44,12 @@ func WithMaxWorkerPoolSize(max int32) options {
 func ContentType(ct string) options {
 	return func(o *Option) {
 		o.contentType = ct
+	}
+}
+
+// Address sets the address of the server
+func Address(ct string) options {
+	return func(o *Option) {
+		o.addr = ct
 	}
 }

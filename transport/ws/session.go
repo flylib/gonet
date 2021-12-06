@@ -23,6 +23,10 @@ func newSession(conn *websocket.Conn) *session {
 	ses := CreateSession()
 	newSession, _ := ses.(*session)
 	newSession.conn = conn
+	CacheMsg(&Message{
+		Session: newSession,
+		ID:      SessionConnect,
+	})
 	return newSession
 }
 
@@ -50,6 +54,6 @@ func (s *session) recvLoop() {
 			continue
 		}
 		msg.Session = s
-		PushWorkerPool(msg)
+		CacheMsg(msg)
 	}
 }

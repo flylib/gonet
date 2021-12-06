@@ -47,6 +47,9 @@ func init() {
 				},
 			},
 		},
+		msgTypes:  map[MessageID]reflect.Type{},
+		msgIDs:    map[reflect.Type]MessageID{},
+		mHandlers: map[MessageID]Handler{},
 	}
 }
 
@@ -68,7 +71,7 @@ func NewServer(opts ...options) Server {
 	default:
 		sys.defaultCodec = codec.JsonCodec{}
 	}
-	sys.workers = NewWorkerPool(option.workerPoolSize)
+	sys.workers = newWorkerPool(option.workerPoolSize)
 	sys.server.(interface{ setAddr(string) }).setAddr(option.addr)
 	return sys.server
 }
@@ -92,6 +95,10 @@ func CreateSession() Session {
 
 //回收会话对象
 func RecycleSession(session Session) {
+	CacheMsg(&Message{
+		Session: session,
+		ID:      SessionClose,
+	})
 	//关闭
 	session.Close()
 	//删除
@@ -122,16 +129,20 @@ func Broadcast(msg interface{}) {
 }
 
 //映射消息体
-func RegisterMsg(msgID MessageID, msg interface{}) {
+func RegisterMsg(msgID MessageID, msg interface{}, f Handler) {
 	sys.Lock()
 	defer sys.Unlock()
 	msgType := reflect.TypeOf(msg)
 	if _, ok := sys.msgTypes[msgID]; ok {
 		panic("error:Duplicate message id")
-	} else {
+	}
+	if msgType != nil {
+		sys.msgIDs[msgType] = msgID
 		sys.msgTypes[msgID] = msgType
 	}
-	sys.msgIDs[msgType] = msgID
+	if f != nil {
+		sys.mHandlers[msgID] = f
+	}
 }
 
 //获取消息ID
