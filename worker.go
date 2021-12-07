@@ -28,7 +28,7 @@ type WorkerPool struct {
 	//消息溢满通知
 	overflowNotifyCh chan int
 	//消息缓存
-	msgList *list.List
+	cacheList *list.List
 }
 
 //初始化协程池
@@ -37,7 +37,7 @@ func newWorkerPool(size int32) (pool WorkerPool) {
 		createWorkerCh:   make(chan int),
 		overflowNotifyCh: make(chan int, 1),
 		receiveMsgCh:     make(chan *Message, receiveQueueSize),
-		msgList:          list.New(),
+		cacheList:        list.New(),
 	}
 	pool.run()
 	pool.createWorker(size)
@@ -63,7 +63,7 @@ func (w *WorkerPool) handle(msg *Message) {
 	if len(sys.workers.receiveMsgCh) >= receiveQueueSize {
 		w.Lock()
 		defer w.Unlock()
-		w.msgList.PushFront(msg)
+		w.cacheList.PushFront(msg)
 		if len(w.overflowNotifyCh) < 1 {
 			w.overflowNotifyCh <- 1
 		}
@@ -99,10 +99,10 @@ func (w *WorkerPool) run() {
 	//消息缓存处理
 	go func() {
 		for {
-			if e := w.msgList.Back(); e != nil {
+			if e := w.cacheList.Back(); e != nil {
 				msg := e.Value.(*Message)
 				w.receiveMsgCh <- msg
-				w.msgList.Remove(e)
+				w.cacheList.Remove(e)
 			} else {
 				<-w.overflowNotifyCh
 			}

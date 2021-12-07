@@ -21,7 +21,7 @@ const (
 //ws://192.168.0.125:8088/game/blockInfo
 func main() {
 	for {
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 1)
 		go test()
 	}
 }

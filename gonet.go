@@ -85,8 +85,8 @@ func GetSession(id uint64) (Session, bool) {
 //创建会话
 func CreateSession() Session {
 	obj := sys.pool.Get()
-	sys.incr = atomic.AddUint64(&sys.incr, 1)
-	sys.store(sys.incr, obj)
+	//sys.incr = atomic.AddUint64(&sys.incr, 1)
+	sys.store(atomic.AddUint64(&sys.incr, 1), obj)
 	session := obj.(Session)
 	return session
 }
