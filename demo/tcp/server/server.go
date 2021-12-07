@@ -1,9 +1,8 @@
 package main
 
 import (
-	"github.com/zjllib/gonet"
-	_ "github.com/zjllib/gonet/peer/tcp"
-	_ "github.com/zjllib/gonet/v3/json"
+	"github.com/zjllib/gonet/v3"
+	_ "github.com/zjllib/gonet/v3/transport/tcp"
 )
 
 func main() {

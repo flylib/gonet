@@ -1,6 +1,9 @@
 package gonet
 
-import "sync"
+import (
+	"net"
+	"sync"
+)
 
 ///////////////////////////////
 /////    Session POOL   //////
@@ -18,6 +21,8 @@ type Session interface {
 	Store(key, value interface{})
 	//获取键值对
 	Load(key interface{}) (value interface{}, ok bool)
+	//地址
+	RemoteAddr() net.Addr
 }
 
 type (

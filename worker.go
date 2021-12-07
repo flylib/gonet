@@ -50,13 +50,6 @@ func (w *WorkerPool) createWorker(count int32) {
 		w.createWorkerCh <- 1
 	}
 }
-func (w *WorkerPool) destroyWorker(count int32) {
-	for i := int32(0); i < count; i++ {
-		w.receiveMsgCh <- &Message{
-			ID: MsgIDDecPoolSize,
-		}
-	}
-}
 
 //运行
 func (w *WorkerPool) run() {

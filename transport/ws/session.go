@@ -5,6 +5,7 @@ import (
 	. "github.com/zjllib/gonet/v3"
 	"github.com/zjllib/gonet/v3/transport"
 	"log"
+	"net"
 )
 
 // webSocket conn
@@ -28,6 +29,10 @@ func newSession(conn *websocket.Conn) *session {
 		ID:      SessionConnect,
 	})
 	return newSession
+}
+
+func (s *session) RemoteAddr() net.Addr {
+	return s.conn.RemoteAddr()
 }
 
 func (s *session) Close() error {
