@@ -16,7 +16,7 @@ type session struct {
 }
 
 func init() {
-	RegisterServer(&server{}, &session{})
+	RegisterServer(&server{}, session{})
 }
 
 //新会话
@@ -49,8 +49,7 @@ func (s *session) recvLoop() {
 	for {
 		_, pkt, err := s.conn.ReadMessage()
 		if err != nil {
-			log.Printf("session_%v closed, %v \n", s.ID(), err)
-			RecycleSession(s)
+			RecycleSession(s, err)
 			return
 		}
 		msg, err := transport.ParserWSPacket(pkt)

@@ -94,10 +94,11 @@ func CreateSession() Session {
 }
 
 //回收会话对象
-func RecycleSession(session Session) {
+func RecycleSession(session Session, err error) {
 	CacheMsg(&Message{
 		Session: session,
 		ID:      SessionClose,
+		Body:    err,
 	})
 	//关闭
 	session.Close()
@@ -160,8 +161,8 @@ func CreateMsg(msgID MessageID) interface{} {
 }
 
 //初始化服务端
-func RegisterServer(server Server, session Session) {
-	sys.Do(func() {
+func RegisterServer(server Server, session interface{}) {
+	sys.Once.Do(func() {
 		sys.server = server
 		sys.sessionType = reflect.TypeOf(session)
 	})

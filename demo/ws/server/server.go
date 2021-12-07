@@ -1,14 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3/demo/proto"
 	_ "github.com/zjllib/gonet/v3/transport/ws"
 	"log"
+	"reflect"
 )
 
 func init() {
 	gonet.RegisterMsg(gonet.SessionConnect, nil, Handler)
 	gonet.RegisterMsg(gonet.SessionClose, nil, Handler)
+	gonet.RegisterMsg(101, proto.Say{}, Handler)
 }
 
 func main() {
@@ -26,7 +30,10 @@ func Handler(msg *gonet.Message) {
 	case gonet.SessionConnect:
 		log.Println("connected session_id:", msg.Session.ID(), " ip:", msg.Session.RemoteAddr().String())
 	case gonet.SessionClose:
-		log.Println("connected session_id:", msg.Session.ID())
+		log.Println("connected session_id:", msg.Session.ID(), " error:", msg.Body)
+	case 101:
+		fmt.Println(msg.Body)
+		fmt.Println(reflect.TypeOf(msg.Body))
 	default:
 		log.Println("unknown session_id:", msg.ID)
 	}
