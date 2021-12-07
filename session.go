@@ -40,3 +40,7 @@ type (
 func (s SessionIdentify) ID() uint64 {
 	return s.id
 }
+
+func (s SessionIdentify) setID(id uint64) {
+	s.id = id
+}
