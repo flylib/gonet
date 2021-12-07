@@ -146,7 +146,7 @@ func RegisterMsg(msgID MessageID, msg interface{}, f Handler) {
 //获取消息ID
 func GetMsgID(msg interface{}) (MessageID, bool) {
 	msgID, ok := sys.msgIDs[reflect.TypeOf(msg)]
-	return MessageID(msgID), ok
+	return msgID, ok
 }
 
 //通消息id创建消息体
