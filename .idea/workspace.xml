@@ -19,12 +19,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]v3 &#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]workers&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +262,9 @@
     <MESSAGE value="[update]change session to conn&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
     <MESSAGE value="[update]v3&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
     <MESSAGE value="[update]v3 &#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <option name="LAST_COMMIT_MESSAGE" value="[update]v3 &#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
+    <MESSAGE value="[update]v3 阶段完成&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
+    <MESSAGE value="[update]workers&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="[update]workers&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

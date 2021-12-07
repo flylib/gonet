@@ -1,7 +1,6 @@
 package gonet
 
 import (
-	"container/list"
 	"github.com/zjllib/gonet/v3/codec"
 	"log"
 	"reflect"
@@ -28,8 +27,6 @@ type System struct {
 	defaultCodec codec.Codec
 	//服务端
 	server Server
-	//消息缓存
-	msgList list.List
 	//携程池
 	workers WorkerPool
 	//消息钩子
@@ -180,9 +177,5 @@ func DecodeMessage(msg interface{}, data []byte) error {
 
 //缓存消息
 func CacheMsg(msg *Message) {
-	if len(sys.workers.receiveMsgCh) >= receiveQueueSize {
-		sys.msgList.PushBack(msg)
-	} else {
-		sys.workers.receiveMsgCh <- msg
-	}
+	sys.workers.handle(msg)
 }
