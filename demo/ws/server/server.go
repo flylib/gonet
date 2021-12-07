@@ -6,7 +6,6 @@ import (
 	"github.com/zjllib/gonet/v3/demo/proto"
 	_ "github.com/zjllib/gonet/v3/transport/ws"
 	"log"
-	"reflect"
 )
 
 func init() {
@@ -32,8 +31,8 @@ func Handler(msg *gonet.Message) {
 	case gonet.SessionClose:
 		log.Println("connected session_id:", msg.Session.ID(), " error:", msg.Body)
 	case 101:
-		fmt.Println(msg.Body)
-		fmt.Println(reflect.TypeOf(msg.Body))
+		fmt.Println("session_id:", msg.Session.ID(), " say ", msg.Body.(*proto.Say).Content)
+		//fmt.Println(reflect.TypeOf(msg.Body))
 	default:
 		log.Println("unknown session_id:", msg.ID)
 	}

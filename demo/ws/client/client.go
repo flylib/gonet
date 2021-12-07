@@ -20,6 +20,13 @@ const (
 //ws://47.57.65.221:8088/game/blockInfo
 //ws://192.168.0.125:8088/game/blockInfo
 func main() {
+	for {
+		time.Sleep(time.Second * 10)
+		go test()
+	}
+}
+
+func test() {
 	dialer := websocket.Dialer{
 		Proxy:            http.ProxyFromEnvironment,
 		HandshakeTimeout: 5 * time.Second,
@@ -30,7 +37,7 @@ func main() {
 	}
 
 	go func() {
-		tick := time.Tick(time.Second * 2)
+		tick := time.Tick(time.Second * 10)
 		for {
 			<-tick
 
