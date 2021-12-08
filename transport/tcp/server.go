@@ -10,6 +10,10 @@ type server struct {
 	ln net.Listener
 }
 
+func init() {
+	RegisterServer(&server{}, session{})
+}
+
 func (s *server) Start() error {
 	ln, err := net.Listen(string(TCP), s.Addr())
 	if err != nil {
@@ -33,9 +37,3 @@ func (s *server) newConn(conn net.Conn) {
 	ses := newSession(conn)
 	ses.recvLoop()
 }
-
-//func SetUP() {
-//	identify := PeerIdentify{}
-//	identify.SetType(PeertypeServer)
-//	RegisterPeer(&server{PeerIdentify: identify})
-//}

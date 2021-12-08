@@ -1,10 +1,9 @@
 package tcp
 
 import (
-	"github.com/astaxie/beego/logs"
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/codec"
 	"github.com/zjllib/gonet/v3/transport"
+	"log"
 	"net"
 )
 
@@ -18,9 +17,8 @@ type session struct {
 	recvCount uint64
 	//raw conn
 	conn net.Conn
-	buf  []byte
 	//缓存数据，用于解决粘包问题
-	//cache []byte
+	cache []byte
 }
 
 //新会话
@@ -30,9 +28,8 @@ func newSession(conn net.Conn) *session {
 	return ses.(*session)
 }
 
-// 取原始连接
-func (s *session) Socket() interface{} {
-	return s.conn
+func (s *session) RemoteAddr() net.Addr {
+	return s.conn.RemoteAddr()
 }
 
 func (s *session) Send(msg interface{}) error {
@@ -40,33 +37,35 @@ func (s *session) Send(msg interface{}) error {
 }
 
 func (s *session) Close() error {
-	if err := s.conn.Close(); err != nil {
-		return err
-	}
-	s.SessionStore = SessionStore{}
-	return nil
+	return s.conn.Close()
 }
 
 // 接收循环
 func (s *session) recvLoop() {
 	for {
-		n, err := s.conn.Read(s.buf)
+		var buf []byte
+		n, err := s.conn.Read(buf)
 		if err != nil {
-			logs.Error("session_%v closed,reason is %v", s.ID(), err)
-			//recycle session
-			RecycleSession(s)
-			break
+			RecycleSession(s, err)
+			return
 		}
-		actorIDx, msg, err := codec.ParserPacket(s.buf[:n])
+		//如果有粘包未处理数据部分，放入本次进行处理
+		if len(s.cache) > 0 {
+			buf = append(s.cache, buf[:n]...)
+			n = len(buf)
+			s.cache = nil
+		}
+		msg, unUsedCount, err := transport.ParserPacket(buf[:n])
 		if err != nil {
-			logs.Warn("msg parser error,reason is %v", err)
+			s.cache = nil
+			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
 		}
-		controller, err := s.GetController(actorIDx)
-		if err != nil {
-			logs.Warn("session_%v get controller_%v error, reason is %v", s.ID(), actorIDx, err)
-			continue
+		//存储未使用部分
+		if unUsedCount > 0 {
+			s.cache = append(s.cache, buf[len(buf)-unUsedCount-1:]...)
 		}
-		HandleEvent(controller, s, msg)
+		msg.Session = s
+		CacheMsg(msg)
 	}
 }
