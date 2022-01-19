@@ -87,7 +87,7 @@ git clone https://github.com/zjllib/gonet.git
     		fmt.Println("session_id:", msg.Session.ID(), " say ", msg.Body.(*proto.Say).Content)
     		//fmt.Println(reflect.TypeOf(msg.Body))
     	default:
-    		log.Println("unknown session_id:", msg.ID)
+    		log.Println("unknown message id:", msg.ID)
     	}
     }
 
