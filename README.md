@@ -1,5 +1,5 @@
 
-![gonetlogo](./logo.jpg)
+![gonetlogo](docs/logo.jpg)
 ## version
  v 2.0.0
 ## 介绍
