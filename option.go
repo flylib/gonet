@@ -24,6 +24,8 @@ type Option struct {
 	contentType string
 	//worker pool size
 	workerPoolSize int32
+	//cache for messages
+	msgCache MessageCache
 }
 
 type options func(o *Option)
@@ -51,5 +53,12 @@ func ContentType(ct string) options {
 func Address(ct string) options {
 	return func(o *Option) {
 		o.addr = ct
+	}
+}
+
+//cache for messages
+func WithMessageCache(cache MessageCache) options {
+	return func(o *Option) {
+		o.msgCache = cache
 	}
 }

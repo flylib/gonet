@@ -68,7 +68,11 @@ func NewServer(opts ...options) Server {
 	default:
 		sys.defaultCodec = codec.JsonCodec{}
 	}
-	sys.workers = newWorkerPool(option.workerPoolSize)
+	cache := option.msgCache
+	if cache == nil {
+		cache = MessageList{}
+	}
+	sys.workers = createWorkerPool(option.workerPoolSize, cache)
 	sys.server.(interface{ setAddr(string) }).setAddr(option.addr)
 	return sys.server
 }

@@ -1,10 +1,8 @@
 package gonet
 
 import (
-	"container/list"
 	"log"
 	"runtime"
-	"sync"
 	"sync/atomic"
 )
 
@@ -18,26 +16,26 @@ const (
 
 //处理池
 type WorkerPool struct {
-	sync.Mutex
 	//当前池协程数量(池大小)
 	size int32
-	//接受消息通道
-	receiveMsgCh chan *Message
+	//接受处理消息通道
+	rcvMsgCh, handleMsgCh chan *Message
 	//创建协程通知
 	createWorkerCh chan int
 	//消息溢满通知
 	overflowNotifyCh chan int
 	//消息缓存
-	cacheList *list.List
+	msgCache MessageCache
 }
 
 //初始化协程池
-func newWorkerPool(size int32) (pool WorkerPool) {
+func createWorkerPool(size int32, msgCache MessageCache) (pool WorkerPool) {
 	pool = WorkerPool{
 		createWorkerCh:   make(chan int),
 		overflowNotifyCh: make(chan int, 1),
-		receiveMsgCh:     make(chan *Message, receiveQueueSize),
-		cacheList:        list.New(),
+		rcvMsgCh:         make(chan *Message, receiveQueueSize),
+		handleMsgCh:      make(chan *Message, receiveQueueSize),
+		msgCache:         msgCache,
 	}
 	pool.run()
 	pool.createWorker(size)
@@ -60,20 +58,23 @@ func (w *WorkerPool) createWorker(count int32) {
 	}
 }
 func (w *WorkerPool) handle(msg *Message) {
-	if len(sys.workers.receiveMsgCh) >= receiveQueueSize {
-		w.Lock()
-		defer w.Unlock()
-		w.cacheList.PushFront(msg)
+	if len(w.handleMsgCh) >= receiveQueueSize {
+		w.msgCache.Push(msg)
 		if len(w.overflowNotifyCh) < 1 {
 			w.overflowNotifyCh <- 1
 		}
 	} else {
-		sys.workers.receiveMsgCh <- msg
+		w.handleMsgCh <- msg
 	}
 }
 
 //运行
 func (w *WorkerPool) run() {
+	go func() {
+		for msg := range w.rcvMsgCh {
+			w.handle(msg)
+		}
+	}()
 	go func() {
 		for range w.createWorkerCh {
 			w.incPoolSize()
@@ -88,7 +89,7 @@ func (w *WorkerPool) run() {
 					}
 					w.createWorkerCh <- 1
 				}()
-				for msg := range w.receiveMsgCh {
+				for msg := range w.handleMsgCh {
 					if f, ok := sys.mHandlers[msg.ID]; ok {
 						f(msg)
 					}
@@ -99,10 +100,8 @@ func (w *WorkerPool) run() {
 	//消息缓存处理
 	go func() {
 		for {
-			if e := w.cacheList.Back(); e != nil {
-				msg := e.Value.(*Message)
-				w.receiveMsgCh <- msg
-				w.cacheList.Remove(e)
+			if e := w.msgCache.Pop(); e != nil {
+				w.handleMsgCh <- e
 			} else {
 				<-w.overflowNotifyCh
 			}
