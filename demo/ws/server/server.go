@@ -10,9 +10,9 @@ import (
 
 func init() {
 	//消息路由
-	gonet.RegisterMsg(gonet.SessionConnect, nil, Handler)
-	gonet.RegisterMsg(gonet.SessionClose, nil, Handler)
-	gonet.RegisterMsg(101, proto.Say{}, Handler)
+	gonet.Route(gonet.SessionConnect, nil, Handler)
+	gonet.Route(gonet.SessionClose, nil, Handler)
+	gonet.Route(101, proto.Say{}, Handler)
 }
 
 func main() {

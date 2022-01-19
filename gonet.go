@@ -132,7 +132,7 @@ func Broadcast(msg interface{}) {
 }
 
 //映射消息体
-func RegisterMsg(msgID MessageID, msg interface{}, f Handler) {
+func Route(msgID MessageID, msg interface{}, f Handler) {
 	sys.Lock()
 	defer sys.Unlock()
 	msgType := reflect.TypeOf(msg)

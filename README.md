@@ -60,11 +60,11 @@ git clone https://github.com/zjllib/gonet.git
     	_ "github.com/zjllib/gonet/v3/transport/ws" //协议
     	"log"
     )
-    //注册消息路由
+    //消息路由
     func init() {
-    	gonet.RegisterMsg(gonet.SessionConnect, nil, Handler)
-    	gonet.RegisterMsg(gonet.SessionClose, nil, Handler)
-    	gonet.RegisterMsg(101, proto.Say{}, Handler)
+    	gonet.Route(gonet.SessionConnect, nil, Handler)
+    	gonet.Route(gonet.SessionClose, nil, Handler)
+    	gonet.Route(101, proto.Say{}, Handler)
     }
     
     func main() {

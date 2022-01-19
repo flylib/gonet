@@ -19,10 +19,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="add docs folder">
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]done tcp&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,15 +109,15 @@
     <property name="settings.editor.selected.configurable" value="go.vgo" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="F:\go\project\goNet\demo\pprof" />
-      <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\go\project\others\goNet\docs" />
       <recent name="D:\go\project\others\goNet\codec" />
       <recent name="D:\go\project\others\goNet\transport" />
       <recent name="E:\goNet" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\go\project\goNet\demo\pprof" />
+      <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
     </key>
   </component>
   <component name="RemoteSynchronizer">
@@ -359,10 +360,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1642561076442" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1642563558006">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1642582762478">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1642563558006" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1642582762478" />
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1638933810692">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
