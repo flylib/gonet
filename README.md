@@ -1,9 +1,17 @@
 
 ![gonetlogo](docs/logo.jpg)
 ## version
- v 2.0.0
+ v3
+ 
 ## 介绍
-一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[beego](https://github.com/astaxie/beego)两大开框架的设计，使用非常方便简洁，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域的通讯。
+一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[gin](https://github.com/gin-gonic/gin) 两大开框架的设计，使用非常方便简洁，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域的通讯。
+
+## 主要技术理念
+- Session pool 会话池
+- Routine pool  消息处理协程池
+- Message cache layer 消息缓存层
+- Message ID route 依据消息ID进行路由
+
 
 ## 主要特性及追求目标
 - 高并发
@@ -11,6 +19,7 @@
 - 简单易用
 - 线性安全
 - 兼容性强
+- 高度可配置
 - 多领域应用
 - 防崩溃
 - 错误快速定位
@@ -41,55 +50,50 @@ git clone https://github.com/zjllib/gonet.git
 ```
 
 ## 使用样例参考
-- 服务端
 ```go
-	func main() {
-	server := gonet.NewServer("ws://localhost:8088/center/ws")
-	server.Start()
-}
-```
-- 客户端
-```go
-	client := gonet.NewClient("ws://localhost:8088/center/ws")
-	client.Start()
-```
-- 消息处理实现及注册
-```go
-//系统消息
-const (
-	MsgIDDecPoolSize uint32 = iota
-	MsgIDSessionConnect
-	MsgIDSessionClose
-)
-//消息注入
-func init() {
-	gonet.RegisterMsg(SceneLogin, gonet.MsgIDSessionConnect, gonet.SessionConnect{})
-	gonet.RegisterMsg(SceneLogin, gonet.MsgIDSessionClose, gonet.SessionClose{})
-	gonet.RegisterMsg(SceneLogin, proto.MsgIDPing, proto.Ping{})
-	gonet.RegisterMsg(SceneLogin, proto.MsgIDPong, proto.Pong{})
-}
+	package main
+    
+    import (
+    	"fmt"
+    	"github.com/zjllib/gonet/v3"
+    	"github.com/zjllib/gonet/v3/demo/proto"
+    	_ "github.com/zjllib/gonet/v3/transport/ws" //协议
+    	"log"
+    )
+    //注册消息路由
+    func init() {
+    	gonet.RegisterMsg(gonet.SessionConnect, nil, Handler)
+    	gonet.RegisterMsg(gonet.SessionClose, nil, Handler)
+    	gonet.RegisterMsg(101, proto.Say{}, Handler)
+    }
+    
+    func main() {
+    	server := gonet.NewServer(
+    		gonet.Address("ws://localhost:8088/center/ws"), //listen addr
+    		gonet.MaxWorkerPoolSize(20))
+    	log.Printf("server listening on %s", server.Addr())
+    	if err := server.Start(); err != nil {
+    		log.Fatal(err)
+    	}
+    }
+    //消息处理函数
+    func Handler(msg *gonet.Message) {
+    	switch msg.ID {
+    	case gonet.SessionConnect:
+    		log.Println("connected session_id:", msg.Session.ID(), " ip:", msg.Session.RemoteAddr().String())
+    	case gonet.SessionClose:
+    		log.Println("connected session_id:", msg.Session.ID(), " error:", msg.Body)
+    	case 101:
+    		fmt.Println("session_id:", msg.Session.ID(), " say ", msg.Body.(*proto.Say).Content)
+    		//fmt.Println(reflect.TypeOf(msg.Body))
+    	default:
+    		log.Println("unknown session_id:", msg.ID)
+    	}
+    }
 
-//消息处理场景
-type server struct {
-}
-
-func (server) Handler(msg *gonet.Msg) {
-	switch data := msg.Data.(type) {
-	case *gonet.SessionConnect:
-		logs.Info("session_%d connected at %v", msg.Session.ID(), time.Now())
-	case *gonet.SessionClose:
-		logs.Warn("session_%d close at %v", msg.Session.ID(), time.Now())
-	case *proto.Ping:
-		logs.Info("session_%d ping at %d", msg.Session.ID(), data.At)
-	}
-}
 ```
-## 在线游戏demo
-- **使用etcd+mysql+beego+gonet+cocos creator制作**  
-服务端：大厅服+游戏服+服务注册  
-客户端：大厅+子游戏模式  
-http://116.62.245.150:8087/web-desktop/
-![display](./display_lkby.gif)
+
+
 ## 测试
 ## FAQ
 ## 参与贡献
