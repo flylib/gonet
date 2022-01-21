@@ -36,6 +36,9 @@ type System struct {
 func init() {
 	log.SetPrefix("[gonet]")
 	log.SetFlags(log.Llongfile | log.LstdFlags)
+}
+
+func init() {
 	sys = System{
 		SessionManager: SessionManager{
 			pool: sync.Pool{
@@ -70,7 +73,7 @@ func NewServer(opts ...options) Server {
 	}
 	cache := option.msgCache
 	if cache == nil {
-		cache = MessageList{}
+		cache = &MessageList{}
 	}
 	sys.workers = createWorkerPool(option.workerPoolSize, cache)
 	sys.server.(interface{ setAddr(string) }).setAddr(option.addr)
@@ -182,5 +185,5 @@ func DecodeMessage(msg interface{}, data []byte) error {
 
 //缓存消息
 func CacheMsg(msg *Message) {
-	sys.workers.handle(msg)
+	sys.workers.rcvMsgCh <- msg
 }

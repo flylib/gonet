@@ -32,7 +32,7 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 // 发送封包
-func (s *session) Send(msg interface{}) error {
+func (s *session) Send(msg interface{}, params ...interface{}) error {
 	var err error
 	if s.remote == nil {
 		err = transport.SendPacket(s.conn, msg)
@@ -43,5 +43,7 @@ func (s *session) Send(msg interface{}) error {
 }
 
 func (s *session) Close() error {
-	return s.conn.Close()
+	err := s.conn.Close()
+	s.conn = nil
+	return err
 }

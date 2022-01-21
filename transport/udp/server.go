@@ -41,7 +41,7 @@ func (u *server) Start() error {
 		} else {
 			ses = newSession(u.conn, remote)
 		}
-		msg, _, err := transport.ParserPacket(buf[:n])
+		msg, _, err := transport.ParserTcpPacket(buf[:n])
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
 			continue

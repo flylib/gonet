@@ -16,7 +16,7 @@ type Session interface {
 	//断开
 	Close() error
 	//发送消息
-	Send(msg interface{}) error
+	Send(msg interface{}, params ...interface{}) error
 	//设置键值对，存储关联数据
 	Store(key, value interface{})
 	//获取键值对

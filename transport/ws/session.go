@@ -22,13 +22,13 @@ func init() {
 //新会话
 func newSession(conn *websocket.Conn) *session {
 	ses := CreateSession()
-	newSession, _ := ses.(*session)
-	newSession.conn = conn
+	s, _ := ses.(*session)
+	s.conn = conn
 	CacheMsg(&Message{
-		Session: newSession,
+		Session: s,
 		ID:      SessionConnect,
 	})
-	return newSession
+	return s
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -36,11 +36,13 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Close() error {
-	return s.conn.Close()
+	err := s.conn.Close()
+	s.conn = nil
+	return err
 }
 
 //websocket does not support sending messages concurrently
-func (s *session) Send(msg interface{}) error {
+func (s *session) Send(msg interface{}, params ...interface{}) error {
 	return transport.SendWSPacket(s.conn, msg)
 }
 

@@ -3,6 +3,7 @@ package transport
 import (
 	"encoding/binary"
 	"github.com/gorilla/websocket"
+	"github.com/lucas-clemente/quic-go"
 	. "github.com/zjllib/gonet/v3"
 	"io"
 	"net"
@@ -11,7 +12,7 @@ import (
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+                   +              +                 +
-//+  消息总长度（2）    + 消息ID（4）   + 消息内容         +
+//+    消息总长度（2）   + 消息ID（4）   +  消息内容         +
 //+                   +              +                 +
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -22,9 +23,19 @@ const (
 	HeaderOffset  = MsgIDOffset + MsgIDOffset //包头部分
 )
 
+type Middleware interface {
+	ParserTcpPacket(data []byte) (*Message, int, error)
+	ParserWSPacket(pkt []byte) (*Message, error)
+
+	SendPacket(w io.Writer, msg interface{}) error
+	SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error
+	SendWSPacket(w *websocket.Conn, msg interface{}) error
+	SendQUICPacket(c quic.Connection, msg interface{}) error
+}
+
 //----------------------------------------------【解析包】--------------------------------------------------
 //用于处理tcp,udp等粘包问题
-func ParserPacket(data []byte) (*Message, int, error) {
+func ParserTcpPacket(data []byte) (*Message, int, error) {
 	dataSize := len(data)
 	// 小于包头
 	if dataSize < PktSizeOffset {
@@ -88,6 +99,26 @@ func SendUdpPacket(w *net.UDPConn, msg interface{}, toAddr *net.UDPAddr) error {
 		copy(pktData[HeaderOffset:], body)
 		_, err = w.WriteToUDP(pktData, toAddr)
 		return err
+	}
+	return err
+}
+func SendQUICPacket(c quic.Connection, msg interface{}) error {
+	// 将用户数换为字节数组和消息ID
+	body, err := EncodeMessage(msg)
+	if err != nil {
+		return err
+	}
+	pktData := make([]byte, HeaderOffset+len(body))
+	// Size==len(body)
+	binary.LittleEndian.PutUint16(pktData, uint16(len(body)))
+	msgID, ok := GetMsgID(reflect.TypeOf(msg))
+	if ok {
+		// ID
+		binary.LittleEndian.PutUint16(pktData[2:], uint16(msgID))
+		// Value
+		copy(pktData[HeaderOffset:], body)
+
+		return c.SendMessage(pktData)
 	}
 	return err
 }

@@ -32,12 +32,14 @@ func (s *session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *session) Send(msg interface{}) error {
+func (s *session) Send(msg interface{}, params ...interface{}) error {
 	return transport.SendPacket(s.conn, msg)
 }
 
 func (s *session) Close() error {
-	return s.conn.Close()
+	err := s.conn.Close()
+	s.conn = nil
+	return err
 }
 
 // 接收循环
@@ -55,7 +57,7 @@ func (s *session) recvLoop() {
 			n = len(buf)
 			s.cache = nil
 		}
-		msg, unUsedCount, err := transport.ParserPacket(buf[:n])
+		msg, unUsedCount, err := transport.ParserTcpPacket(buf[:n])
 		if err != nil {
 			s.cache = nil
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)

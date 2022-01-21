@@ -11,7 +11,7 @@ import (
 //////////////////////////
 
 const (
-	receiveQueueSize = 1024 //默认接收队列大小
+	receiveQueueSize = 512 //默认接收队列大小
 )
 
 //处理池
@@ -33,7 +33,7 @@ func createWorkerPool(size int32, msgCache MessageCache) (pool WorkerPool) {
 	pool = WorkerPool{
 		createWorkerCh:   make(chan int),
 		overflowNotifyCh: make(chan int, 1),
-		rcvMsgCh:         make(chan *Message, receiveQueueSize),
+		rcvMsgCh:         make(chan *Message),
 		handleMsgCh:      make(chan *Message, receiveQueueSize),
 		msgCache:         msgCache,
 	}
