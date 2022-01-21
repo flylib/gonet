@@ -29,16 +29,19 @@ type MessageList struct {
 	list.List
 }
 
-func (l MessageList) Size() int {
+func (l *MessageList) Size() int {
 	return l.List.Len()
 }
 
-func (l MessageList) Push(msg *Message) {
+func (l *MessageList) Push(msg *Message) {
 	l.List.PushFront(msg)
 }
 
-func (l MessageList) Pop() *Message {
+func (l *MessageList) Pop() *Message {
 	element := l.List.Back()
+	if element == nil {
+		return nil
+	}
 	l.List.Remove(element)
 	return element.Value.(*Message)
 }
