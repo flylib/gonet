@@ -9,47 +9,47 @@ import (
 )
 
 // webSocket conn
-type session struct {
-	SessionIdentify
-	SessionStore
+type Conn struct {
+	ConnIdentify
+	ConnStore
 	conn *websocket.Conn
 }
 
 func init() {
-	RegisterServer(&server{}, session{})
+	RegisterServer(&server{}, Conn{})
 }
 
 //新会话
-func newSession(conn *websocket.Conn) *session {
-	ses := CreateSession()
-	newSession, _ := ses.(*session)
-	newSession.conn = conn
-	CacheMsg(&Message{
-		Session: newSession,
-		ID:      SessionConnect,
+func newConn(conn *websocket.Conn) *Conn {
+	c := CreateConn()
+	newConnection, _ := c.(*Conn)
+	newConnection.conn = conn
+	CacheSession(&Session{
+		Connection: newConnection,
+		Msg:        GetCommonMsgNewConnMsg(),
 	})
-	return newSession
+	return newConnection
 }
 
-func (s *session) RemoteAddr() net.Addr {
+func (s *Conn) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *session) Close() error {
+func (s *Conn) Close() error {
 	return s.conn.Close()
 }
 
 //websocket does not support sending messages concurrently
-func (s *session) Send(msg interface{}) error {
+func (s *Conn) Send(msg interface{}) error {
 	return transport.SendWSPacket(s.conn, msg)
 }
 
 //循环读取消息
-func (s *session) recvLoop() {
+func (s *Conn) recvLoop() {
 	for {
 		_, pkt, err := s.conn.ReadMessage()
 		if err != nil {
-			RecycleSession(s, err)
+			RecycleConn(s, err)
 			return
 		}
 		msg, err := transport.ParserWSPacket(pkt)
@@ -57,7 +57,9 @@ func (s *session) recvLoop() {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
 		}
-		msg.Session = s
-		CacheMsg(msg)
+		CacheSession(&Session{
+			Connection: s,
+			Msg:        msg,
+		})
 	}
 }

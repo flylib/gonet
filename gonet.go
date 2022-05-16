@@ -9,14 +9,20 @@ import (
 )
 
 var (
-	sys System //系统
+	sys        System //系统
+	msgNewConn = &Message{
+		ID: NewConnection,
+	}
+	msgConnClose = &Message{
+		ID: NewConnection,
+	}
 )
 
-type Handler func(msg *Message)
+const ()
 
 type System struct {
 	sync.Once
-	SessionManager
+	ConnManager
 	//message types
 	msgTypes map[MessageID]reflect.Type
 	//message ids
@@ -30,7 +36,7 @@ type System struct {
 	//携程池
 	workers WorkerPool
 	//消息钩子
-	mHandlers map[MessageID]Handler
+	mHandlers map[MessageID]SessionHandler
 }
 
 func init() {
@@ -40,7 +46,7 @@ func init() {
 
 func init() {
 	sys = System{
-		SessionManager: SessionManager{
+		ConnManager: ConnManager{
 			pool: sync.Pool{
 				New: func() interface{} {
 					return reflect.New(sys.sessionType).Interface()
@@ -49,7 +55,7 @@ func init() {
 		},
 		msgTypes:  map[MessageID]reflect.Type{},
 		msgIDs:    map[reflect.Type]MessageID{},
-		mHandlers: map[MessageID]Handler{},
+		mHandlers: map[MessageID]SessionHandler{},
 	}
 }
 
@@ -81,42 +87,41 @@ func NewServer(opts ...options) Server {
 }
 
 //获取会话
-func GetSession(id uint64) (Session, bool) {
-	value, ok := sys.sessions.Load(id)
+func GetConn(id uint64) (Connection, bool) {
+	value, ok := sys.connections.Load(id)
 	if ok {
-		return value.(Session), ok
+		return value.(Connection), ok
 	}
 	return nil, false
 }
 
 //创建会话
-func CreateSession() Session {
+func CreateConn() Connection {
 	obj := sys.pool.Get()
 	//sys.incr = atomic.AddUint64(&sys.incr, 1)
 	sys.store(atomic.AddUint64(&sys.incr, 1), obj)
-	session := obj.(Session)
-	return session
+	conn := obj.(Connection)
+	return conn
 }
 
 //回收会话对象
-func RecycleSession(session Session, err error) {
-	CacheMsg(&Message{
-		Session: session,
-		ID:      SessionClose,
-		Body:    err,
+func RecycleConn(conn Connection, err error) {
+	CacheSession(&Session{
+		Connection: conn,
+		Msg:        msgConnClose,
 	})
 	//关闭
-	session.Close()
+	conn.Close()
 	//删除
-	sys.del(session.ID())
+	sys.del(conn.ID())
 	//回收
-	sys.pool.Put(session)
+	sys.pool.Put(conn)
 }
 
 //统计会话数量
-func SessionCount() int {
+func GetConnCount() int {
 	sum := 0
-	sys.sessions.Range(func(key, value interface{}) bool {
+	sys.connections.Range(func(key, value interface{}) bool {
 		sum++
 		return true
 	})
@@ -125,8 +130,8 @@ func SessionCount() int {
 
 //广播会话
 func Broadcast(msg interface{}) {
-	sys.sessions.Range(func(_, item interface{}) bool {
-		session, ok := item.(Session)
+	sys.connections.Range(func(_, item interface{}) bool {
+		session, ok := item.(Connection)
 		if ok {
 			session.Send(msg)
 		}
@@ -135,7 +140,7 @@ func Broadcast(msg interface{}) {
 }
 
 //映射消息体
-func Route(msgID MessageID, msg interface{}, f Handler) {
+func Route(msgID MessageID, msg interface{}, f SessionHandler) {
 	sys.Lock()
 	defer sys.Unlock()
 	msgType := reflect.TypeOf(msg)
@@ -184,6 +189,10 @@ func DecodeMessage(msg interface{}, data []byte) error {
 }
 
 //缓存消息
-func CacheMsg(msg *Message) {
-	sys.workers.rcvMsgCh <- msg
+func CacheSession(s *Session) {
+	sys.workers.sessionCh <- s
+}
+
+func GetCommonMsgNewConnMsg() *Message {
+	return msgNewConn
 }

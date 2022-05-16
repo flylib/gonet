@@ -1,46 +1,41 @@
 package gonet
 
-import (
-	"net"
-	"sync"
-)
+import "container/list"
 
-///////////////////////////////
-/////    Session POOL   //////
-//////////////////////////////
-
-//会话
-type Session interface {
-	//ID
-	ID() uint64
-	//断开
-	Close() error
-	//发送消息
-	Send(msg interface{}) error
-	//设置键值对，存储关联数据
-	Store(key, value interface{})
-	//获取键值对
-	Load(key interface{}) (value interface{}, ok bool)
-	//地址
-	RemoteAddr() net.Addr
+//单次会话
+type Session struct {
+	Connection          //来自链接
+	Msg        *Message //消息
 }
 
-type (
-	//核心会话标志
-	SessionIdentify struct {
-		//id
-		id uint64
-	}
-	//存储功能
-	SessionStore struct {
-		sync.Map
-	}
-)
+//单次会话处理钩子
+type SessionHandler func(msg *Session)
 
-func (s *SessionIdentify) ID() uint64 {
-	return s.id
+//会话中间缓存层，为处理不过来的会话进行缓存
+type SessionCache interface {
+	Size() int
+	Push(msg *Session)
+	Pop() *Session
 }
 
-func (s *SessionIdentify) setID(id uint64) {
-	s.id = id
+//默认的消息缓存队列
+type MessageList struct {
+	list.List
+}
+
+func (l *MessageList) Size() int {
+	return l.List.Len()
+}
+
+func (l *MessageList) Push(msg *Session) {
+	l.List.PushFront(msg)
+}
+
+func (l *MessageList) Pop() *Session {
+	element := l.List.Back()
+	if element == nil {
+		return nil
+	}
+	l.List.Remove(element)
+	return element.Value.(*Session)
 }

@@ -10,9 +10,9 @@ import (
 // Socket会话
 type session struct {
 	//核心会话标志
-	SessionIdentify
+	ConnIdentify
 	//存储功能
-	SessionStore
+	ConnStore
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -23,7 +23,7 @@ type session struct {
 
 //新会话
 func newSession(conn net.Conn) *session {
-	ses := CreateSession()
+	ses := CreateConn()
 	ses.(*session).conn = conn
 	return ses.(*session)
 }
@@ -46,7 +46,7 @@ func (s *session) recvLoop() {
 		var buf []byte
 		n, err := s.conn.Read(buf)
 		if err != nil {
-			RecycleSession(s, err)
+			RecycleConn(s, err)
 			return
 		}
 		//如果有粘包未处理数据部分，放入本次进行处理
@@ -66,6 +66,6 @@ func (s *session) recvLoop() {
 			s.cache = append(s.cache, buf[len(buf)-unUsedCount-1:]...)
 		}
 		msg.Session = s
-		CacheMsg(msg)
+		CacheSession(msg)
 	}
 }

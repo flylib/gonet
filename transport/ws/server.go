@@ -38,6 +38,6 @@ func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	session := newSession(conn)
-	go session.recvLoop()
+	newConnection := newConn(conn)
+	go newConnection.recvLoop()
 }

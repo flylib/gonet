@@ -36,7 +36,7 @@ func (u *server) Start() error {
 		}
 		var ses *session
 		if sid, exit := remotes[remote.String()]; exit {
-			s, _ := GetSession(sid)
+			s, _ := GetConn(sid)
 			ses, _ = s.(*session)
 		} else {
 			ses = newSession(u.conn, remote)
@@ -47,7 +47,7 @@ func (u *server) Start() error {
 			continue
 		}
 		msg.Session = ses
-		CacheMsg(msg)
+		CacheSession(msg)
 	}
 	return nil
 }

@@ -19,23 +19,23 @@ type WorkerPool struct {
 	//当前池协程数量(池大小)
 	size int32
 	//接受处理消息通道
-	rcvMsgCh, handleMsgCh chan *Message
+	sessionCh, handleSessionCh chan *Session
 	//创建协程通知
 	createWorkerCh chan int
 	//消息溢满通知
 	overflowNotifyCh chan int
 	//消息缓存
-	msgCache MessageCache
+	sessionCache SessionCache
 }
 
 //初始化协程池
-func createWorkerPool(size int32, msgCache MessageCache) (pool WorkerPool) {
+func createWorkerPool(size int32, sessionCache SessionCache) (pool WorkerPool) {
 	pool = WorkerPool{
 		createWorkerCh:   make(chan int),
 		overflowNotifyCh: make(chan int, 1),
-		rcvMsgCh:         make(chan *Message),
-		handleMsgCh:      make(chan *Message, receiveQueueSize),
-		msgCache:         msgCache,
+		sessionCh:        make(chan *Session),
+		handleSessionCh:  make(chan *Session, receiveQueueSize),
+		sessionCache:     sessionCache,
 	}
 	pool.run()
 	pool.createWorker(size)
@@ -57,21 +57,21 @@ func (w *WorkerPool) createWorker(count int32) {
 		w.createWorkerCh <- 1
 	}
 }
-func (w *WorkerPool) handle(msg *Message) {
-	if len(w.handleMsgCh) >= receiveQueueSize {
-		w.msgCache.Push(msg)
+func (w *WorkerPool) handle(msg *Session) {
+	if len(w.handleSessionCh) >= receiveQueueSize {
+		w.sessionCache.Push(msg)
 		if len(w.overflowNotifyCh) < 1 {
 			w.overflowNotifyCh <- 1
 		}
 	} else {
-		w.handleMsgCh <- msg
+		w.handleSessionCh <- msg
 	}
 }
 
 //运行
 func (w *WorkerPool) run() {
 	go func() {
-		for msg := range w.rcvMsgCh {
+		for msg := range w.sessionCh {
 			w.handle(msg)
 		}
 	}()
@@ -89,9 +89,9 @@ func (w *WorkerPool) run() {
 					}
 					w.createWorkerCh <- 1
 				}()
-				for msg := range w.handleMsgCh {
-					if f, ok := sys.mHandlers[msg.ID]; ok {
-						f(msg)
+				for s := range w.handleSessionCh {
+					if f, ok := sys.mHandlers[s.Msg.ID]; ok {
+						f(s)
 					}
 				}
 			}()
@@ -100,8 +100,8 @@ func (w *WorkerPool) run() {
 	//消息缓存处理
 	go func() {
 		for {
-			if e := w.msgCache.Pop(); e != nil {
-				w.handleMsgCh <- e
+			if e := w.sessionCache.Pop(); e != nil {
+				w.handleSessionCh <- e
 			} else {
 				<-w.overflowNotifyCh
 			}

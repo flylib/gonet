@@ -11,8 +11,8 @@ var remotes = map[string]uint64{}
 
 // Socket会话
 type session struct {
-	SessionIdentify
-	SessionStore
+	ConnIdentify
+	ConnStore
 	remote *net.UDPAddr
 	conn   *net.UDPConn
 	data   interface{}
@@ -21,7 +21,7 @@ type session struct {
 
 //新会话
 func newSession(conn *net.UDPConn, remote *net.UDPAddr) *session {
-	ses := CreateSession()
+	ses := CreateConn()
 	ses.(*session).conn = conn
 	remotes[remote.String()] = ses.ID()
 	return ses.(*session)

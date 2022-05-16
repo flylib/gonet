@@ -1,29 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BranchesTreeState">
-    <expand>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-    </expand>
+    <expand />
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="[update]done tcp&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="update:session 概念转变成单次会话">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +45,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="v3" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -98,7 +83,7 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../zinx" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../gev" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
@@ -292,7 +277,8 @@
     <MESSAGE value="[update]done tcp&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
     <MESSAGE value="modify add docs folder" />
     <MESSAGE value="add docs folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="add docs folder" />
+    <MESSAGE value="update:session 概念转变成单次会话" />
+    <option name="LAST_COMMIT_MESSAGE" value="update:session 概念转变成单次会话" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -304,78 +290,14 @@
     <proxy>https://mirrors.aliyun.com/goproxy/</proxy>
   </component>
   <component name="WindowStateProjectService">
-    <state x="752" y="450" key="#GOROOT" timestamp="1642559542290">
+    <state x="662" y="252" width="596" height="594" key="find.popup" timestamp="1652668911029">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="752" y="450" key="#GOROOT/0.0.1920.1040@0.0.1920.1040" timestamp="1642559542290" />
-    <state x="797" y="414" key="#com.intellij.codeInsight.template.impl.EditVariableDialog" timestamp="1638783908503">
+    <state x="662" y="252" width="596" height="594" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1652668911029" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1652671846378">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="797" y="414" key="#com.intellij.codeInsight.template.impl.EditVariableDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1638783908503" />
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1638841112874">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1638841112874" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1642573429414">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1642573429414" />
-    <state width="1877" height="193" key="GridCell.Tab.0.bottom" timestamp="1638951442469">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="193" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1638951442469" />
-    <state width="1877" height="193" key="GridCell.Tab.0.center" timestamp="1638951442469">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="193" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1638951442469" />
-    <state width="1877" height="193" key="GridCell.Tab.0.left" timestamp="1638951442469">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="193" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1638951442469" />
-    <state width="1877" height="193" key="GridCell.Tab.0.right" timestamp="1638951442469">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="193" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1638951442469" />
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1638847992114">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1638847992114" />
-    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1638847992114">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1638847992114" />
-    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1638847992114">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1638847992114" />
-    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1638847992114">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1638847992114" />
-    <state x="582" y="228" width="998" height="714" key="SettingsEditor" timestamp="1642573505200">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="582" y="228" width="998" height="714" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1642573505200" />
-    <state width="498" height="446" key="SwitcherDM" timestamp="1642561076442">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="498" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1642561076442" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1642582762478">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1642582762478" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog" timestamp="1638933810692">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.SelectionHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1638933810692" />
-    <state x="753" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1638785888805">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="753" y="433" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1638785888805" />
-    <state x="659" y="254" width="596" height="584" key="find.popup" timestamp="1638496736140">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="659" y="254" width="596" height="584" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1638496736140" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1652671846378" />
   </component>
   <component name="masterDetails">
     <states>
