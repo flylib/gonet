@@ -79,7 +79,7 @@ func NewServer(opts ...options) Server {
 	}
 	cache := option.msgCache
 	if cache == nil {
-		cache = &MessageList{}
+		cache = &SessionCacheList{}
 	}
 	sys.workers = createWorkerPool(option.workerPoolSize, cache)
 	sys.server.(interface{ setAddr(string) }).setAddr(option.addr)

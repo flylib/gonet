@@ -19,19 +19,19 @@ type SessionCache interface {
 }
 
 //默认的消息缓存队列
-type MessageList struct {
+type SessionCacheList struct {
 	list.List
 }
 
-func (l *MessageList) Size() int {
+func (l *SessionCacheList) Size() int {
 	return l.List.Len()
 }
 
-func (l *MessageList) Push(msg *Session) {
+func (l *SessionCacheList) Push(msg *Session) {
 	l.List.PushFront(msg)
 }
 
-func (l *MessageList) Pop() *Session {
+func (l *SessionCacheList) Pop() *Session {
 	element := l.List.Back()
 	if element == nil {
 		return nil
