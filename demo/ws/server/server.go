@@ -10,8 +10,8 @@ import (
 
 func init() {
 	//消息路由
-	gonet.Route(gonet.NewConnection, nil, Handler)
-	gonet.Route(gonet.SessionClose, nil, Handler)
+	gonet.Route(gonet.MsgIDNewConnection, nil, Handler)
+	gonet.Route(gonet.MsgIDConnClose, nil, Handler)
 	gonet.Route(101, proto.Say{}, Handler)
 }
 
@@ -28,15 +28,15 @@ func main() {
 func Handler(s *gonet.Session) {
 	if s.Msg != nil {
 		switch s.Msg.ID {
-		case gonet.NewConnection:
-			log.Println("connected session_id:", s.Connection.ID(), " ip:", s.Connection.RemoteAddr().String())
-		case gonet.SessionClose:
-			log.Println("connected session_id:", s.Connection.ID(), " error:", s.Msg.Body)
+		case gonet.MsgIDNewConnection:
+			log.Println("connected session_id:", s.Conn.ID(), " ip:", s.Conn.RemoteAddr().String())
+		case gonet.MsgIDConnClose:
+			log.Println("connected session_id:", s.Conn.ID(), " error:", s.Msg.Body)
 		case 101:
-			fmt.Println("session_id:", s.Connection.ID(), " say ", s.Msg.Body.(*proto.Say).Content)
+			fmt.Println("session_id:", s.Conn.ID(), " say ", s.Msg.Body.(*proto.Say).Content)
 			//fmt.Println(reflect.TypeOf(msg.Body))
 		default:
-			log.Println("unknown session_id:", s.ID)
+			log.Println("unknown session_id:", s.Msg.ID)
 		}
 	}
 

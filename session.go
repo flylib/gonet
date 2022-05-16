@@ -4,12 +4,12 @@ import "container/list"
 
 //单次会话
 type Session struct {
-	Connection          //来自链接
-	Msg        *Message //消息
+	Conn Connection //来自链接
+	Msg  *Message   //消息
 }
 
 //单次会话处理钩子
-type SessionHandler func(msg *Session)
+type SessionHandler func(*Session)
 
 //会话中间缓存层，为处理不过来的会话进行缓存
 type SessionCache interface {

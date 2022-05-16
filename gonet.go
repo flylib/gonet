@@ -9,16 +9,8 @@ import (
 )
 
 var (
-	sys        System //系统
-	msgNewConn = &Message{
-		ID: NewConnection,
-	}
-	msgConnClose = &Message{
-		ID: NewConnection,
-	}
+	sys System //系统
 )
-
-const ()
 
 type System struct {
 	sync.Once
@@ -28,7 +20,7 @@ type System struct {
 	//message ids
 	msgIDs map[reflect.Type]MessageID
 	//server types
-	sessionType reflect.Type
+	connType reflect.Type
 	//消息编码器
 	defaultCodec codec.Codec
 	//服务端
@@ -49,7 +41,7 @@ func init() {
 		ConnManager: ConnManager{
 			pool: sync.Pool{
 				New: func() interface{} {
-					return reflect.New(sys.sessionType).Interface()
+					return reflect.New(sys.connType).Interface()
 				},
 			},
 		},
@@ -98,7 +90,6 @@ func GetConn(id uint64) (Connection, bool) {
 //创建会话
 func CreateConn() Connection {
 	obj := sys.pool.Get()
-	//sys.incr = atomic.AddUint64(&sys.incr, 1)
 	sys.store(atomic.AddUint64(&sys.incr, 1), obj)
 	conn := obj.(Connection)
 	return conn
@@ -107,8 +98,8 @@ func CreateConn() Connection {
 //回收会话对象
 func RecycleConn(conn Connection, err error) {
 	CacheSession(&Session{
-		Connection: conn,
-		Msg:        msgConnClose,
+		Conn: conn,
+		Msg:  msgConnClose,
 	})
 	//关闭
 	conn.Close()
@@ -131,9 +122,9 @@ func GetConnCount() int {
 //广播会话
 func Broadcast(msg interface{}) {
 	sys.connections.Range(func(_, item interface{}) bool {
-		session, ok := item.(Connection)
+		conn, ok := item.(Connection)
 		if ok {
-			session.Send(msg)
+			conn.Send(msg)
 		}
 		return true
 	})
@@ -171,10 +162,10 @@ func CreateMsg(msgID MessageID) interface{} {
 }
 
 //初始化服务端
-func RegisterServer(server Server, session interface{}) {
+func RegisterServer(server Server, conn interface{}) {
 	sys.Once.Do(func() {
 		sys.server = server
-		sys.sessionType = reflect.TypeOf(session)
+		sys.connType = reflect.TypeOf(conn)
 	})
 }
 

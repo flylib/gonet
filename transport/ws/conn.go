@@ -25,8 +25,8 @@ func newConn(conn *websocket.Conn) *Conn {
 	newConnection, _ := c.(*Conn)
 	newConnection.conn = conn
 	CacheSession(&Session{
-		Connection: newConnection,
-		Msg:        GetCommonMsgNewConnMsg(),
+		Conn: newConnection,
+		Msg:  GetCommonMsgNewConnMsg(),
 	})
 	return newConnection
 }
@@ -58,8 +58,8 @@ func (s *Conn) recvLoop() {
 			continue
 		}
 		CacheSession(&Session{
-			Connection: s,
-			Msg:        msg,
+			Conn: s,
+			Msg:  msg,
 		})
 	}
 }
