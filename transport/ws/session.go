@@ -4,7 +4,6 @@ import (
 	"github.com/gorilla/websocket"
 	. "github.com/zjllib/gonet/v3"
 	"github.com/zjllib/gonet/v3/transport"
-	"log"
 	"net"
 )
 
@@ -56,7 +55,11 @@ func (s *session) recvLoop() {
 		}
 		msg, err := transport.ParserWSPacket(pkt)
 		if err != nil {
-			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
+			CacheMsg(&Message{
+				Session: s,
+				ID:      SessionWarn,
+				Body:    err,
+			})
 			continue
 		}
 		msg.Session = s

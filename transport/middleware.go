@@ -17,10 +17,10 @@ import (
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 const (
-	MTU           = 1500                      // 最大传输单元
-	PktSizeOffset = 2                         // 包体大小字段
-	MsgIDOffset   = 4                         // 消息ID字段
-	HeaderOffset  = MsgIDOffset + MsgIDOffset //包头部分
+	MTU           = 1500                        // 最大传输单元
+	PktSizeOffset = 2                           // 包体大小字段
+	MsgIDOffset   = 4                           // 消息ID字段
+	HeaderOffset  = PktSizeOffset + MsgIDOffset //包头部分
 )
 
 type Middleware interface {

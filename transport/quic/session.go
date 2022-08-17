@@ -7,6 +7,7 @@ import (
 	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
+	"sync"
 )
 
 // webSocket conn
@@ -14,7 +15,7 @@ type session struct {
 	SessionIdentify
 	SessionStore
 	conn    quic.Connection
-	streams map[quic.StreamID]quic.Stream
+	streams sync.Map
 }
 
 func init() {
@@ -48,13 +49,9 @@ func (s *session) Send(msg interface{}, params ...interface{}) error {
 	var err error
 	if len(params) == 0 {
 		err = transport.SendQUICPacket(s.conn, msg)
-	} else {
-		streamID, ok := params[0].(quic.StreamID)
-		if ok {
-			stream := s.streams[streamID]
-			if stream != nil {
-				err = transport.SendPacket(stream, msg)
-			}
+	} else if streamID, ok := params[0].(quic.StreamID); ok {
+		if load, ok := s.streams.Load(streamID); ok {
+			err = transport.SendPacket(load.(quic.Stream), msg)
 		}
 	}
 	return err
@@ -70,7 +67,7 @@ func (s *session) recvLoop() {
 		}
 		msg, _, err := transport.ParserTcpPacket(bytes)
 		if err != nil {
-			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
+			log.Printf("[quic]session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
 		}
 		msg.Session = s
@@ -81,33 +78,45 @@ func (s *session) recvLoop() {
 //循环读取消息
 func (s *session) recvStreamMsgLoop(stream quic.Stream) {
 	for {
-		var buf []byte
+		buf := make([]byte, 1024)
 		n, err := stream.Read(buf)
 		if err != nil {
-			//RecycleSession(s, err)
+			CacheMsg(&Message{
+				Session:  s,
+				StreamID: stream.StreamID(),
+				ID:       SessionWarn,
+				Body:     err,
+			})
 			stream.Close()
-			delete(s.streams, stream.StreamID())
+			s.streams.Delete(stream.StreamID())
 			return
 		}
 		msg, _, err := transport.ParserTcpPacket(buf[:n])
 		if err != nil {
-			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
+			CacheMsg(&Message{
+				Session:  s,
+				StreamID: stream.StreamID(),
+				ID:       SessionWarn,
+				Body:     err,
+			})
 			continue
 		}
+		msg.StreamID = stream.StreamID()
 		msg.Session = s
 		CacheMsg(msg)
 	}
 }
 
-//
+//stream
 func (s *session) recvStreamLoop() {
 	for {
 		stream, err := s.conn.AcceptStream(context.Background())
 		if err != nil {
-			log.Printf("[quic] session_%v recvStreamLoop error,reason is %v \n", s.ID(), err)
-			s.Close()
-			break
+			RecycleSession(s, err)
+			return
 		}
-		s.streams[stream.StreamID()] = stream
+		s.Store(stream.StreamID(), stream)
+		//开单独go routine 去处理stream的消息
+		go s.recvStreamMsgLoop(stream)
 	}
 }

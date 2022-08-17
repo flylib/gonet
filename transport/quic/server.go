@@ -28,14 +28,20 @@ func (s *server) Start() (err error) {
 		if err != nil {
 			continue
 		}
-		go newSession(conn)
+		go s.newConn(conn)
 	}
-
 }
 
 func (s *server) Stop() error {
 	// TODO 关闭处理
 	return s.ln.Close()
+}
+
+//新连接
+func (s *server) newConn(conn quic.Connection) {
+	ses := newSession(conn)
+	ses.recvStreamLoop()
+	//ses.recvLoop()
 }
 
 // Setup a bare-bones TLS config for the server

@@ -19,19 +19,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="add quic proto">
-      <changelist_data name="zhangjunli" email="1217105106@qq.com" />
-      <change afterPath="$PROJECT_DIR$/transport/quic/server.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/transport/quic/session.go" afterDir="false" />
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="fix:message cache&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/middleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/middleware.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,6 +59,11 @@
   </component>
   <component name="GOROOT" url="file://C:/Program Files/Go" />
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="zhangjunli &lt;1217105106@qq.com&gt;" />
+      </list>
+    </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="master" />
@@ -105,7 +103,7 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/transport/quic" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/demo/quic/server" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
@@ -113,15 +111,17 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="go.vgo" />
+    <property name="settings.editor.selected.configurable" value="watcher.settings" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\go\project\goNet\demo\quic\server" />
       <recent name="D:\go\project\goNet\transport\quic" />
       <recent name="F:\go\project\goNet\demo\pprof" />
       <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\go\project\goNet\demo\quic\client" />
       <recent name="D:\go\project\others\goNet\docs" />
       <recent name="D:\go\project\others\goNet\codec" />
       <recent name="D:\go\project\others\goNet\transport" />
@@ -137,23 +137,23 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build client.go (2)">
-    <configuration name="go build client.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Build.go build github.com/zjllib/gonet/v3/demo/quic/client">
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/quic/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/demo/ws/client/client.go" />
-      <package value="goNet" />
-      <directory value="$PROJECT_DIR$/" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/demo/quic/client/client.go" />
+      <package value="github.com/zjllib/gonet/v3/demo/quic/client" />
+      <directory value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build client.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/quic/server" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/demo/tcp/client/client.go" />
-      <package value="goNet" />
-      <directory value="$PROJECT_DIR$/" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/demo/quic/server/server.go" />
+      <package value="github.com/zjllib/gonet/v3/demo/quic/server" />
+      <directory value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -185,11 +185,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/quic/client" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/quic/server" />
         <item itemvalue="Go Build.go build server.go (2)" />
         <item itemvalue="Go Build.go build server.go" />
         <item itemvalue="Go Build.go build main.go" />
-        <item itemvalue="Go Build.go build client.go (2)" />
-        <item itemvalue="Go Build.go build client.go" />
       </list>
     </recent_temporary>
   </component>
@@ -282,7 +282,8 @@
     <MESSAGE value="modify add docs folder" />
     <MESSAGE value="add docs folder" />
     <MESSAGE value="add quic proto" />
-    <option name="LAST_COMMIT_MESSAGE" value="add quic proto" />
+    <MESSAGE value="fix:message cache&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix:message cache&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -292,6 +293,32 @@
       </map>
     </environment>
     <proxy>https://mirrors.aliyun.com/goproxy/</proxy>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://C:/Program Files/Go/src/runtime/panic.go</url>
+          <line>1276</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/transport/quic/session.go</url>
+          <line>62</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/transport/quic/session.go</url>
+          <line>89</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/transport/quic/session.go</url>
+          <line>117</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="masterDetails">
     <states>

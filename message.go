@@ -1,6 +1,9 @@
 package gonet
 
-import "container/list"
+import (
+	"container/list"
+	"github.com/lucas-clemente/quic-go"
+)
 
 type MessageID uint32
 
@@ -8,13 +11,15 @@ type MessageID uint32
 const (
 	SessionConnect MessageID = iota + 1
 	SessionClose
+	SessionWarn //警告信息
 )
 
 //消息体
 type Message struct {
 	Session
-	ID   MessageID   `json:"id"`
-	Body interface{} `json:"data"`
+	StreamID quic.StreamID //for quic
+	ID       MessageID     `json:"id"`
+	Body     interface{}   `json:"data"`
 }
 
 //消息中间缓存层，为处理不过来的消息进行缓存

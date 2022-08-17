@@ -3,7 +3,6 @@ package tcp
 import (
 	. "github.com/zjllib/gonet/v3"
 	"github.com/zjllib/gonet/v3/transport"
-	"log"
 	"net"
 )
 
@@ -60,7 +59,11 @@ func (s *session) recvLoop() {
 		msg, unUsedCount, err := transport.ParserTcpPacket(buf[:n])
 		if err != nil {
 			s.cache = nil
-			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
+			CacheMsg(&Message{
+				Session: s,
+				ID:      SessionWarn,
+				Body:    err,
+			})
 			continue
 		}
 		//存储未使用部分
