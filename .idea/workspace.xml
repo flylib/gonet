@@ -19,12 +19,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="fix:message cache&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;">
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="add quic">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/middleware.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/quic/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/quic/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/quic/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/quic/server/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +63,7 @@
     </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="v3" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -283,7 +280,8 @@
     <MESSAGE value="add docs folder" />
     <MESSAGE value="add quic proto" />
     <MESSAGE value="fix:message cache&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix:message cache&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
+    <MESSAGE value="add quic" />
+    <option name="LAST_COMMIT_MESSAGE" value="add quic" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -309,7 +307,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/transport/quic/session.go</url>
-          <line>89</line>
+          <line>87</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">

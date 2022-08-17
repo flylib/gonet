@@ -12,6 +12,7 @@ func init() {
 	//消息路由
 	gonet.Route(gonet.SessionConnect, nil, Handler)
 	gonet.Route(gonet.SessionClose, nil, Handler)
+	gonet.Route(gonet.SessionWarn, nil, Handler)
 	gonet.Route(101, proto.Say{}, Handler)
 }
 
@@ -31,6 +32,8 @@ func Handler(msg *gonet.Message) {
 		log.Println("connected session_id:", msg.Session.ID(), " ip:", msg.Session.RemoteAddr().String())
 	case gonet.SessionClose:
 		log.Println("connected session_id:", msg.Session.ID(), " error:", msg.Body)
+	case gonet.SessionWarn:
+		log.Println("warninfo  session_id:", msg.Session.ID(), "streamID", msg.StreamID, " error:", msg.Body)
 	case 101:
 		fmt.Println("session_id:", msg.Session.ID(), "streamID", msg.StreamID, " say ", msg.Body.(*proto.Say).Content)
 		//fmt.Println(reflect.TypeOf(msg.Body))
