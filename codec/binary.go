@@ -8,7 +8,7 @@ type BinaryCodec struct {
 }
 
 func (b BinaryCodec) Type() string {
-	return Binary
+	return "binary"
 }
 
 func (b BinaryCodec) Encode(msgObj interface{}) (data []byte, err error) {

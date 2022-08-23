@@ -12,25 +12,26 @@ var (
 	sys System //系统
 )
 
-type Handler func(msg *Message)
+type Hook func(msg *Message)
 
 type System struct {
 	sync.Once
+	//会话管理
 	SessionManager
 	//message types
-	msgTypes map[MessageID]reflect.Type
+	mMsgTypes map[MessageID]reflect.Type
 	//message ids
-	msgIDs map[reflect.Type]MessageID
+	mMsgIDs map[reflect.Type]MessageID
 	//server types
 	sessionType reflect.Type
 	//消息编码器
-	defaultCodec codec.Codec
+	defaultCodec Codec
 	//服务端
 	server Server
-	//携程池
-	workers WorkerPool
+	//bee worker pool
+	workers BeeWorkerPool
 	//消息钩子
-	mHandlers map[MessageID]Handler
+	mMsgHooks map[MessageID]Hook
 }
 
 func init() {
@@ -47,9 +48,9 @@ func init() {
 				},
 			},
 		},
-		msgTypes:  map[MessageID]reflect.Type{},
-		msgIDs:    map[reflect.Type]MessageID{},
-		mHandlers: map[MessageID]Handler{},
+		mMsgTypes: map[MessageID]reflect.Type{},
+		mMsgIDs:   map[reflect.Type]MessageID{},
+		mMsgHooks: map[MessageID]Hook{},
 	}
 }
 
@@ -62,12 +63,12 @@ func NewServer(opts ...options) Server {
 		f(&option)
 	}
 	switch option.contentType {
-	case codec.Binary:
+	case Binary:
 		sys.defaultCodec = codec.BinaryCodec{}
-	case codec.Xml:
+	case Xml:
 		sys.defaultCodec = codec.XmlCodec{}
-	case codec.Protobuf:
-		sys.defaultCodec = codec.JsonCodec{}
+	case Protobuf:
+		sys.defaultCodec = codec.ProtobufCodec{}
 	default:
 		sys.defaultCodec = codec.JsonCodec{}
 	}
@@ -75,7 +76,7 @@ func NewServer(opts ...options) Server {
 	if cache == nil {
 		cache = &MessageList{}
 	}
-	sys.workers = createWorkerPool(option.workerPoolSize, cache)
+	sys.workers = createBeeWorkerPool(option.workerPoolSize, cache)
 	sys.server.(interface{ setAddr(string) }).setAddr(option.addr)
 	return sys.server
 }
@@ -135,31 +136,31 @@ func Broadcast(msg interface{}) {
 }
 
 //映射消息体
-func Route(msgID MessageID, msg interface{}, f Handler) {
+func Route(msgID MessageID, msg interface{}, callback Hook) {
 	sys.Lock()
 	defer sys.Unlock()
 	msgType := reflect.TypeOf(msg)
-	if _, ok := sys.msgTypes[msgID]; ok {
+	if _, ok := sys.mMsgTypes[msgID]; ok {
 		panic("error:Duplicate message id")
 	}
 	if msgType != nil {
-		sys.msgIDs[msgType] = msgID
-		sys.msgTypes[msgID] = msgType
+		sys.mMsgIDs[msgType] = msgID
+		sys.mMsgTypes[msgID] = msgType
 	}
-	if f != nil {
-		sys.mHandlers[msgID] = f
+	if callback != nil {
+		sys.mMsgHooks[msgID] = callback
 	}
 }
 
 //获取消息ID
 func GetMsgID(msg interface{}) (MessageID, bool) {
-	msgID, ok := sys.msgIDs[reflect.TypeOf(msg)]
+	msgID, ok := sys.mMsgIDs[reflect.TypeOf(msg)]
 	return msgID, ok
 }
 
 //通消息id创建消息体
 func CreateMsg(msgID MessageID) interface{} {
-	if msg, ok := sys.msgTypes[msgID]; ok {
+	if msg, ok := sys.mMsgTypes[msgID]; ok {
 		return reflect.New(msg).Interface()
 	}
 	return nil

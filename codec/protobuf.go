@@ -9,7 +9,7 @@ type ProtobufCodec struct {
 
 // 编码器的名称
 func (g ProtobufCodec) Type() string {
-	return Protobuf
+	return "protobuf"
 }
 
 func (g ProtobufCodec) Encode(msgObj interface{}) (data []byte, err error) {

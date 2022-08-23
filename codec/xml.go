@@ -9,7 +9,7 @@ type XmlCodec struct {
 
 // 编码器的名称
 func (x XmlCodec) Type() string {
-	return Xml
+	return "xml"
 }
 
 // 将结构体编码为xml的字节数组

@@ -11,7 +11,7 @@ type JsonCodec struct {
 
 // 编码器的名称
 func (j JsonCodec) Type() string {
-	return Json
+	return "json"
 }
 
 // 将结构体编码为JSON的字节数组
