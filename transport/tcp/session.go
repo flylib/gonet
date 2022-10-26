@@ -2,7 +2,6 @@ package tcp
 
 import (
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
 )
@@ -33,7 +32,7 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msg interface{}) error {
-	return transport.SendPacket(s.conn, msg)
+	return SendPacket(s.conn, msg)
 }
 
 func (s *session) Close() error {
@@ -55,7 +54,7 @@ func (s *session) recvLoop() {
 			n = len(buf)
 			s.cache = nil
 		}
-		msg, unUsedCount, err := transport.ParserPacket(buf[:n])
+		msg, unUsedCount, err := ParserPacket(buf[:n])
 		if err != nil {
 			s.cache = nil
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)

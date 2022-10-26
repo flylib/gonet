@@ -2,7 +2,6 @@ package udp
 
 import (
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/transport"
 	"net"
 )
 
@@ -35,9 +34,9 @@ func (s *session) RemoteAddr() net.Addr {
 func (s *session) Send(msg interface{}) error {
 	var err error
 	if s.remote == nil {
-		err = transport.SendPacket(s.conn, msg)
+		err = SendPacket(s.conn, msg)
 	} else {
-		err = transport.SendUdpPacket(s.conn, msg, s.remote)
+		err = SendUdpPacket(s.conn, msg, s.remote)
 	}
 	return err
 }

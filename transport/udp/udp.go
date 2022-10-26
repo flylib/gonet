@@ -43,7 +43,7 @@ func (s *udp) Listen() error {
 		} else {
 			ses = newSession(s.conn, remote)
 		}
-		msg, _, err := transport.ParserPacket(buf[:n])
+		msg, _, err := ParserPacket(buf[:n])
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
 			continue

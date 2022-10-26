@@ -21,7 +21,7 @@ func main() {
 	service := gonet.NewService(
 		gonet.WithTransport(transport),
 		gonet.MaxWorkerPoolSize(20))
-
+	println("server listen on:", transport.Addr())
 	if err := service.Start(); err != nil {
 		log.Fatal(err)
 	}

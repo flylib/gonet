@@ -9,6 +9,32 @@ import (
 	"sync/atomic"
 )
 
+var (
+	ctx Context //上下文
+)
+
+func init() {
+	log.SetPrefix("[gonet]")
+	log.SetFlags(log.Llongfile | log.LstdFlags)
+}
+
+func init() {
+	ctx = Context{
+		SessionManager: SessionManager{
+			pool: sync.Pool{
+				New: func() interface{} {
+					return reflect.New(ctx.sessionType).Interface()
+				},
+			},
+		},
+		mMsgTypes: map[MessageID]reflect.Type{},
+		mMsgIDs:   map[reflect.Type]MessageID{},
+		mMsgHooks: map[MessageID]Hook{},
+	}
+}
+
+type Hook func(msg *Message)
+
 //一切皆服务
 type Service interface {
 	// 开启服务
@@ -16,12 +42,6 @@ type Service interface {
 	// 停止服务
 	Stop() error
 }
-
-var (
-	ctx Context //上下文
-)
-
-type Hook func(msg *Message)
 
 type Context struct {
 	//会话管理
@@ -48,26 +68,6 @@ func (c Context) Start() error {
 
 func (c Context) Stop() error {
 	return c.transport.Stop()
-}
-
-func init() {
-	log.SetPrefix("[gonet]")
-	log.SetFlags(log.Llongfile | log.LstdFlags)
-}
-
-func init() {
-	ctx = Context{
-		SessionManager: SessionManager{
-			pool: sync.Pool{
-				New: func() interface{} {
-					return reflect.New(ctx.sessionType).Interface()
-				},
-			},
-		},
-		mMsgTypes: map[MessageID]reflect.Type{},
-		mMsgIDs:   map[reflect.Type]MessageID{},
-		mMsgHooks: map[MessageID]Hook{},
-	}
 }
 
 func NewService(opts ...options) Service {

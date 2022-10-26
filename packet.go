@@ -1,9 +1,8 @@
-package transport
+package gonet
 
 import (
 	"encoding/binary"
 	"github.com/gorilla/websocket"
-	. "github.com/zjllib/gonet/v3"
 	"io"
 	"net"
 	"reflect"
@@ -113,7 +112,7 @@ func SendWSPacket(w *websocket.Conn, msg interface{}) error {
 	if ok {
 		binary.LittleEndian.PutUint32(pktData, uint32(msgID))
 		pktData = append(pktData, arrBytes...)
-		return w.WriteMessage(websocket.TextMessage, pktData)
+		return w.WriteMessage(websocket.BinaryMessage, pktData)
 	}
 	return ErrorNotExistMsg
 }
