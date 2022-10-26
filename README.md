@@ -51,45 +51,49 @@ git clone https://github.com/zjllib/gonet.git
 
 ## 使用样例参考
 ```go
-	package main
-    
-    import (
-    	"fmt"
-    	"github.com/zjllib/gonet/v3"
-    	"github.com/zjllib/gonet/v3/demo/proto"
-    	_ "github.com/zjllib/gonet/v3/transport/ws" //协议
-    	"log"
-    )
-    //消息路由
-    func init() {
-    	gonet.Route(gonet.SessionConnect, nil, Handler)
-    	gonet.Route(gonet.SessionClose, nil, Handler)
-    	gonet.Route(101, proto.Say{}, Handler)
-    }
-    
-    func main() {
-    	server := gonet.NewServer(
-    		gonet.Address("ws://localhost:8088/center/ws"), //listen addr
-    		gonet.MaxWorkerPoolSize(20))
-    	log.Printf("server listening on %s", server.Addr())
-    	if err := server.Start(); err != nil {
-    		log.Fatal(err)
-    	}
-    }
-    //消息处理函数
-    func Handler(msg *gonet.Message) {
-    	switch msg.ID {
-    	case gonet.SessionConnect:
-    		log.Println("connected session_id:", msg.Session.ID(), " ip:", msg.Session.RemoteAddr().String())
-    	case gonet.SessionClose:
-    		log.Println("connected session_id:", msg.Session.ID(), " error:", msg.Body)
-    	case 101:
-    		fmt.Println("session_id:", msg.Session.ID(), " say ", msg.Body.(*proto.Say).Content)
-    		//fmt.Println(reflect.TypeOf(msg.Body))
-    	default:
-    		log.Println("unknown message id:", msg.ID)
-    	}
-    }
+     package main
+
+import (
+	"fmt"
+	"github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3/demo/proto"
+	"github.com/zjllib/gonet/v3/transport/ws" //协议
+	"log"
+)
+
+func init() {
+	//消息路由
+	gonet.Route(gonet.SessionConnect, nil, Handler)
+	gonet.Route(gonet.SessionClose, nil, Handler)
+	gonet.Route(101, proto.Say{}, Handler)
+}
+
+func main() {
+	transport := ws.NewTransport("ws://localhost:8088/center/ws")
+
+	service := gonet.NewService(
+		gonet.WithTransport(transport),
+		gonet.MaxWorkerPoolSize(20))
+	println("server listen on:", transport.Addr())
+	if err := service.Start(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func Handler(msg *gonet.Message) {
+	switch msg.ID {
+	case gonet.SessionConnect:
+		log.Println("connected session_id:", msg.Session.ID(), " ip:", msg.Session.RemoteAddr().String())
+	case gonet.SessionClose:
+		log.Println("connected session_id:", msg.Session.ID(), " error:", msg.Body)
+	case 101:
+		fmt.Println("session_id:", msg.Session.ID(), " say ", msg.Body.(*proto.Say).Content)
+		//fmt.Println(reflect.TypeOf(msg.Body))
+	default:
+		log.Println("unknown message id:", msg.ID)
+	}
+}
+
 
 ```
 
