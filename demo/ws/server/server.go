@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/zjllib/gonet/v3"
 	"github.com/zjllib/gonet/v3/demo/proto"
-	_ "github.com/zjllib/gonet/v3/transport/ws" //协议
+	"github.com/zjllib/gonet/v3/transport/ws" //协议
 	"log"
 )
 
@@ -16,11 +16,13 @@ func init() {
 }
 
 func main() {
-	server := gonet.NewServer(
-		gonet.Address("ws://localhost:8088/center/ws"), //listen addr
+	transport := ws.NewTransport("ws://localhost:8088/center/ws")
+
+	service := gonet.NewService(
+		gonet.WithTransport(transport),
 		gonet.MaxWorkerPoolSize(20))
-	log.Printf("server listening on %s", server.Addr())
-	if err := server.Start(); err != nil {
+
+	if err := service.Start(); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -1,4 +1,6 @@
-package gonet
+package transport
+
+import "reflect"
 
 type TransportProtocol string
 
@@ -13,27 +15,30 @@ const (
 )
 
 type (
-	//服务端
-	Server interface {
-		// 开启服务
-		Start() error
+
+	//传输协议
+	Transport interface {
+		// 启动监听
+		Listen() error
 		// 停止服务
 		Stop() error
-		//地址
+		// 地址
 		Addr() string
+		// 会话类型
+		SessionType() reflect.Type
 	}
 	//端属性
-	ServerIdentify struct {
+	TransportIdentify struct {
 		uuid string
 		//地址
 		addr string
 	}
 )
 
-func (s *ServerIdentify) Addr() string {
+func (s *TransportIdentify) Addr() string {
 	return s.addr
 }
 
-func (s *ServerIdentify) setAddr(addr string) {
+func (s *TransportIdentify) SetAddr(addr string) {
 	s.addr = addr
 }

@@ -1,6 +1,7 @@
 package gonet
 
 import (
+	"github.com/zjllib/gonet/v3/transport"
 	"time"
 )
 
@@ -10,10 +11,8 @@ import (
 
 //options
 type Option struct {
-	//传输协议
-	tpl TransportProtocol
-	//关联地址
-	addr string
+	//传输端
+	transport transport.Transport
 	//读写超时
 	readDeadline, writeDeadline time.Duration
 	//0意味着无限制
@@ -49,10 +48,10 @@ func ContentType(ct string) options {
 	}
 }
 
-// Address sets the address of the server
-func Address(ct string) options {
+//传输协议
+func WithTransport(t transport.Transport) options {
 	return func(o *Option) {
-		o.addr = ct
+		o.transport = t
 	}
 }
 

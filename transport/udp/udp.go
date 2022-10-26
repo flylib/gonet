@@ -5,19 +5,22 @@ import (
 	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
+	"reflect"
 )
 
-type server struct {
-	ServerIdentify
+type udp struct {
+	transport.TransportIdentify
 	conn *net.UDPConn
 }
 
-func init() {
-	RegisterServer(&server{}, session{})
+func NewTransport(addr string) *udp {
+	s := &udp{}
+	s.SetAddr(addr)
+	return s
 }
 
-func (u *server) Start() error {
-	localAddr, err := net.ResolveUDPAddr("udp", u.Addr())
+func (s *udp) Listen() error {
+	localAddr, err := net.ResolveUDPAddr(string(transport.UDP), s.Addr())
 	if err != nil {
 		return err
 	}
@@ -25,13 +28,12 @@ func (u *server) Start() error {
 	if err != nil {
 		return err
 	}
-	u.conn = conn
-	//u.session = newSession(conn, localAddr)
+	s.conn = conn
 	for {
 		var buf []byte
-		n, remote, err := u.conn.ReadFromUDP(buf)
+		n, remote, err := s.conn.ReadFromUDP(buf)
 		if err != nil {
-			log.Printf("#udp.read failed(%v) %v \n", u.conn.RemoteAddr(), err.Error())
+			log.Printf("#udp.read failed(%v) %v \n", s.conn.RemoteAddr(), err.Error())
 			continue
 		}
 		var ses *session
@@ -39,7 +41,7 @@ func (u *server) Start() error {
 			s, _ := GetSession(sid)
 			ses, _ = s.(*session)
 		} else {
-			ses = newSession(u.conn, remote)
+			ses = newSession(s.conn, remote)
 		}
 		msg, _, err := transport.ParserPacket(buf[:n])
 		if err != nil {
@@ -51,6 +53,10 @@ func (u *server) Start() error {
 	}
 	return nil
 }
-func (u *server) Stop() error {
-	return u.conn.Close()
+func (s *udp) Stop() error {
+	return s.conn.Close()
+}
+
+func (s *udp) SessionType() reflect.Type {
+	return reflect.TypeOf(session{})
 }

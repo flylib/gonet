@@ -2,21 +2,28 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	. "github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3/transport"
 	"net/http"
 	"net/url"
+	"reflect"
 )
 
 //接收端
-type server struct {
-	ServerIdentify
+type ws struct {
+	transport.TransportIdentify
 	//指定将HTTP连接升级到WebSocket连接的参数。
 	upGrader websocket.Upgrader
 	//响应头
 	//respHeader http.Header
 }
 
-func (s *server) Start() error {
+func NewTransport(addr string) *ws {
+	t := &ws{}
+	t.SetAddr(addr)
+	return t
+}
+
+func (s *ws) Listen() error {
 	url, err := url.Parse(s.Addr())
 	if err != nil {
 		return err
@@ -26,18 +33,22 @@ func (s *server) Start() error {
 	return http.ListenAndServe(url.Host, mux)
 }
 
-func (s *server) Stop() error {
+func (s *ws) Stop() error {
 	// TODO 关闭处理
 	return nil
 }
 
-func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
+func (s *ws) SessionType() reflect.Type {
+	return reflect.TypeOf(session{})
+}
+
+func (s *ws) newConn(w http.ResponseWriter, r *http.Request) {
 	r.Header.Add("Connection", "upgrade") //升级
 	r.Header.Add("Upgrade", "websocket")  //websocket
+
 	conn, err := s.upGrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}
-	session := newSession(conn)
-	go session.recvLoop()
+	go newSession(conn).recvLoop()
 }

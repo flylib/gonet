@@ -2,20 +2,28 @@ package gonet
 
 import (
 	"github.com/zjllib/gonet/v3/codec"
+	transport2 "github.com/zjllib/gonet/v3/transport"
 	"log"
 	"reflect"
 	"sync"
 	"sync/atomic"
 )
 
+//一切皆服务
+type Service interface {
+	// 开启服务
+	Start() error
+	// 停止服务
+	Stop() error
+}
+
 var (
-	sys System //系统
+	ctx Context //上下文
 )
 
 type Hook func(msg *Message)
 
-type System struct {
-	sync.Once
+type Context struct {
 	//会话管理
 	SessionManager
 	//message types
@@ -26,12 +34,20 @@ type System struct {
 	sessionType reflect.Type
 	//消息编码器
 	defaultCodec Codec
-	//服务端
-	server Server
+	//传输端
+	transport transport2.Transport
 	//bee worker pool
 	workers BeeWorkerPool
 	//消息钩子
 	mMsgHooks map[MessageID]Hook
+}
+
+func (c Context) Start() error {
+	return c.transport.Listen()
+}
+
+func (c Context) Stop() error {
+	return c.transport.Stop()
 }
 
 func init() {
@@ -40,11 +56,11 @@ func init() {
 }
 
 func init() {
-	sys = System{
+	ctx = Context{
 		SessionManager: SessionManager{
 			pool: sync.Pool{
 				New: func() interface{} {
-					return reflect.New(sys.sessionType).Interface()
+					return reflect.New(ctx.sessionType).Interface()
 				},
 			},
 		},
@@ -54,36 +70,37 @@ func init() {
 	}
 }
 
-func NewServer(opts ...options) Server {
-	if sys.server == nil {
-		panic(ErrorNoTransport)
-	}
+func NewService(opts ...options) Service {
 	option := Option{}
 	for _, f := range opts {
 		f(&option)
 	}
+	//传输协议
+	ctx.transport = option.transport
+	ctx.sessionType = option.transport.SessionType()
+
+	//编码格式
 	switch option.contentType {
 	case Binary:
-		sys.defaultCodec = codec.BinaryCodec{}
+		ctx.defaultCodec = codec.BinaryCodec{}
 	case Xml:
-		sys.defaultCodec = codec.XmlCodec{}
+		ctx.defaultCodec = codec.XmlCodec{}
 	case Protobuf:
-		sys.defaultCodec = codec.ProtobufCodec{}
+		ctx.defaultCodec = codec.ProtobufCodec{}
 	default:
-		sys.defaultCodec = codec.JsonCodec{}
+		ctx.defaultCodec = codec.JsonCodec{}
 	}
 	cache := option.msgCache
 	if cache == nil {
 		cache = &MessageList{}
 	}
-	sys.workers = createBeeWorkerPool(option.workerPoolSize, cache)
-	sys.server.(interface{ setAddr(string) }).setAddr(option.addr)
-	return sys.server
+	ctx.workers = createBeeWorkerPool(option.workerPoolSize, cache)
+	return ctx
 }
 
 //获取会话
 func GetSession(id uint64) (Session, bool) {
-	value, ok := sys.sessions.Load(id)
+	value, ok := ctx.sessions.Load(id)
 	if ok {
 		return value.(Session), ok
 	}
@@ -92,9 +109,8 @@ func GetSession(id uint64) (Session, bool) {
 
 //创建会话
 func CreateSession() Session {
-	obj := sys.pool.Get()
-	//sys.incr = atomic.AddUint64(&sys.incr, 1)
-	sys.store(atomic.AddUint64(&sys.incr, 1), obj)
+	obj := ctx.pool.Get()
+	ctx.store(atomic.AddUint64(&ctx.incr, 1), obj)
 	session := obj.(Session)
 	return session
 }
@@ -109,15 +125,15 @@ func RecycleSession(session Session, err error) {
 	//关闭
 	session.Close()
 	//删除
-	sys.del(session.ID())
+	ctx.del(session.ID())
 	//回收
-	sys.pool.Put(session)
+	ctx.pool.Put(session)
 }
 
 //统计会话数量
 func SessionCount() int {
 	sum := 0
-	sys.sessions.Range(func(key, value interface{}) bool {
+	ctx.sessions.Range(func(key, value interface{}) bool {
 		sum++
 		return true
 	})
@@ -126,7 +142,7 @@ func SessionCount() int {
 
 //广播会话
 func Broadcast(msg interface{}) {
-	sys.sessions.Range(func(_, item interface{}) bool {
+	ctx.sessions.Range(func(_, item interface{}) bool {
 		session, ok := item.(Session)
 		if ok {
 			session.Send(msg)
@@ -137,54 +153,46 @@ func Broadcast(msg interface{}) {
 
 //映射消息体
 func Route(msgID MessageID, msg interface{}, callback Hook) {
-	sys.Lock()
-	defer sys.Unlock()
+	ctx.Lock()
+	defer ctx.Unlock()
 	msgType := reflect.TypeOf(msg)
-	if _, ok := sys.mMsgTypes[msgID]; ok {
+	if _, ok := ctx.mMsgTypes[msgID]; ok {
 		panic("error:Duplicate message id")
 	}
 	if msgType != nil {
-		sys.mMsgIDs[msgType] = msgID
-		sys.mMsgTypes[msgID] = msgType
+		ctx.mMsgIDs[msgType] = msgID
+		ctx.mMsgTypes[msgID] = msgType
 	}
 	if callback != nil {
-		sys.mMsgHooks[msgID] = callback
+		ctx.mMsgHooks[msgID] = callback
 	}
 }
 
 //获取消息ID
 func GetMsgID(msg interface{}) (MessageID, bool) {
-	msgID, ok := sys.mMsgIDs[reflect.TypeOf(msg)]
+	msgID, ok := ctx.mMsgIDs[reflect.TypeOf(msg)]
 	return msgID, ok
 }
 
 //通消息id创建消息体
 func CreateMsg(msgID MessageID) interface{} {
-	if msg, ok := sys.mMsgTypes[msgID]; ok {
+	if msg, ok := ctx.mMsgTypes[msgID]; ok {
 		return reflect.New(msg).Interface()
 	}
 	return nil
 }
 
-//初始化服务端
-func RegisterServer(server Server, session interface{}) {
-	sys.Once.Do(func() {
-		sys.server = server
-		sys.sessionType = reflect.TypeOf(session)
-	})
-}
-
 //编码消息
 func EncodeMessage(msg interface{}) ([]byte, error) {
-	return sys.defaultCodec.Encode(msg)
+	return ctx.defaultCodec.Encode(msg)
 }
 
 // 解码消息
 func DecodeMessage(msg interface{}, data []byte) error {
-	return sys.defaultCodec.Decode(data, msg)
+	return ctx.defaultCodec.Decode(data, msg)
 }
 
 //缓存消息
 func CacheMsg(msg *Message) {
-	sys.workers.rcvMsgCh <- msg
+	ctx.workers.rcvMsgCh <- msg
 }

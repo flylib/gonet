@@ -15,10 +15,6 @@ type session struct {
 	conn *websocket.Conn
 }
 
-func init() {
-	RegisterServer(&server{}, session{})
-}
-
 //新会话
 func newSession(conn *websocket.Conn) *session {
 	ses := CreateSession()

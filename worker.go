@@ -92,7 +92,7 @@ func (w *BeeWorkerPool) run() {
 					w.createWorkerCh <- 1
 				}()
 				for msg := range w.handleMsgCh {
-					if f, ok := sys.mMsgHooks[msg.ID]; ok {
+					if f, ok := ctx.mMsgHooks[msg.ID]; ok {
 						f(msg)
 					}
 				}
