@@ -5,6 +5,8 @@ import (
 	"net"
 )
 
+var _ Session = new(session)
+
 //addr:sessionID
 var remotes = map[string]uint64{}
 

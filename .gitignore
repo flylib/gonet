@@ -14,3 +14,10 @@
 *.out
 
 *.xml
+
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr

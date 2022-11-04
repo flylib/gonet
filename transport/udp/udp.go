@@ -8,6 +8,8 @@ import (
 	"reflect"
 )
 
+var _ transport.Transport = new(udp)
+
 type udp struct {
 	transport.TransportIdentify
 	conn *net.UDPConn

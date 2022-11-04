@@ -8,6 +8,8 @@ import (
 	"reflect"
 )
 
+var _ transport.Transport = new(ws)
+
 //接收端
 type ws struct {
 	transport.TransportIdentify

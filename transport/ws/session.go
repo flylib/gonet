@@ -7,6 +7,8 @@ import (
 	"net"
 )
 
+var _ Session = new(session)
+
 // webSocket conn
 type session struct {
 	SessionIdentify

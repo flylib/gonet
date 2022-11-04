@@ -6,6 +6,8 @@ import (
 	"reflect"
 )
 
+var _ transport.Transport = new(tcp)
+
 type tcp struct {
 	transport.TransportIdentify
 	ln net.Listener

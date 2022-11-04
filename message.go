@@ -2,6 +2,8 @@ package gonet
 
 import "container/list"
 
+var _ MessageCache = new(MessageList)
+
 type MessageID uint32
 
 //系统消息
