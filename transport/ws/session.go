@@ -21,9 +21,8 @@ func newSession(conn *websocket.Conn) *session {
 	ses := CreateSession()
 	newSession, _ := ses.(*session)
 	newSession.conn = conn
-	CacheMsg(&Message{
-		Session: newSession,
-		ID:      SessionConnect,
+	CacheMessage(newSession, &Message{
+		ID: SessionConnect,
 	})
 	return newSession
 }
@@ -54,7 +53,6 @@ func (s *session) recvLoop() {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
 		}
-		msg.Session = s
-		CacheMsg(msg)
+		CacheMessage(s, msg)
 	}
 }

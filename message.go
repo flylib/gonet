@@ -12,9 +12,20 @@ const (
 	SessionClose
 )
 
+type Head struct {
+	session Session
+}
+
+func (h *Head) setSession(session Session) {
+	h.session = session
+}
+func (h *Head) GetSession() Session {
+	return h.session
+}
+
 //消息体
 type Message struct {
-	Session
+	Head
 	ID   MessageID   `json:"id"`
 	Body interface{} `json:"data"`
 }

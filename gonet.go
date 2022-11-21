@@ -117,10 +117,9 @@ func CreateSession() Session {
 
 //回收会话对象
 func RecycleSession(session Session, err error) {
-	CacheMsg(&Message{
-		Session: session,
-		ID:      SessionClose,
-		Body:    err,
+	CacheMessage(session, &Message{
+		ID:   SessionClose,
+		Body: err,
 	})
 	//关闭
 	session.Close()
@@ -193,6 +192,7 @@ func DecodeMessage(msg interface{}, data []byte) error {
 }
 
 //缓存消息
-func CacheMsg(msg *Message) {
+func CacheMessage(session Session, msg *Message) {
+	msg.Head.setSession(session)
 	ctx.workers.rcvMsgCh <- msg
 }

@@ -50,8 +50,7 @@ func (s *udp) Listen() error {
 			log.Printf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
 			continue
 		}
-		msg.Session = ses
-		CacheMsg(msg)
+		CacheMessage(ses, msg)
 	}
 	return nil
 }

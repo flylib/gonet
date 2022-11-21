@@ -66,7 +66,6 @@ func (s *session) recvLoop() {
 		if unUsedCount > 0 {
 			s.cache = append(s.cache, buf[len(buf)-unUsedCount-1:]...)
 		}
-		msg.Session = s
-		CacheMsg(msg)
+		CacheMessage(s, msg)
 	}
 }
