@@ -2,7 +2,7 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	. "github.com/zjllib/gonet/v3/transport"
+	. "github.com/zjllib/gonet/v3"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -12,7 +12,7 @@ var _ IServer = new(server)
 
 //接收端
 type server struct {
-	TransportIdentify
+	ServerIdentify
 	//指定将HTTP连接升级到WebSocket连接的参数。
 	upGrader websocket.Upgrader
 	//响应头

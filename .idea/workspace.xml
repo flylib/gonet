@@ -19,23 +19,16 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="add msg head">
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="refactor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/errors.go" beforeDir="false" afterPath="$PROJECT_DIR$/errors.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/binary.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/binary/binary.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/json.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/json/json.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/protobuf.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/protobuf/protobuf.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/xml.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/xml/xml.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/packet.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/tcp/tcp.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/transport.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/udp.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/ws.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,11 +131,11 @@
       <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\go\project\goNet\transport" />
+      <recent name="D:\go\project\goNet\codec\xml" />
+      <recent name="D:\go\project\goNet\codec\protobuf" />
+      <recent name="D:\go\project\goNet\codec\json" />
+      <recent name="D:\go\project\goNet\codec\binary" />
       <recent name="D:\go\project\goNet" />
-      <recent name="D:\go\project\others\goNet\docs" />
-      <recent name="D:\go\project\others\goNet\codec" />
-      <recent name="D:\go\project\others\goNet\transport" />
     </key>
   </component>
   <component name="RemoteSynchronizer">
@@ -307,7 +300,8 @@
     <MESSAGE value="update readme.md" />
     <MESSAGE value="add asserts that types implement expected set of interfaces" />
     <MESSAGE value="add asserts that types implement expected set of interfaces&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
-    <option name="LAST_COMMIT_MESSAGE" value="add asserts that types implement expected set of interfaces&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
+    <MESSAGE value="refactor" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -322,7 +316,7 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/codec/protobuf.go</url>
+          <url>file://$PROJECT_DIR$/codec/protobuf/protobuf.go</url>
           <line>6</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>

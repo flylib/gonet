@@ -2,7 +2,6 @@ package gonet
 
 import (
 	"container/list"
-	"github.com/zjllib/gonet/v3/transport"
 )
 
 var _ MessageCache = new(MessageList)
@@ -16,13 +15,13 @@ const (
 )
 
 type Head struct {
-	session transport.ISession
+	session ISession
 }
 
-func (h *Head) setSession(session transport.ISession) {
+func (h *Head) setSession(session ISession) {
 	h.session = session
 }
-func (h *Head) GetSession() transport.ISession {
+func (h *Head) GetSession() ISession {
 	return h.session
 }
 
@@ -60,17 +59,4 @@ func (l *MessageList) Pop() *Message {
 	}
 	l.List.Remove(element)
 	return element.Value.(*Message)
-}
-
-const (
-	Json     = "json"
-	Binary   = "binary"
-	Protobuf = "protobuf"
-	Xml      = "xml"
-)
-
-type Codec interface {
-	Encode(v interface{}) (data []byte, err error)
-	Decode(data []byte, vObj interface{}) error
-	Type() string
 }

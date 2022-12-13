@@ -2,19 +2,18 @@ package tcp
 
 import (
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
 )
 
-var _ transport.ISession = new(session)
+var _ ISession = new(session)
 
 // Socket会话
 type session struct {
 	//核心会话标志
-	transport.SessionIdentify
+	SessionIdentify
 	//存储功能
-	transport.SessionStore
+	SessionStore
 	//累计收消息总数
 	recvCount uint64
 	//raw conn

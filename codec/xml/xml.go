@@ -1,4 +1,4 @@
-package codec
+package xml
 
 import (
 	"encoding/xml"

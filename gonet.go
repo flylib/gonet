@@ -1,8 +1,10 @@
 package gonet
 
 import (
-	"github.com/zjllib/gonet/v3/codec"
-	"github.com/zjllib/gonet/v3/transport"
+	"github.com/zjllib/gonet/v3/codec/binary"
+	"github.com/zjllib/gonet/v3/codec/json"
+	"github.com/zjllib/gonet/v3/codec/protobuf"
+	"github.com/zjllib/gonet/v3/codec/xml"
 	"log"
 	"reflect"
 	"sync"
@@ -10,7 +12,7 @@ import (
 )
 
 var (
-	ctx goNet //上下文
+	goNetContext goNet //上下文
 )
 
 func init() {
@@ -19,11 +21,11 @@ func init() {
 }
 
 func init() {
-	ctx = goNet{
+	goNetContext = goNet{
 		SessionManager: SessionManager{
 			pool: sync.Pool{
 				New: func() interface{} {
-					return reflect.New(ctx.sessionType).Interface()
+					return reflect.New(goNetContext.sessionType).Interface()
 				},
 			},
 		},
@@ -47,7 +49,7 @@ type goNet struct {
 	//消息编码器
 	defaultCodec Codec
 	//传输端
-	server transport.IServer
+	server IServer
 	//bee worker pool
 	workers BeeWorkerPool
 	//消息钩子
@@ -56,15 +58,15 @@ type goNet struct {
 	name string
 }
 
-func (c goNet) Name() string {
+func (c *goNet) Name() string {
 	return c.name
 }
 
-func (c goNet) Start() error {
+func (c *goNet) Start() error {
 	return c.server.Listen()
 }
 
-func (c goNet) Stop() error {
+func (c *goNet) Stop() error {
 	return c.server.Stop()
 }
 
@@ -91,51 +93,51 @@ func NewService(opts ...options) IService {
 		f(&option)
 	}
 	//传输协议
-	ctx.server = option.server
-	ctx.sessionType = option.server.SessionType()
+	goNetContext.server = option.server
+	goNetContext.sessionType = option.server.SessionType()
 	if option.serviceName == "" {
 		option.serviceName = "goNet"
 	}
-	ctx.name = option.serviceName
+	goNetContext.name = option.serviceName
 
 	//编码格式
 	switch option.contentType {
 	case Binary:
-		ctx.defaultCodec = codec.BinaryCodec{}
+		goNetContext.defaultCodec = binary.BinaryCodec{}
 	case Xml:
-		ctx.defaultCodec = codec.XmlCodec{}
+		goNetContext.defaultCodec = xml.XmlCodec{}
 	case Protobuf:
-		ctx.defaultCodec = codec.ProtobufCodec{}
+		goNetContext.defaultCodec = protobuf.ProtobufCodec{}
 	default:
-		ctx.defaultCodec = codec.JsonCodec{}
+		goNetContext.defaultCodec = json.JsonCodec{}
 	}
 	cache := option.msgCache
 	if cache == nil {
 		cache = &MessageList{}
 	}
-	ctx.workers = createBeeWorkerPool(option.workerPoolSize, cache)
-	return ctx
+	goNetContext.workers = createBeeWorkerPool(option.workerPoolSize, cache)
+	return &goNetContext
 }
 
 //获取会话
-func GetSession(id uint64) (transport.ISession, bool) {
-	value, ok := ctx.sessions.Load(id)
+func GetSession(id uint64) (ISession, bool) {
+	value, ok := goNetContext.sessions.Load(id)
 	if ok {
-		return value.(transport.ISession), ok
+		return value.(ISession), ok
 	}
 	return nil, false
 }
 
 //创建会话
-func CreateSession() transport.ISession {
-	obj := ctx.pool.Get()
-	ctx.store(atomic.AddUint64(&ctx.incr, 1), obj)
-	session := obj.(transport.ISession)
+func CreateSession() ISession {
+	obj := goNetContext.pool.Get()
+	goNetContext.store(atomic.AddUint64(&goNetContext.incr, 1), obj)
+	session := obj.(ISession)
 	return session
 }
 
 //回收会话对象
-func RecycleSession(session transport.ISession, err error) {
+func RecycleSession(session ISession, err error) {
 	CacheMessage(session, &Message{
 		ID:   SessionClose,
 		Body: err,
@@ -143,15 +145,15 @@ func RecycleSession(session transport.ISession, err error) {
 	//关闭
 	session.Close()
 	//删除
-	ctx.del(session.ID())
+	goNetContext.del(session.ID())
 	//回收
-	ctx.pool.Put(session)
+	goNetContext.pool.Put(session)
 }
 
 //统计会话数量
 func SessionCount() int {
 	sum := 0
-	ctx.sessions.Range(func(key, value interface{}) bool {
+	goNetContext.sessions.Range(func(key, value interface{}) bool {
 		sum++
 		return true
 	})
@@ -160,8 +162,8 @@ func SessionCount() int {
 
 //广播会话
 func Broadcast(msg interface{}) {
-	ctx.sessions.Range(func(_, item interface{}) bool {
-		session, ok := item.(transport.ISession)
+	goNetContext.sessions.Range(func(_, item interface{}) bool {
+		session, ok := item.(ISession)
 		if ok {
 			session.Send(msg)
 		}
@@ -171,30 +173,30 @@ func Broadcast(msg interface{}) {
 
 //映射消息体
 func Route(msgID MessageID, msg interface{}, callback Hook) {
-	ctx.Lock()
-	defer ctx.Unlock()
+	goNetContext.Lock()
+	defer goNetContext.Unlock()
 	msgType := reflect.TypeOf(msg)
-	if _, ok := ctx.mMsgTypes[msgID]; ok {
+	if _, ok := goNetContext.mMsgTypes[msgID]; ok {
 		panic("error:Duplicate message id")
 	}
 	if msgType != nil {
-		ctx.mMsgIDs[msgType] = msgID
-		ctx.mMsgTypes[msgID] = msgType
+		goNetContext.mMsgIDs[msgType] = msgID
+		goNetContext.mMsgTypes[msgID] = msgType
 	}
 	if callback != nil {
-		ctx.mMsgHooks[msgID] = callback
+		goNetContext.mMsgHooks[msgID] = callback
 	}
 }
 
 //获取消息ID
 func GetMsgID(msg interface{}) (MessageID, bool) {
-	msgID, ok := ctx.mMsgIDs[reflect.TypeOf(msg)]
+	msgID, ok := goNetContext.mMsgIDs[reflect.TypeOf(msg)]
 	return msgID, ok
 }
 
 //通消息id创建消息体
 func CreateMsg(msgID MessageID) interface{} {
-	if msg, ok := ctx.mMsgTypes[msgID]; ok {
+	if msg, ok := goNetContext.mMsgTypes[msgID]; ok {
 		return reflect.New(msg).Interface()
 	}
 	return nil
@@ -202,16 +204,16 @@ func CreateMsg(msgID MessageID) interface{} {
 
 //编码消息
 func EncodeMessage(msg interface{}) ([]byte, error) {
-	return ctx.defaultCodec.Encode(msg)
+	return goNetContext.defaultCodec.Encode(msg)
 }
 
 // 解码消息
 func DecodeMessage(msg interface{}, data []byte) error {
-	return ctx.defaultCodec.Decode(data, msg)
+	return goNetContext.defaultCodec.Decode(data, msg)
 }
 
 //缓存消息
-func CacheMessage(session transport.ISession, msg *Message) {
+func CacheMessage(session ISession, msg *Message) {
 	msg.Head.setSession(session)
-	ctx.workers.rcvMsgCh <- msg
+	goNetContext.workers.rcvMsgCh <- msg
 }

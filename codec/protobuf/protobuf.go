@@ -1,4 +1,4 @@
-package codec
+package protobuf
 
 import (
 	"github.com/gogo/protobuf/proto"

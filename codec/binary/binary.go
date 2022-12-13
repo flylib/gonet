@@ -1,4 +1,4 @@
-package codec
+package binary
 
 import (
 	"github.com/davyxu/goobjfmt"

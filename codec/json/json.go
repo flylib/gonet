@@ -1,4 +1,4 @@
-package codec
+package json
 
 import (
 	"github.com/json-iterator/go" //高性能json编码库

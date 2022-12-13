@@ -3,7 +3,6 @@ package ws
 import (
 	"github.com/gorilla/websocket"
 	. "github.com/zjllib/gonet/v3"
-	. "github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
 )
