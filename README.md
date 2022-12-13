@@ -1,16 +1,31 @@
 
 ![gonetlogo](docs/logo.jpg)
 ## version
- v3
+ `v3.1.0`
  
 ## 介绍
 一个基于go语言开发的网络脚手架,参考[cellnet](https://github.com/davyxu/cellnet)和[gin](https://github.com/gin-gonic/gin) 两大开框架的设计，使用非常方便简洁，轻松让你开发出高并发高性能的网络应用，可以用于游戏,app等任何领域的通讯。
 
 ## 主要技术理念
 - Session pool 会话池
-- Routine pool  消息处理协程池
+- Bee worker  消息处理协程池
 - Message cache layer 消息缓存层
 - Message ID route 依据消息ID进行路由
+
+## 架构图
+```go
+/*
++---------------------------------------------------+
++	            service		            +
++---------------------------------------------------+
++	server	       |	client	            +
++---------------------------------------------------+
++	    bee worker、Session pool、codec	    +
++---------------------------------------------------+
++	   transport(udp、tcp、ws、quic)	            +
++---------------------------------------------------+
+*/
+```
 
 
 ## 主要特性及追求目标

@@ -2,18 +2,19 @@ package udp
 
 import (
 	. "github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3/transport"
 	"net"
 )
 
-var _ Session = new(session)
+var _ transport.ISession = new(session)
 
 //addr:sessionID
 var remotes = map[string]uint64{}
 
 // Socket会话
 type session struct {
-	SessionIdentify
-	SessionStore
+	transport.SessionIdentify
+	transport.SessionStore
 	remote *net.UDPAddr
 	conn   *net.UDPConn
 	data   interface{}

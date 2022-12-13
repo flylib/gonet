@@ -6,20 +6,20 @@ import (
 	"reflect"
 )
 
-var _ transport.Transport = new(tcp)
+var _ transport.IServer = new(server)
 
-type tcp struct {
+type server struct {
 	transport.TransportIdentify
 	ln net.Listener
 }
 
-func NewTransport(addr string) *tcp {
-	s := &tcp{}
+func NewTransport(addr string) *server {
+	s := &server{}
 	s.SetAddr(addr)
 	return s
 }
 
-func (s *tcp) Listen() error {
+func (s *server) Listen() error {
 	ln, err := net.Listen(string(transport.TCP), s.Addr())
 	if err != nil {
 		return err
@@ -33,10 +33,10 @@ func (s *tcp) Listen() error {
 		go newSession(conn).recvLoop()
 	}
 }
-func (s *tcp) Stop() error {
+func (s *server) Stop() error {
 	return s.ln.Close()
 }
 
-func (s *tcp) SessionType() reflect.Type {
+func (s *server) SessionType() reflect.Type {
 	return reflect.TypeOf(session{})
 }

@@ -2,7 +2,7 @@ package gonet
 
 import (
 	"github.com/zjllib/gonet/v3/codec"
-	transport2 "github.com/zjllib/gonet/v3/transport"
+	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"reflect"
 	"sync"
@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ctx Context //上下文
+	ctx goNet //上下文
 )
 
 func init() {
@@ -19,7 +19,7 @@ func init() {
 }
 
 func init() {
-	ctx = Context{
+	ctx = goNet{
 		SessionManager: SessionManager{
 			pool: sync.Pool{
 				New: func() interface{} {
@@ -35,15 +35,7 @@ func init() {
 
 type Hook func(msg *Message)
 
-//一切皆服务
-type Service interface {
-	// 开启服务
-	Start() error
-	// 停止服务
-	Stop() error
-}
-
-type Context struct {
+type goNet struct {
 	//会话管理
 	SessionManager
 	//message types
@@ -55,29 +47,56 @@ type Context struct {
 	//消息编码器
 	defaultCodec Codec
 	//传输端
-	transport transport2.Transport
+	server transport.IServer
 	//bee worker pool
 	workers BeeWorkerPool
 	//消息钩子
 	mMsgHooks map[MessageID]Hook
+
+	name string
 }
 
-func (c Context) Start() error {
-	return c.transport.Listen()
+func (c goNet) Name() string {
+	return c.name
 }
 
-func (c Context) Stop() error {
-	return c.transport.Stop()
+func (c goNet) Start() error {
+	return c.server.Listen()
 }
 
-func NewService(opts ...options) Service {
+func (c goNet) Stop() error {
+	return c.server.Stop()
+}
+
+//会话管理
+type SessionManager struct {
+	sync.RWMutex
+	incr     uint64    //流水号
+	sessions sync.Map  //所有链接
+	pool     sync.Pool //临时对象池
+}
+
+func (s *SessionManager) store(id uint64, session interface{}) {
+	session.(interface{ setID(id uint64) }).setID(id)
+	s.sessions.Store(id, session)
+}
+
+func (s *SessionManager) del(id uint64) {
+	s.sessions.Delete(id)
+}
+
+func NewService(opts ...options) IService {
 	option := Option{}
 	for _, f := range opts {
 		f(&option)
 	}
 	//传输协议
-	ctx.transport = option.transport
-	ctx.sessionType = option.transport.SessionType()
+	ctx.server = option.server
+	ctx.sessionType = option.server.SessionType()
+	if option.serviceName == "" {
+		option.serviceName = "goNet"
+	}
+	ctx.name = option.serviceName
 
 	//编码格式
 	switch option.contentType {
@@ -99,24 +118,24 @@ func NewService(opts ...options) Service {
 }
 
 //获取会话
-func GetSession(id uint64) (Session, bool) {
+func GetSession(id uint64) (transport.ISession, bool) {
 	value, ok := ctx.sessions.Load(id)
 	if ok {
-		return value.(Session), ok
+		return value.(transport.ISession), ok
 	}
 	return nil, false
 }
 
 //创建会话
-func CreateSession() Session {
+func CreateSession() transport.ISession {
 	obj := ctx.pool.Get()
 	ctx.store(atomic.AddUint64(&ctx.incr, 1), obj)
-	session := obj.(Session)
+	session := obj.(transport.ISession)
 	return session
 }
 
 //回收会话对象
-func RecycleSession(session Session, err error) {
+func RecycleSession(session transport.ISession, err error) {
 	CacheMessage(session, &Message{
 		ID:   SessionClose,
 		Body: err,
@@ -142,7 +161,7 @@ func SessionCount() int {
 //广播会话
 func Broadcast(msg interface{}) {
 	ctx.sessions.Range(func(_, item interface{}) bool {
-		session, ok := item.(Session)
+		session, ok := item.(transport.ISession)
 		if ok {
 			session.Send(msg)
 		}
@@ -192,7 +211,7 @@ func DecodeMessage(msg interface{}, data []byte) error {
 }
 
 //缓存消息
-func CacheMessage(session Session, msg *Message) {
+func CacheMessage(session transport.ISession, msg *Message) {
 	msg.Head.setSession(session)
 	ctx.workers.rcvMsgCh <- msg
 }

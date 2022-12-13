@@ -17,7 +17,7 @@ const (
 type (
 
 	//传输协议
-	Transport interface {
+	IServer interface {
 		// 启动监听
 		Listen() error
 		// 停止服务

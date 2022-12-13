@@ -3,7 +3,7 @@ package gonet
 import "errors"
 
 var (
-	ErrorSessionClosed = errors.New("Session already closed")
-	ErrorNotExistMsg   = errors.New("Non-existent message")
-	ErrorNoTransport   = errors.New("No transmission protocol selected")
+	ErrorSessionClosed = errors.New("session already closed")
+	ErrorNotExistMsg   = errors.New("non-existent message")
+	ErrorNoTransport   = errors.New("no transmission protocol selected")
 )

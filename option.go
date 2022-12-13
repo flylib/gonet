@@ -11,8 +11,10 @@ import (
 
 //options
 type Option struct {
-	//传输端
-	transport transport.Transport
+	//SERVER
+	server transport.IServer
+	//CLIENT
+	client transport.IClient
 	//读写超时
 	readDeadline, writeDeadline time.Duration
 	//0意味着无限制
@@ -25,9 +27,25 @@ type Option struct {
 	workerPoolSize int32
 	//cache for messages
 	msgCache MessageCache
+	//service name
+	serviceName string
 }
 
 type options func(o *Option)
+
+//server
+func Server(s transport.IServer) options {
+	return func(o *Option) {
+		o.server = s
+	}
+}
+
+//client
+func Client(c transport.IClient) options {
+	return func(o *Option) {
+		o.client = c
+	}
+}
 
 func MaxSessions(max int) options {
 	return func(o *Option) {
@@ -48,16 +66,16 @@ func ContentType(ct string) options {
 	}
 }
 
-//传输协议
-func WithTransport(t transport.Transport) options {
-	return func(o *Option) {
-		o.transport = t
-	}
-}
-
 //cache for messages
 func WithMessageCache(cache MessageCache) options {
 	return func(o *Option) {
 		o.msgCache = cache
+	}
+}
+
+//cache for messages
+func ServiceName(name string) options {
+	return func(o *Option) {
+		o.serviceName = name
 	}
 }

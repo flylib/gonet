@@ -8,20 +8,20 @@ import (
 	"reflect"
 )
 
-var _ transport.Transport = new(udp)
+var _ transport.IServer = new(server)
 
-type udp struct {
+type server struct {
 	transport.TransportIdentify
 	conn *net.UDPConn
 }
 
-func NewTransport(addr string) *udp {
-	s := &udp{}
+func NewTransport(addr string) *server {
+	s := &server{}
 	s.SetAddr(addr)
 	return s
 }
 
-func (s *udp) Listen() error {
+func (s *server) Listen() error {
 	localAddr, err := net.ResolveUDPAddr(string(transport.UDP), s.Addr())
 	if err != nil {
 		return err
@@ -54,10 +54,10 @@ func (s *udp) Listen() error {
 	}
 	return nil
 }
-func (s *udp) Stop() error {
+func (s *server) Stop() error {
 	return s.conn.Close()
 }
 
-func (s *udp) SessionType() reflect.Type {
+func (s *server) SessionType() reflect.Type {
 	return reflect.TypeOf(session{})
 }
