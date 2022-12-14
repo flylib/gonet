@@ -21,9 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="refactor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -294,9 +292,9 @@
     <MESSAGE value="update readme.md" />
     <MESSAGE value="add asserts that types implement expected set of interfaces" />
     <MESSAGE value="add asserts that types implement expected set of interfaces&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
-    <MESSAGE value="refactor" />
     <MESSAGE value="refactor&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
+    <MESSAGE value="refactor" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
