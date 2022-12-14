@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-var _ ISession = new(session)
+var _ transport.ISession = new(session)
 
 //addr:sessionID
 var remotes = map[string]uint64{}

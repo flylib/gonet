@@ -8,7 +8,7 @@ import (
 	"reflect"
 )
 
-var _ IServer = new(server)
+var _ transport.IServer = new(server)
 
 type server struct {
 	transport.ServerIdentify
@@ -22,7 +22,7 @@ func NewTransport(addr string) *server {
 }
 
 func (s *server) Listen() error {
-	localAddr, err := net.ResolveUDPAddr(string(UDP), s.Addr())
+	localAddr, err := net.ResolveUDPAddr(string(transport.UDP), s.Addr())
 	if err != nil {
 		return err
 	}

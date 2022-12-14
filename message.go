@@ -2,6 +2,7 @@ package gonet
 
 import (
 	"container/list"
+	"github.com/zjllib/gonet/v3/transport"
 )
 
 var _ MessageCache = new(MessageList)
@@ -15,13 +16,13 @@ const (
 )
 
 type Head struct {
-	session ISession
+	session transport.ISession
 }
 
-func (h *Head) setSession(session ISession) {
+func (h *Head) setSession(session transport.ISession) {
 	h.session = session
 }
-func (h *Head) GetSession() ISession {
+func (h *Head) GetSession() transport.ISession {
 	return h.session
 }
 

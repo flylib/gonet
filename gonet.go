@@ -1,10 +1,12 @@
 package gonet
 
 import (
+	"github.com/zjllib/gonet/v3/codec"
 	"github.com/zjllib/gonet/v3/codec/binary"
 	"github.com/zjllib/gonet/v3/codec/json"
 	"github.com/zjllib/gonet/v3/codec/protobuf"
 	"github.com/zjllib/gonet/v3/codec/xml"
+	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"reflect"
 	"sync"
@@ -47,9 +49,9 @@ type goNet struct {
 	//server types
 	sessionType reflect.Type
 	//消息编码器
-	defaultCodec Codec
+	defaultCodec codec.Codec
 	//传输端
-	server IServer
+	server transport.IServer
 	//bee worker pool
 	workers BeeWorkerPool
 	//消息钩子
@@ -79,7 +81,7 @@ type SessionManager struct {
 }
 
 func (s *SessionManager) store(id uint64, session interface{}) {
-	session.(interface{ setID(id uint64) }).setID(id)
+	session.(interface{ SetID(id uint64) }).SetID(id)
 	s.sessions.Store(id, session)
 }
 
@@ -102,11 +104,11 @@ func NewService(opts ...options) IService {
 
 	//编码格式
 	switch option.contentType {
-	case Binary:
+	case codec.Binary:
 		goNetContext.defaultCodec = binary.BinaryCodec{}
-	case Xml:
+	case codec.Xml:
 		goNetContext.defaultCodec = xml.XmlCodec{}
-	case Protobuf:
+	case codec.Protobuf:
 		goNetContext.defaultCodec = protobuf.ProtobufCodec{}
 	default:
 		goNetContext.defaultCodec = json.JsonCodec{}
@@ -120,24 +122,24 @@ func NewService(opts ...options) IService {
 }
 
 //获取会话
-func GetSession(id uint64) (ISession, bool) {
+func GetSession(id uint64) (transport.ISession, bool) {
 	value, ok := goNetContext.sessions.Load(id)
 	if ok {
-		return value.(ISession), ok
+		return value.(transport.ISession), ok
 	}
 	return nil, false
 }
 
 //创建会话
-func CreateSession() ISession {
+func CreateSession() transport.ISession {
 	obj := goNetContext.pool.Get()
 	goNetContext.store(atomic.AddUint64(&goNetContext.incr, 1), obj)
-	session := obj.(ISession)
+	session := obj.(transport.ISession)
 	return session
 }
 
 //回收会话对象
-func RecycleSession(session ISession, err error) {
+func RecycleSession(session transport.ISession, err error) {
 	CacheMessage(session, &Message{
 		ID:   SessionClose,
 		Body: err,
@@ -163,7 +165,7 @@ func SessionCount() int {
 //广播会话
 func Broadcast(msg interface{}) {
 	goNetContext.sessions.Range(func(_, item interface{}) bool {
-		session, ok := item.(ISession)
+		session, ok := item.(transport.ISession)
 		if ok {
 			session.Send(msg)
 		}
@@ -213,7 +215,7 @@ func DecodeMessage(msg interface{}, data []byte) error {
 }
 
 //缓存消息
-func CacheMessage(session ISession, msg *Message) {
+func CacheMessage(session transport.ISession, msg *Message) {
 	msg.Head.setSession(session)
 	goNetContext.workers.rcvMsgCh <- msg
 }

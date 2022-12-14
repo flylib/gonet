@@ -19,16 +19,18 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="refactor">
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="refactor&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/binary.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/binary/binary.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/json.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/json/json.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/protobuf.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/protobuf/protobuf.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/xml.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/xml/xml.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/transport.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,11 +133,11 @@
       <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\go\project\goNet\transport" />
       <recent name="D:\go\project\goNet\codec\xml" />
       <recent name="D:\go\project\goNet\codec\protobuf" />
       <recent name="D:\go\project\goNet\codec\json" />
       <recent name="D:\go\project\goNet\codec\binary" />
-      <recent name="D:\go\project\goNet" />
     </key>
   </component>
   <component name="RemoteSynchronizer">
@@ -276,7 +278,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="修改启动配置" />
     <MESSAGE value="优化" />
     <MESSAGE value="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;" />
     <MESSAGE value="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;" />
@@ -301,7 +302,8 @@
     <MESSAGE value="add asserts that types implement expected set of interfaces" />
     <MESSAGE value="add asserts that types implement expected set of interfaces&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
     <MESSAGE value="refactor" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor" />
+    <MESSAGE value="refactor&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

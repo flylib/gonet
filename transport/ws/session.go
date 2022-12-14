@@ -3,16 +3,17 @@ package ws
 import (
 	"github.com/gorilla/websocket"
 	. "github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
 )
 
-var _ ISession = new(session)
+var _ transport.ISession = new(session)
 
 // webSocket conn
 type session struct {
-	SessionIdentify
-	SessionStore
+	transport.SessionIdentify
+	transport.SessionStore
 	conn *websocket.Conn
 }
 
