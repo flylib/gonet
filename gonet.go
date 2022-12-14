@@ -52,6 +52,7 @@ type goNet struct {
 	defaultCodec codec.Codec
 	//传输端
 	server transport.IServer
+	client transport.IClient
 	//bee worker pool
 	workers BeeWorkerPool
 	//消息钩子
@@ -70,6 +71,12 @@ func (c *goNet) Start() error {
 
 func (c *goNet) Stop() error {
 	return c.server.Stop()
+}
+func (c *goNet) Server() transport.IServer {
+	return c.server
+}
+func (c *goNet) Client() transport.IClient {
+	return c.client
 }
 
 //会话管理

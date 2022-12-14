@@ -1,5 +1,7 @@
 package gonet
 
+import "github.com/zjllib/gonet/v3/transport"
+
 /*
 +---------------------------------------------------+
 +				     service						+
@@ -20,4 +22,8 @@ type IService interface {
 	Start() error
 	// 停止服务
 	Stop() error
+	// Client is used to call services
+	Client() transport.IClient
+	// Server is for handling requests and events
+	Server() transport.IServer
 }

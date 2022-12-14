@@ -16,12 +16,10 @@ func init() {
 }
 
 func main() {
-	server := ws.NewServer("ws://localhost:8088/center/ws")
-
 	service := gonet.NewService(
-		gonet.Server(server),
+		gonet.Server(ws.NewServer("ws://localhost:8088/center/ws")),
 		gonet.MaxWorkerPoolSize(20))
-	println("server listen on:", server.Addr())
+	println("server listen on:", service.Server().Addr())
 	if err := service.Start(); err != nil {
 		log.Fatal(err)
 	}
