@@ -1,4 +1,4 @@
-package transport
+package gonet
 
 import (
 	"net"
@@ -18,7 +18,7 @@ const (
 	RPC  TransportProtocol = "rpc"
 )
 
-//Interfaces
+// Interfaces
 type (
 	//服务端
 	IServer interface {
@@ -51,7 +51,7 @@ type (
 	}
 )
 
-//server端属性
+// server端属性
 type ServerIdentify struct {
 	uuid string
 	//地址
@@ -66,12 +66,12 @@ func (s *ServerIdentify) SetAddr(addr string) {
 	s.addr = addr
 }
 
-//存储功能
+// 存储功能
 type SessionStore struct {
 	sync.Map
 }
 
-//核心会话标志
+// 核心会话标志
 type SessionIdentify struct {
 	id uint64
 }

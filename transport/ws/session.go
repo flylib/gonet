@@ -3,26 +3,25 @@ package ws
 import (
 	"github.com/gorilla/websocket"
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
 )
 
-var _ transport.ISession = new(session)
+var _ ISession = new(session)
 
 // webSocket conn
 type session struct {
-	transport.SessionIdentify
-	transport.SessionStore
+	SessionIdentify
+	SessionStore
 	conn *websocket.Conn
 }
 
-//新会话
-func newSession(conn *websocket.Conn) *session {
-	ses := CreateSession()
+// 新会话
+func newSession(c *Context, conn *websocket.Conn) *session {
+	ses := c.CreateSession()
 	newSession, _ := ses.(*session)
 	newSession.conn = conn
-	CacheMessage(newSession, &Message{
+	c.HandingMessage(newSession, &Message{
 		ID: SessionConnect,
 	})
 	return newSession
@@ -36,24 +35,24 @@ func (s *session) Close() error {
 	return s.conn.Close()
 }
 
-//websocket does not support sending messages concurrently
+// websocket does not support sending messages concurrently
 func (s *session) Send(msg interface{}) error {
 	return SendWSPacket(s.conn, msg)
 }
 
-//循环读取消息
-func (s *session) recvLoop() {
+// 循环读取消息
+func (s *session) recvLoop(c *Context) {
 	for {
-		_, pkt, err := s.conn.ReadMessage()
+		_, data, err := s.conn.ReadMessage()
 		if err != nil {
-			RecycleSession(s, err)
+			c.RecycleSession(s, err)
 			return
 		}
-		msg, err := ParserWSPacket(pkt)
+		msg, err := ParserWSPacket(data)
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
 		}
-		CacheMessage(s, msg)
+		c.HandingMessage(s, msg)
 	}
 }

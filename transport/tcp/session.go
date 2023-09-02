@@ -2,19 +2,18 @@ package tcp
 
 import (
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
 )
 
-var _ transport.ISession = new(session)
+var _ ISession = new(session)
 
 // Socket会话
 type session struct {
 	//核心会话标志
-	transport.SessionIdentify
+	SessionIdentify
 	//存储功能
-	transport.SessionStore
+	SessionStore
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -23,9 +22,9 @@ type session struct {
 	cache []byte
 }
 
-//新会话
-func newSession(conn net.Conn) *session {
-	ses := CreateSession()
+// 新会话
+func newSession(c *Context, conn net.Conn) *session {
+	ses := c.CreateSession()
 	ses.(*session).conn = conn
 	return ses.(*session)
 }
@@ -43,12 +42,12 @@ func (s *session) Close() error {
 }
 
 // 接收循环
-func (s *session) recvLoop() {
+func (s *session) recvLoop(c *Context) {
 	for {
 		var buf []byte
 		n, err := s.conn.Read(buf)
 		if err != nil {
-			RecycleSession(s, err)
+			c.RecycleSession(s, err)
 			return
 		}
 		//如果有粘包未处理数据部分，放入本次进行处理
@@ -67,6 +66,6 @@ func (s *session) recvLoop() {
 		if unUsedCount > 0 {
 			s.cache = append(s.cache, buf[len(buf)-unUsedCount-1:]...)
 		}
-		CacheMessage(s, msg)
+		c.HandingMessage(s, msg)
 	}
 }

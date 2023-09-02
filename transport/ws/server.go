@@ -2,17 +2,18 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	"github.com/zjllib/gonet/v3/transport"
+	"github.com/zjllib/gonet/v3"
 	"net/http"
 	"net/url"
 	"reflect"
 )
 
-var _ transport.IServer = new(server)
+var _ gonet.IServer = new(server)
 
-//接收端
+// 接收端
 type server struct {
-	transport.ServerIdentify
+	*gonet.Context
+	gonet.ServerIdentify
 	//指定将HTTP连接升级到WebSocket连接的参数。
 	upGrader websocket.Upgrader
 	//响应头
@@ -52,5 +53,5 @@ func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	go newSession(conn).recvLoop()
+	go newSession(s.Context, conn).recvLoop(s.Context)
 }

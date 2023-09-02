@@ -1,7 +1,6 @@
 package gonet
 
 import (
-	"github.com/zjllib/gonet/v3/transport"
 	"time"
 )
 
@@ -9,12 +8,12 @@ import (
 /////    Option Func   ////////
 //////////////////////////////
 
-//options
+// options
 type Option struct {
 	//SERVER
-	server transport.IServer
+	server IServer
 	//CLIENT
-	client transport.IClient
+	client IClient
 	//读写超时
 	readDeadline, writeDeadline time.Duration
 	//0意味着无限制
@@ -33,15 +32,15 @@ type Option struct {
 
 type options func(o *Option)
 
-//server
-func Server(s transport.IServer) options {
+// server
+func Server(s IServer) options {
 	return func(o *Option) {
 		o.server = s
 	}
 }
 
-//client
-func Client(c transport.IClient) options {
+// client
+func Client(c IClient) options {
 	return func(o *Option) {
 		o.client = c
 	}
@@ -66,14 +65,14 @@ func ContentType(ct string) options {
 	}
 }
 
-//cache for messages
+// cache for messages
 func WithMessageCache(cache MessageCache) options {
 	return func(o *Option) {
 		o.msgCache = cache
 	}
 }
 
-//cache for messages
+// cache for messages
 func ServiceName(name string) options {
 	return func(o *Option) {
 		o.serviceName = name

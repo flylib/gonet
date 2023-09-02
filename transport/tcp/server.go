@@ -1,15 +1,15 @@
 package tcp
 
 import (
-	"github.com/zjllib/gonet/v3/transport"
+	"github.com/zjllib/gonet/v3"
 	"net"
 	"reflect"
 )
 
-var _ transport.IServer = new(server)
+var _ gonet.IServer = new(server)
 
 type server struct {
-	transport.ServerIdentify
+	gonet.ServerIdentify
 	ln net.Listener
 }
 
@@ -20,7 +20,7 @@ func NewTransport(addr string) *server {
 }
 
 func (s *server) Listen() error {
-	ln, err := net.Listen(string(transport.TCP), s.Addr())
+	ln, err := net.Listen(string(gonet.TCP), s.Addr())
 	if err != nil {
 		return err
 	}

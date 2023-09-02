@@ -2,16 +2,15 @@ package udp
 
 import (
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
 	"reflect"
 )
 
-var _ transport.IServer = new(server)
+var _ IServer = new(server)
 
 type server struct {
-	transport.ServerIdentify
+	ServerIdentify
 	conn *net.UDPConn
 }
 
@@ -22,7 +21,7 @@ func NewTransport(addr string) *server {
 }
 
 func (s *server) Listen() error {
-	localAddr, err := net.ResolveUDPAddr(string(transport.UDP), s.Addr())
+	localAddr, err := net.ResolveUDPAddr(string(UDP), s.Addr())
 	if err != nil {
 		return err
 	}
@@ -50,7 +49,7 @@ func (s *server) Listen() error {
 			log.Printf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
 			continue
 		}
-		CacheMessage(ses, msg)
+		HandingMessage(ses, msg)
 	}
 	return nil
 }

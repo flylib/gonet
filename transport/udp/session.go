@@ -2,26 +2,25 @@ package udp
 
 import (
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/transport"
 	"net"
 )
 
-var _ transport.ISession = new(session)
+var _ ISession = new(session)
 
 //addr:sessionID
 var remotes = map[string]uint64{}
 
 // Socket会话
 type session struct {
-	transport.SessionIdentify
-	transport.SessionStore
+	SessionIdentify
+	SessionStore
 	remote *net.UDPAddr
 	conn   *net.UDPConn
 	data   interface{}
 	buf    []byte
 }
 
-//新会话
+// 新会话
 func newSession(conn *net.UDPConn, remote *net.UDPAddr) *session {
 	ses := CreateSession()
 	ses.(*session).conn = conn
