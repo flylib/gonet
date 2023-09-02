@@ -58,12 +58,12 @@ type ServerIdentify struct {
 	addr string
 }
 
-func (s *ServerIdentify) Addr() string {
-	return s.addr
+func (self *ServerIdentify) Addr() string {
+	return self.addr
 }
 
-func (s *ServerIdentify) SetAddr(addr string) {
-	s.addr = addr
+func (self *ServerIdentify) SetAddr(addr string) {
+	self.addr = addr
 }
 
 // 存储功能
@@ -76,10 +76,10 @@ type SessionIdentify struct {
 	id uint64
 }
 
-func (s *SessionIdentify) ID() uint64 {
-	return s.id
+func (self *SessionIdentify) ID() uint64 {
+	return self.id
 }
 
-func (s *SessionIdentify) SetID(id uint64) {
-	s.id = id
+func (self *SessionIdentify) SetID(id uint64) {
+	self.id = id
 }

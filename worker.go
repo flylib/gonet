@@ -17,12 +17,13 @@ const (
 	receiveQueueSize = 512 //默认接收队列大小
 )
 
-//处理池
+// 处理池
 type BeeWorkerPool struct {
+	*Context
 	//当前池协程数量(池大小)
 	size int32
 	//接受处理消息通道
-	rcvMsgCh, handleMsgCh chan *Message
+	rcvMsgCh, handleMsgCh chan IMessage
 	//创建协程通知
 	createWorkerCh chan int
 	//消息溢满通知
@@ -31,9 +32,10 @@ type BeeWorkerPool struct {
 	msgCache MessageCache
 }
 
-//初始化协程池
-func createBeeWorkerPool(size int32, msgCache MessageCache) (pool BeeWorkerPool) {
+// 初始化协程池
+func createBeeWorkerPool(c *Context, size int32, msgCache MessageCache) (pool BeeWorkerPool) {
 	pool = BeeWorkerPool{
+		Context:          c,
 		createWorkerCh:   make(chan int),
 		overflowNotifyCh: make(chan int, 1),
 		rcvMsgCh:         make(chan *Message),
@@ -45,54 +47,54 @@ func createBeeWorkerPool(size int32, msgCache MessageCache) (pool BeeWorkerPool)
 	return pool
 }
 
-func (w *BeeWorkerPool) incPoolSize() {
-	atomic.AddInt32(&w.size, 1)
+func (self *BeeWorkerPool) incPoolSize() {
+	atomic.AddInt32(&self.size, 1)
 }
-func (w *BeeWorkerPool) decPoolSize() {
-	atomic.AddInt32(&w.size, -1)
+func (self *BeeWorkerPool) decPoolSize() {
+	atomic.AddInt32(&self.size, -1)
 }
 
-func (w *BeeWorkerPool) createBeeWorker(count int32) {
+func (self *BeeWorkerPool) createBeeWorker(count int32) {
 	if count <= 0 {
 		count = 1
 	}
 	for i := int32(0); i < count; i++ {
-		w.createWorkerCh <- 1
+		self.createWorkerCh <- 1
 	}
 }
 
-func (w *BeeWorkerPool) handle(msg *Message) {
-	if len(w.handleMsgCh) >= receiveQueueSize {
-		w.msgCache.Push(msg)
-		if len(w.overflowNotifyCh) < 1 {
-			w.overflowNotifyCh <- 1
+func (self *BeeWorkerPool) handle(msg *Message) {
+	if len(self.handleMsgCh) >= receiveQueueSize {
+		self.msgCache.Push(msg)
+		if len(self.overflowNotifyCh) < 1 {
+			self.overflowNotifyCh <- 1
 		}
 	} else {
-		w.handleMsgCh <- msg
+		self.handleMsgCh <- msg
 	}
 }
 
-//运行
-func (w *BeeWorkerPool) run() {
+// 运行
+func (self *BeeWorkerPool) run() {
 	go func() {
-		for msg := range w.rcvMsgCh {
-			w.handle(msg)
+		for msg := range self.rcvMsgCh {
+			self.handle(msg)
 		}
 	}()
 	go func() {
-		for range w.createWorkerCh {
-			w.incPoolSize()
+		for range self.createWorkerCh {
+			self.incPoolSize()
 			go func() {
 				//panic handling
 				defer func() {
-					w.decPoolSize()
+					self.decPoolSize()
 					if err := recover(); err != nil {
 						fmt.Fprintf(os.Stderr, "panic error:%s\n%s", err, debug.Stack())
 					}
-					w.createWorkerCh <- 1
+					self.createWorkerCh <- 1
 				}()
-				for msg := range w.handleMsgCh {
-					if f, ok := goNetContext.mMsgHooks[msg.ID]; ok {
+				for msg := range self.handleMsgCh {
+					if f, ok := self.Context.mMsgHooks[msg.ID]; ok {
 						f(msg)
 					}
 				}
@@ -102,10 +104,10 @@ func (w *BeeWorkerPool) run() {
 	//消息缓存处理
 	go func() {
 		for {
-			if e := w.msgCache.Pop(); e != nil {
-				w.handleMsgCh <- e
+			if e := self.msgCache.Pop(); e != nil {
+				self.handleMsgCh <- e
 			} else {
-				<-w.overflowNotifyCh
+				<-self.overflowNotifyCh
 			}
 		}
 	}()

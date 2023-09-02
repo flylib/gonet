@@ -2,6 +2,10 @@ package gonet
 
 import (
 	"github.com/zjllib/gonet/v3/codec"
+	"github.com/zjllib/gonet/v3/codec/binary"
+	"github.com/zjllib/gonet/v3/codec/json"
+	"github.com/zjllib/gonet/v3/codec/protobuf"
+	"github.com/zjllib/gonet/v3/codec/xml"
 	"reflect"
 	"sync"
 )
@@ -28,6 +32,47 @@ type Context struct {
 	name string
 
 	globalLock sync.Mutex
+
+	//包解析器
+	IPackageParser
+}
+
+func NewContext(opts ...options) *Context {
+	option := Option{}
+	for _, f := range opts {
+		f(&option)
+	}
+	c := &Context{
+		sessionMgr: newSessionManager(option.server.SessionType()),
+		mMsgTypes:  map[MessageID]reflect.Type{},
+		mMsgIDs:    map[reflect.Type]MessageID{},
+		mMsgHooks:  map[MessageID]Hook{},
+	}
+	//传输协议
+	c.server = option.server
+	c.sessionType = option.server.SessionType()
+	if option.serviceName == "" {
+		option.serviceName = "gonet"
+	}
+	c.name = option.serviceName
+
+	//编码格式
+	switch option.contentType {
+	case codec.Binary:
+		c.defaultCodec = binary.BinaryCodec{}
+	case codec.Xml:
+		c.defaultCodec = xml.XmlCodec{}
+	case codec.Protobuf:
+		c.defaultCodec = protobuf.ProtobufCodec{}
+	default:
+		c.defaultCodec = json.JsonCodec{}
+	}
+	cache := option.msgCache
+	if cache == nil {
+		cache = &MessageList{}
+	}
+	c.workers = createBeeWorkerPool(c, option.workerPoolSize, cache)
+	return c
 }
 
 func (c *Context) Name() string {
@@ -116,7 +161,7 @@ func (c *Context) DecodeMessage(msg interface{}, data []byte) error {
 }
 
 // 缓存消息
-func (c *Context) HandingMessage(session ISession, msg *Message) {
-	msg.Head.setSession(session)
+func (c *Context) HandingMessage(session ISession, msg IMessage) {
+	msg.(interface{ setSession(session ISession) }).setSession(session)
 	c.workers.rcvMsgCh <- msg
 }

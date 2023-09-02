@@ -21,15 +21,35 @@ type Head struct {
 func (h *Head) setSession(session ISession) {
 	h.session = session
 }
-func (h *Head) GetSession() ISession {
+func (h *Head) FromSession() ISession {
 	return h.session
 }
 
 // 消息体
 type Message struct {
 	Head
-	ID   MessageID `json:"id"`
-	Body any       `json:"data"`
+	id      MessageID
+	body    any
+	rawData []byte
+}
+
+func (m Message) ID() MessageID {
+	return m.id
+}
+
+func (m Message) Body() any {
+	return m.body
+}
+
+func (m Message) RawData() []byte {
+	return m.rawData
+}
+
+type IMessage interface {
+	ID() MessageID
+	Body() any
+	RawData() []byte
+	FromSession() ISession
 }
 
 // 消息中间缓存层，为处理不过来的消息进行缓存
@@ -63,5 +83,5 @@ func (l *MessageList) Pop() *Message {
 
 type IPackageParser interface {
 	Marshal(v any) ([]byte, error)
-	Unmarshal(data []byte, v any) error
+	Unmarshal(data []byte) (IMessage, error)
 }

@@ -8,21 +8,22 @@ import (
 	"log"
 )
 
-func init() {
-	//消息路由
-	gonet.Route(gonet.SessionConnect, nil, Handler)
-	gonet.Route(gonet.SessionClose, nil, Handler)
-	gonet.Route(101, proto.Say{}, Handler)
-}
-
 func main() {
-	service := gonet.NewContext(
+	context := gonet.NewContext(
 		gonet.Server(ws.NewServer("ws://localhost:8088/center/ws")),
 		gonet.MaxWorkerPoolSize(20))
-	println("server listen on:", service.Server().Addr())
-	if err := service.Server().Listen(); err != nil {
+	InitRouter(context)
+	println("server listen on:", context.Server().Addr())
+	if err := context.Server().Listen(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func InitRouter(c *gonet.Context) {
+	//消息路由
+	c.Route(gonet.SessionConnect, nil, Handler)
+	c.Route(gonet.SessionClose, nil, Handler)
+	c.Route(101, proto.Say{}, Handler)
 }
 
 func Handler(msg *gonet.Message) {

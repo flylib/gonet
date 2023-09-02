@@ -48,7 +48,8 @@ func (s *session) recvLoop(c *Context) {
 			c.RecycleSession(s, err)
 			return
 		}
-		msg, err := ParserWSPacket(data)
+		//msg, err := ParserWSPacket(data)
+		msg, err := c.Unmarshal(data)
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
