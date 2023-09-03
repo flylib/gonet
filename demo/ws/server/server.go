@@ -26,14 +26,14 @@ func InitRouter(c *gonet.Context) {
 	c.Route(101, proto.Say{}, Handler)
 }
 
-func Handler(msg *gonet.Message) {
-	switch msg.ID {
+func Handler(s gonet.ISession, msg gonet.IMessage) {
+	switch msg.ID() {
 	case gonet.SessionConnect:
-		log.Println("connected session_id:", msg.GetSession().ID(), " ip:", msg.GetSession().RemoteAddr().String())
+		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())
 	case gonet.SessionClose:
-		log.Println("connected session_id:", msg.GetSession().ID(), " error:", msg.Body)
+		log.Println("connected session_id:", s.ID(), " error:", msg.Body)
 	case 101:
-		fmt.Println("session_id:", msg.GetSession().ID(), " say ", msg.Body.(*proto.Say).Content)
+		fmt.Println("session_id:", s.ID(), " say ", msg.Body().(*proto.Say).Content)
 		//fmt.Println(reflect.TypeOf(msg.Body))
 	default:
 		log.Println("unknown message id:", msg.ID)

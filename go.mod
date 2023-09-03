@@ -1,6 +1,6 @@
 module github.com/zjllib/gonet/v3
 
-go 1.18
+go 1.17
 
 require (
 	github.com/davyxu/goobjfmt v0.1.0

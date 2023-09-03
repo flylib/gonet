@@ -4,7 +4,15 @@ import (
 	"container/list"
 )
 
-var _ MessageCache = new(MessageList)
+var (
+	_                 IEventCache = new(MessageList)
+	NewSessionMessage             = Message{
+		id: SessionConnect,
+	}
+	SessionCloseMessage = Message{
+		id: SessionClose,
+	}
+)
 
 type MessageID uint32
 
@@ -14,20 +22,8 @@ const (
 	SessionClose
 )
 
-type Head struct {
-	session ISession
-}
-
-func (h *Head) setSession(session ISession) {
-	h.session = session
-}
-func (h *Head) FromSession() ISession {
-	return h.session
-}
-
 // 消息体
 type Message struct {
-	Head
 	id      MessageID
 	body    any
 	rawData []byte
@@ -49,14 +45,13 @@ type IMessage interface {
 	ID() MessageID
 	Body() any
 	RawData() []byte
-	FromSession() ISession
 }
 
 // 消息中间缓存层，为处理不过来的消息进行缓存
-type MessageCache interface {
+type IEventCache interface {
 	Size() int
-	Push(msg *Message)
-	Pop() *Message
+	Push(event IEvent)
+	Pop() IEvent
 }
 
 // g默认的消息缓存队列
@@ -68,20 +63,15 @@ func (l *MessageList) Size() int {
 	return l.List.Len()
 }
 
-func (l *MessageList) Push(msg *Message) {
+func (l *MessageList) Push(msg IEvent) {
 	l.List.PushFront(msg)
 }
 
-func (l *MessageList) Pop() *Message {
+func (l *MessageList) Pop() IEvent {
 	element := l.List.Back()
 	if element == nil {
 		return nil
 	}
 	l.List.Remove(element)
-	return element.Value.(*Message)
-}
-
-type IPackageParser interface {
-	Marshal(v any) ([]byte, error)
-	Unmarshal(data []byte) (IMessage, error)
+	return element.Value.(IEvent)
 }

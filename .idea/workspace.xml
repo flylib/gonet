@@ -28,7 +28,12 @@
       <change beforePath="$PROJECT_DIR$/demo/ws/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/packet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/transport.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>

@@ -4,13 +4,9 @@ import (
 	"log"
 )
 
-//var (
-//	goNetContext Context //上下文
-//)
+type MessageHandler func(ISession, IMessage)
 
 func init() {
 	log.SetPrefix("[gonet]")
 	log.SetFlags(log.Llongfile | log.LstdFlags)
 }
-
-type Hook func(msg *Message)

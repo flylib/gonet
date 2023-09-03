@@ -66,6 +66,6 @@ func (s *session) recvLoop(c *Context) {
 		if unUsedCount > 0 {
 			s.cache = append(s.cache, buf[len(buf)-unUsedCount-1:]...)
 		}
-		c.HandingMessage(s, msg)
+		c.PushGlobalMessageQueue(s, msg)
 	}
 }

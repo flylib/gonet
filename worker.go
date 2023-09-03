@@ -17,29 +17,47 @@ const (
 	receiveQueueSize = 512 //默认接收队列大小
 )
 
+type IEvent interface {
+	Session() ISession
+	Message() IMessage
+}
+
+type event struct {
+	session ISession
+	message IMessage
+}
+
+func (e event) Session() ISession {
+	return e.session
+}
+
+func (e event) Message() IMessage {
+	return e.message
+}
+
 // 处理池
 type BeeWorkerPool struct {
 	*Context
 	//当前池协程数量(池大小)
 	size int32
 	//接受处理消息通道
-	rcvMsgCh, handleMsgCh chan IMessage
+	rcvMsgCh, events chan IEvent
 	//创建协程通知
 	createWorkerCh chan int
 	//消息溢满通知
 	overflowNotifyCh chan int
 	//消息缓存
-	msgCache MessageCache
+	msgCache IEventCache
 }
 
 // 初始化协程池
-func createBeeWorkerPool(c *Context, size int32, msgCache MessageCache) (pool BeeWorkerPool) {
+func createBeeWorkerPool(c *Context, size int32, msgCache IEventCache) (pool BeeWorkerPool) {
 	pool = BeeWorkerPool{
 		Context:          c,
 		createWorkerCh:   make(chan int),
 		overflowNotifyCh: make(chan int, 1),
-		rcvMsgCh:         make(chan *Message),
-		handleMsgCh:      make(chan *Message, receiveQueueSize),
+		rcvMsgCh:         make(chan IEvent),
+		events:           make(chan IEvent, receiveQueueSize),
 		msgCache:         msgCache,
 	}
 	pool.run()
@@ -63,14 +81,14 @@ func (self *BeeWorkerPool) createBeeWorker(count int32) {
 	}
 }
 
-func (self *BeeWorkerPool) handle(msg *Message) {
-	if len(self.handleMsgCh) >= receiveQueueSize {
-		self.msgCache.Push(msg)
+func (self *BeeWorkerPool) handle(e IEvent) {
+	if len(self.events) >= receiveQueueSize {
+		self.msgCache.Push(e)
 		if len(self.overflowNotifyCh) < 1 {
 			self.overflowNotifyCh <- 1
 		}
 	} else {
-		self.handleMsgCh <- msg
+		self.events <- e
 	}
 }
 
@@ -93,9 +111,9 @@ func (self *BeeWorkerPool) run() {
 					}
 					self.createWorkerCh <- 1
 				}()
-				for msg := range self.handleMsgCh {
-					if f, ok := self.Context.mMsgHooks[msg.ID]; ok {
-						f(msg)
+				for e := range self.events {
+					if f, ok := self.Context.mMsgHooks[e.Message().ID()]; ok {
+						f(e.Session(), e.Message())
 					}
 				}
 			}()
@@ -105,7 +123,7 @@ func (self *BeeWorkerPool) run() {
 	go func() {
 		for {
 			if e := self.msgCache.Pop(); e != nil {
-				self.handleMsgCh <- e
+				self.events <- e
 			} else {
 				<-self.overflowNotifyCh
 			}

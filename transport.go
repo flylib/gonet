@@ -28,7 +28,7 @@ type (
 		Stop() error
 		// 地址
 		Addr() string
-		// 会话类型
+		//会话类型
 		SessionType() reflect.Type
 	}
 	//客户端
@@ -41,11 +41,11 @@ type (
 		//断开
 		Close() error
 		//发送消息
-		Send(msg interface{}) error
+		Send(msg any) error
 		//设置键值对，存储关联数据
-		Store(key, value interface{})
+		Store(key, value any)
 		//获取键值对
-		Load(key interface{}) (value interface{}, ok bool)
+		Load(key any) (value any, ok bool)
 		//地址
 		RemoteAddr() net.Addr
 	}

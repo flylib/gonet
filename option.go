@@ -25,7 +25,7 @@ type Option struct {
 	//worker pool size
 	workerPoolSize int32
 	//cache for messages
-	msgCache MessageCache
+	msgCache IEventCache
 	//service name
 	serviceName string
 }
@@ -66,7 +66,7 @@ func ContentType(ct string) options {
 }
 
 // cache for messages
-func WithMessageCache(cache MessageCache) options {
+func WithMessageCache(cache IEventCache) options {
 	return func(o *Option) {
 		o.msgCache = cache
 	}

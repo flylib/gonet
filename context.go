@@ -27,7 +27,7 @@ type Context struct {
 	//bee worker pool
 	workers BeeWorkerPool
 	//消息钩子
-	mMsgHooks map[MessageID]Hook
+	mMsgHooks map[MessageID]MessageHandler
 
 	name string
 
@@ -46,7 +46,7 @@ func NewContext(opts ...options) *Context {
 		sessionMgr: newSessionManager(option.server.SessionType()),
 		mMsgTypes:  map[MessageID]reflect.Type{},
 		mMsgIDs:    map[reflect.Type]MessageID{},
-		mMsgHooks:  map[MessageID]Hook{},
+		mMsgHooks:  map[MessageID]MessageHandler{},
 	}
 	//传输协议
 	c.server = option.server
@@ -72,6 +72,7 @@ func NewContext(opts ...options) *Context {
 		cache = &MessageList{}
 	}
 	c.workers = createBeeWorkerPool(c, option.workerPoolSize, cache)
+	c.IPackageParser = defaultPackageParser{c}
 	return c
 }
 
@@ -96,9 +97,9 @@ func (c *Context) CreateSession() ISession {
 	return session
 }
 func (c *Context) RecycleSession(session ISession, err error) {
-	c.HandingMessage(session, &Message{
-		ID:   SessionClose,
-		Body: err,
+	c.PushGlobalMessageQueue(session, &Message{
+		id:   SessionClose,
+		body: err,
 	})
 	//关闭
 	session.Close()
@@ -120,7 +121,7 @@ func (c *Context) Broadcast(msg interface{}) {
 }
 
 // 映射消息体
-func (c *Context) Route(msgID MessageID, msg any, callback Hook) {
+func (c *Context) Route(msgID MessageID, msg any, callback MessageHandler) {
 	c.globalLock.Lock()
 	defer c.globalLock.Unlock()
 	msgType := reflect.TypeOf(msg)
@@ -151,17 +152,16 @@ func (c *Context) CreateMsg(msgID MessageID) interface{} {
 }
 
 // 编码消息
-func (c *Context) EncodeMessage(msg interface{}) ([]byte, error) {
+func (c *Context) EncodeMessage(msg any) ([]byte, error) {
 	return c.defaultCodec.Encode(msg)
 }
 
 // 解码消息
-func (c *Context) DecodeMessage(msg interface{}, data []byte) error {
+func (c *Context) DecodeMessage(msg any, data []byte) error {
 	return c.defaultCodec.Decode(data, msg)
 }
 
 // 缓存消息
-func (c *Context) HandingMessage(session ISession, msg IMessage) {
-	msg.(interface{ setSession(session ISession) }).setSession(session)
-	c.workers.rcvMsgCh <- msg
+func (c *Context) PushGlobalMessageQueue(session ISession, msg IMessage) {
+	c.workers.rcvMsgCh <- event{session: session, message: msg}
 }
