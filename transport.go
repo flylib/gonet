@@ -53,22 +53,33 @@ type (
 
 // server端属性
 type ServerIdentify struct {
+	*Context
 	uuid string
 	//地址
 	addr string
 }
 
-func (self *ServerIdentify) Addr() string {
-	return self.addr
+func (s *ServerIdentify) Addr() string {
+	return s.addr
 }
 
-func (self *ServerIdentify) SetAddr(addr string) {
-	self.addr = addr
+func (s *ServerIdentify) SetAddr(addr string) {
+	s.addr = addr
+}
+func (s *ServerIdentify) setContext(c *Context) {
+	s.Context = c
 }
 
 // 存储功能
 type SessionStore struct {
 	sync.Map
+}
+
+func (s *SessionStore) Clear() {
+	s.Range(func(key, value any) bool {
+		s.Delete(key)
+		return true
+	})
 }
 
 // 核心会话标志

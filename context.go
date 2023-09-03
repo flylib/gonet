@@ -50,6 +50,7 @@ func NewContext(opts ...options) *Context {
 	}
 	//传输协议
 	c.server = option.server
+	c.server.(interface{ setContext(c *Context) }).setContext(c)
 	c.sessionType = option.server.SessionType()
 	if option.serviceName == "" {
 		option.serviceName = "gonet"
@@ -101,8 +102,6 @@ func (c *Context) RecycleSession(session ISession, err error) {
 		id:   SessionClose,
 		body: err,
 	})
-	//关闭
-	session.Close()
 	c.sessionMgr.recycleIdleSession(session)
 }
 func (c *Context) SessionCount() int {

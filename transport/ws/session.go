@@ -23,6 +23,7 @@ func newSession(c *Context, conn *websocket.Conn) *session {
 	s := ses.(*session)
 	s.conn = conn
 	c.PushGlobalMessageQueue(s, NewSessionMessage)
+	s.Context = c
 	return s
 }
 

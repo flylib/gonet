@@ -36,6 +36,8 @@ func (self *SessionManager) getAliveSession(id uint64) (session ISession, exist 
 }
 
 func (self *SessionManager) removeAliveSession(session ISession) {
+	session.Close()
+	session.(interface{ Clear() }).Clear()
 	self.alive.Delete(session.ID())
 	self.recycleIdleSession(session)
 }

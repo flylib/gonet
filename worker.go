@@ -1,6 +1,7 @@
 package gonet
 
 import (
+	"container/list"
 	"fmt"
 	"os"
 	"runtime/debug"
@@ -33,6 +34,35 @@ func (e event) Session() ISession {
 
 func (e event) Message() IMessage {
 	return e.message
+}
+
+// 消息中间缓存层，为处理不过来的消息进行缓存
+type IEventCache interface {
+	Size() int
+	Push(event IEvent)
+	Pop() IEvent
+}
+
+// g默认的消息缓存队列
+type MessageList struct {
+	list.List
+}
+
+func (l *MessageList) Size() int {
+	return l.List.Len()
+}
+
+func (l *MessageList) Push(msg IEvent) {
+	l.List.PushFront(msg)
+}
+
+func (l *MessageList) Pop() IEvent {
+	element := l.List.Back()
+	if element == nil {
+		return nil
+	}
+	l.List.Remove(element)
+	return element.Value.(IEvent)
 }
 
 // 处理池
