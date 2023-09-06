@@ -95,3 +95,37 @@ func (self *SessionIdentify) ID() uint64 {
 func (self *SessionIdentify) SetID(id uint64) {
 	self.id = id
 }
+
+// 核心功能
+type SessionAbility struct {
+	once     *sync.Once
+	wChannel chan any
+}
+
+func (s *SessionAbility) Init(size int) {
+	if size < 1 {
+		size = 1
+	}
+	s.wChannel = make(chan any, size)
+	s.once = &sync.Once{}
+}
+
+func (s *SessionAbility) Close() {
+	close(s.wChannel)
+	s.wChannel = nil
+	s.once = nil
+}
+
+func (s *SessionAbility) SendQueue(msg any) {
+	s.wChannel <- msg
+}
+
+func (s *SessionAbility) WriteLoop(session ISession) {
+	s.once.Do(func() {
+		go func() {
+			for msg := range s.wChannel {
+				session.Send(msg)
+			}
+		}()
+	})
+}

@@ -11,6 +11,7 @@ var _ ISession = new(session)
 
 // webSocket conn
 type session struct {
+	SessionAbility
 	SessionIdentify
 	SessionStore
 	conn *websocket.Conn
@@ -37,7 +38,7 @@ func (s *session) Close() error {
 
 // websocket does not support sending messages concurrently
 func (s *session) Send(msg any) error {
-	data, err := s.PackageParser().Package(s.Context, msg)
+	data, err := s.Context.Package(msg)
 	if err != nil {
 		return err
 	}
@@ -52,7 +53,7 @@ func (s *session) recvLoop() {
 			s.Context.RecycleSession(s, err)
 			return
 		}
-		msg, _, err := s.PackageParser().UnPackage(s.Context, buf)
+		msg, _, err := s.Context.UnPackage(buf)
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue

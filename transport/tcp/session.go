@@ -34,7 +34,12 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msg interface{}) error {
-	return SendPacket(s.conn, msg)
+	data, err := s.Context.Package(msg)
+	if err != nil {
+		return err
+	}
+	_, err = s.conn.Write(data)
+	return err
 }
 
 func (s *session) Close() error {
@@ -56,7 +61,7 @@ func (s *session) recvLoop() {
 			n = len(buf)
 			s.cache = nil
 		}
-		msg, unUsedCount, err := ParserPacket(buf[:n])
+		msg, unUsedCount, err := s.UnPackage(buf[:n])
 		if err != nil {
 			s.cache = nil
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
@@ -64,8 +69,8 @@ func (s *session) recvLoop() {
 		}
 		//存储未使用部分
 		if unUsedCount > 0 {
-			s.cache = append(s.cache, buf[len(buf)-unUsedCount-1:]...)
+			s.cache = append(s.cache, buf[n-unUsedCount-1:n]...)
 		}
-		c.PushGlobalMessageQueue(s, msg)
+		s.Context.PushGlobalMessageQueue(s, msg)
 	}
 }

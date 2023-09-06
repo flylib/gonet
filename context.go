@@ -34,7 +34,7 @@ type Context struct {
 	globalLock sync.Mutex
 
 	//包解析器
-	packageParser IPackageParser
+	IPackageParser
 }
 
 func NewContext(opts ...options) *Context {
@@ -73,7 +73,7 @@ func NewContext(opts ...options) *Context {
 		cache = &MessageList{}
 	}
 	c.workers = createBeeWorkerPool(c, option.workerPoolSize, cache)
-	c.packageParser = &defaultPackageParser{}
+	c.IPackageParser = &defaultPackageParser{c}
 	return c
 }
 
@@ -152,10 +152,6 @@ func (c *Context) EncodeMessage(msg any) ([]byte, error) {
 }
 func (c *Context) DecodeMessage(msg any, data []byte) error {
 	return c.defaultCodec.Decode(data, msg)
-}
-
-func (c *Context) PackageParser() IPackageParser {
-	return c.packageParser
 }
 
 // 缓存消息
