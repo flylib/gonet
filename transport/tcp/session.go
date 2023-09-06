@@ -42,12 +42,12 @@ func (s *session) Close() error {
 }
 
 // 接收循环
-func (s *session) recvLoop(c *Context) {
+func (s *session) recvLoop() {
 	for {
 		var buf []byte
 		n, err := s.conn.Read(buf)
 		if err != nil {
-			c.RecycleSession(s, err)
+			s.Context.RecycleSession(s, err)
 			return
 		}
 		//如果有粘包未处理数据部分，放入本次进行处理

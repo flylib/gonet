@@ -16,11 +16,11 @@ type server struct {
 	ln net.Listener
 }
 
-func NewTransport(addr string) *server {
+func NewServer(addr string) *server {
 	s := &server{}
 	s.SetAddr(addr)
 	return s
-}s
+}
 
 func (s *server) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	newSession(s.Context, c)

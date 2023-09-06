@@ -10,10 +10,11 @@ var _ gonet.IServer = new(server)
 
 type server struct {
 	gonet.ServerIdentify
+	gonet.SessionStore
 	ln net.Listener
 }
 
-func NewTransport(addr string) *server {
+func NewServer(addr string) *server {
 	s := &server{}
 	s.SetAddr(addr)
 	return s
@@ -30,7 +31,7 @@ func (s *server) Listen() error {
 		if err != nil {
 			continue
 		}
-		go newSession(conn).recvLoop()
+		go newSession(s.Context, conn).recvLoop()
 	}
 }
 func (s *server) Stop() error {

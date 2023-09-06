@@ -84,6 +84,7 @@ func (s *SessionStore) Clear() {
 
 // 核心会话标志
 type SessionIdentify struct {
+	*Context
 	id uint64
 }
 

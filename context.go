@@ -34,7 +34,7 @@ type Context struct {
 	globalLock sync.Mutex
 
 	//包解析器
-	IPackageParser
+	packageParser IPackageParser
 }
 
 func NewContext(opts ...options) *Context {
@@ -73,13 +73,15 @@ func NewContext(opts ...options) *Context {
 		cache = &MessageList{}
 	}
 	c.workers = createBeeWorkerPool(c, option.workerPoolSize, cache)
-	c.IPackageParser = defaultPackageParser{c}
+	c.packageParser = &defaultPackageParser{}
 	return c
 }
 
 func (c *Context) Name() string {
 	return c.name
 }
+
+// peer
 func (c *Context) Server() IServer {
 	return c.server
 }
@@ -107,8 +109,6 @@ func (c *Context) RecycleSession(session ISession, err error) {
 func (c *Context) SessionCount() int {
 	return c.sessionMgr.CountAliveSession()
 }
-
-// 广播会话
 func (c *Context) Broadcast(msg interface{}) {
 	c.sessionMgr.alive.Range(func(_, item interface{}) bool {
 		session, ok := item.(ISession)
@@ -119,7 +119,7 @@ func (c *Context) Broadcast(msg interface{}) {
 	})
 }
 
-// 映射消息体
+// 消息管理
 func (c *Context) Route(msgID MessageID, msg any, callback MessageHandler) {
 	c.globalLock.Lock()
 	defer c.globalLock.Unlock()
@@ -135,14 +135,10 @@ func (c *Context) Route(msgID MessageID, msg any, callback MessageHandler) {
 		c.mMsgHooks[msgID] = callback
 	}
 }
-
-// 获取消息ID
 func (c *Context) GetMsgID(msg interface{}) (MessageID, bool) {
 	msgID, ok := c.mMsgIDs[reflect.TypeOf(msg)]
 	return msgID, ok
 }
-
-// 通消息id创建消息体
 func (c *Context) CreateMsg(msgID MessageID) interface{} {
 	if msg, ok := c.mMsgTypes[msgID]; ok {
 		return reflect.New(msg).Interface()
@@ -150,14 +146,16 @@ func (c *Context) CreateMsg(msgID MessageID) interface{} {
 	return nil
 }
 
-// 编码消息
+// 消息编码
 func (c *Context) EncodeMessage(msg any) ([]byte, error) {
 	return c.defaultCodec.Encode(msg)
 }
-
-// 解码消息
 func (c *Context) DecodeMessage(msg any, data []byte) error {
 	return c.defaultCodec.Decode(data, msg)
+}
+
+func (c *Context) PackageParser() IPackageParser {
+	return c.packageParser
 }
 
 // 缓存消息

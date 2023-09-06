@@ -25,21 +25,20 @@ const (
 )
 
 type IPackageParser interface {
-	Package(v any) ([]byte, error)
-	UnPackage(data []byte) (IMessage, error)
+	Package(c *Context, v any) ([]byte, error)
+	UnPackage(c *Context, data []byte) (IMessage, int, error)
 }
 
 type defaultPackageParser struct {
-	*Context
 }
 
-func (self defaultPackageParser) Package(v any) ([]byte, error) {
-	body, err := self.EncodeMessage(v)
+func (d *defaultPackageParser) Package(c *Context, v any) ([]byte, error) {
+	body, err := c.EncodeMessage(v)
 	if err != nil {
 		return nil, err
 	}
 	p := make([]byte, MsgIDOffset, MsgIDOffset+len(body))
-	msgID, ok := self.GetMsgID(v)
+	msgID, ok := c.GetMsgID(v)
 	if ok {
 		binary.LittleEndian.PutUint32(p, uint32(msgID))
 		p = append(p, body...)
@@ -48,14 +47,14 @@ func (self defaultPackageParser) Package(v any) ([]byte, error) {
 	return nil, ErrorNotExistMsg
 }
 
-func (self defaultPackageParser) UnPackage(data []byte) (IMessage, error) {
+func (d *defaultPackageParser) UnPackage(c *Context, data []byte) (IMessage, int, error) {
 	msgID := MessageID(Bytes2Uint32(data[:MsgIDOffset]))
-	newMsg := self.CreateMsg(msgID)
-	err := self.DecodeMessage(newMsg, data[MsgIDOffset:])
+	newMsg := c.CreateMsg(msgID)
+	err := c.DecodeMessage(newMsg, data[MsgIDOffset:])
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return &Message{id: msgID, body: newMsg}, err
+	return &Message{id: msgID, body: newMsg}, 0, err
 }
 
 //
