@@ -31,11 +31,11 @@ func Handler(s gonet.ISession, msg gonet.IMessage) {
 	case gonet.SessionConnect:
 		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())
 	case gonet.SessionClose:
-		log.Println("connected session_id:", s.ID(), " error:", msg.Body)
+		log.Println("connected session_id:", s.ID(), " error:", msg.Body())
 	case 101:
 		fmt.Println("session_id:", s.ID(), " say ", msg.Body().(*proto.Say).Content)
 		//fmt.Println(reflect.TypeOf(msg.Body))
 	default:
-		log.Println("unknown message id:", msg.ID)
+		log.Println("unknown message id:", msg.ID())
 	}
 }
