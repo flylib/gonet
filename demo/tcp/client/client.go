@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"github.com/zjllib/gonet/v3/demo/proto"
 	"net"
 	"time"
@@ -14,12 +13,14 @@ const (
 	MTU         = 1500                      // 最大传输单元
 	packetLen   = 2                         // 包体大小字段
 	msgIDOffset = 4                         // 消息ID字段
-	headerSize  = msgIDOffset + msgIDOffset // 包头部分
+	headerSize  = msgIDOffset + msgIDOffset //包头部分
 )
 
 // ws://47.57.65.221:8088/game/blockInfo
 // ws://192.168.0.125:8088/game/blockInfo
 func main() {
+	test()
+	return
 	for {
 		time.Sleep(time.Second * 1)
 		go test()
@@ -27,14 +28,10 @@ func main() {
 }
 
 func test() {
-	conn, err := net.Dial("tcp", "0.0.0.0:18383")
+	conn, err := net.Dial("tcp", ":9000")
 	if err != nil {
 		fmt.Printf("dial failed, err: %v\n", err)
 		return
-	}
-
-	if err != nil {
-		fmt.Println(err)
 	}
 
 	go func() {
@@ -50,32 +47,17 @@ func test() {
 			pktData := make([]byte, msgIDOffset, msgIDOffset+len(arrBytes))
 			binary.LittleEndian.PutUint32(pktData, uint32(101))
 			pktData = append(pktData, arrBytes...)
-			conn.WriteMessage(websocket.TextMessage, pktData)
+			conn.Write(pktData)
 		}
 	}()
 
 	for {
 		fmt.Println("start read msg")
-		messageType, bytes, err := conn.ReadMessage()
+		var buf []byte
+		n, err := conn.Read(buf)
 		if err != nil {
 			fmt.Println(err)
 		}
-		switch messageType {
-		case websocket.TextMessage:
-			fmt.Println(string(bytes))
-		case websocket.BinaryMessage:
-		case websocket.CloseMessage:
-			fmt.Println("remote server closed")
-			err := conn.Close()
-			if err != nil {
-				fmt.Println(err)
-			}
-		case websocket.PingMessage:
-			fmt.Println("ping at ", time.Now())
-		case websocket.PongMessage:
-			fmt.Println("ping at ", time.Now())
-		default:
-			fmt.Println("unknown msg type ", messageType)
-		}
+		fmt.Println(string(buf[:n]))
 	}
 }
