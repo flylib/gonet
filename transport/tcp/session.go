@@ -24,9 +24,11 @@ type session struct {
 
 // 新会话
 func newSession(c *Context, conn net.Conn) *session {
-	ses := c.CreateSession()
-	ses.(*session).conn = conn
-	return ses.(*session)
+	is := c.CreateSession()
+	s := is.(*session)
+	s.conn = conn
+	s.WithContext(c)
+	return s
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -49,11 +51,14 @@ func (s *session) Close() error {
 // 接收循环
 func (s *session) recvLoop() {
 	for {
-		var buf []byte
+		var buf = make([]byte, 1024)
 		n, err := s.conn.Read(buf)
 		if err != nil {
 			s.Context.RecycleSession(s, err)
 			return
+		}
+		if n == 0 {
+			continue
 		}
 		//如果有粘包未处理数据部分，放入本次进行处理
 		if len(s.cache) > 0 {

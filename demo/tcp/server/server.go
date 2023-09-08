@@ -10,7 +10,7 @@ import (
 
 func main() {
 	context := gonet.NewContext(
-		gonet.Server(tcp.NewServer(":9000")),
+		gonet.Server(tcp.NewServer(":9001")),
 		gonet.MaxWorkerPoolSize(20))
 	InitRouter(context)
 	println("server listen on:", context.Server().Addr())

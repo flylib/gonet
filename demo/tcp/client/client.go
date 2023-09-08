@@ -28,14 +28,14 @@ func main() {
 }
 
 func test() {
-	conn, err := net.Dial("tcp", ":9000")
+	conn, err := net.Dial("tcp", "127.0.0.1:9001")
 	if err != nil {
 		fmt.Printf("dial failed, err: %v\n", err)
 		return
 	}
 
 	go func() {
-		tick := time.Tick(time.Second * 10)
+		tick := time.Tick(time.Second * 3)
 		for {
 			<-tick
 
@@ -47,7 +47,11 @@ func test() {
 			pktData := make([]byte, msgIDOffset, msgIDOffset+len(arrBytes))
 			binary.LittleEndian.PutUint32(pktData, uint32(101))
 			pktData = append(pktData, arrBytes...)
-			conn.Write(pktData)
+			n, err := conn.Write(pktData)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Println(n)
 		}
 	}()
 

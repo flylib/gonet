@@ -95,6 +95,9 @@ func (self *SessionIdentify) ID() uint64 {
 func (self *SessionIdentify) SetID(id uint64) {
 	self.id = id
 }
+func (self *SessionIdentify) WithContext(c *Context) {
+	self.Context = c
+}
 
 // 核心功能
 type SessionAbility struct {
