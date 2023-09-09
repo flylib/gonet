@@ -56,5 +56,6 @@ func (self *SessionManager) getIdleSession() ISession {
 	return self.idle.Get().(ISession)
 }
 func (self *SessionManager) recycleIdleSession(session ISession) {
+	self.alive.Delete(session.ID())
 	self.idle.Put(session)
 }

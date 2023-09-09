@@ -8,9 +8,11 @@ import (
 	"log"
 )
 
+var context *gonet.Context
+
 func main() {
-	context := gonet.NewContext(
-		gonet.Server(gnet.NewServer("tcp://:9000")),
+	context = gonet.NewContext(
+		gonet.Server(gnet.NewServer("tcp://:9001")),
 		gonet.MaxWorkerPoolSize(20))
 	InitRouter(context)
 	println("server listen on:", context.Server().Addr())
@@ -27,6 +29,7 @@ func InitRouter(c *gonet.Context) {
 }
 
 func Handler(s gonet.ISession, msg gonet.IMessage) {
+	fmt.Println("cur session count:", context.SessionCount())
 	switch msg.ID() {
 	case gonet.SessionConnect:
 		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())

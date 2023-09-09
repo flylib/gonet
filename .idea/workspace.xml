@@ -24,10 +24,14 @@
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/tcp/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/tcp/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/server/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/gnet/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/gnet/client/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/gnet/server/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/gnet/server/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/session_mgr.go" beforeDir="false" afterPath="$PROJECT_DIR$/session_mgr.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/gnet/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/gnet/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +144,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build github.com/zjllib/gonet/v3/demo/tcp/client">
+  <component name="RunManager" selected="Go Build.go build github.com/zjllib/gonet/v3/demo/gnet/client">
     <configuration name="go build client.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
@@ -148,6 +152,15 @@
       <package value="goNet" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/demo/ws/client/client.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/gnet/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="goNet" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/zjllib/gonet/v3/demo/gnet/client" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/demo/gnet/client/client.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build github.com/zjllib/gonet/v3/demo/gnet/server" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -168,15 +181,6 @@
       <filePath value="$PROJECT_DIR$/demo/tcp/client/client.go" />
       <method v="2" />
     </configuration>
-    <configuration name="go build server.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="goNet" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <package value="goNet" />
-      <directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/demo/ws/server/server.go" />
-      <method v="2" />
-    </configuration>
     <configuration name="go build server.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
@@ -188,11 +192,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/gnet/client" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/gnet/server" />
         <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/tcp/client" />
         <item itemvalue="Go Build.go build server.go" />
-        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/gnet/server" />
         <item itemvalue="Go Build.go build client.go (2)" />
-        <item itemvalue="Go Build.go build server.go (2)" />
       </list>
     </recent_temporary>
   </component>
@@ -312,19 +316,29 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/gnet/server/server.go</url>
-          <line>15</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/gnet/server/server.go</url>
-          <line>16</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/demo/tcp/client/client.go</url>
           <line>49</line>
           <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/transport/gnet/server.go</url>
+          <line>43</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/gnet/client/client.go</url>
+          <line>60</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/gnet/client/client.go</url>
+          <line>61</line>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/transport/gnet/server.go</url>
+          <line>37</line>
+          <option name="timeStamp" value="33" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

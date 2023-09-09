@@ -19,11 +19,10 @@ type session struct {
 
 // 新会话
 func newSession(c *Context, conn *websocket.Conn) *session {
-	ses := c.CreateSession()
-	s := ses.(*session)
+	is := c.CreateSession()
+	s := is.(*session)
 	s.conn = conn
-	c.PushGlobalMessageQueue(s, NewSessionMessage)
-	s.Context = c
+	s.WithContext(c)
 	return s
 }
 

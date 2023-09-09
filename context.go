@@ -97,6 +97,7 @@ func (c *Context) CreateSession() ISession {
 	idleSession := c.sessionMgr.getIdleSession()
 	session := idleSession.(ISession)
 	c.sessionMgr.addAliveSession(idleSession)
+	c.PushGlobalMessageQueue(session, NewSessionMessage)
 	return session
 }
 func (c *Context) RecycleSession(session ISession, err error) {

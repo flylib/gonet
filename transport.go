@@ -88,15 +88,24 @@ type SessionIdentify struct {
 	id uint64
 }
 
-func (self *SessionIdentify) ID() uint64 {
-	return self.id
+func (s *SessionIdentify) ID() uint64 {
+	return s.id
 }
 
-func (self *SessionIdentify) SetID(id uint64) {
-	self.id = id
+func (s *SessionIdentify) SetID(id uint64) {
+	s.id = id
 }
-func (self *SessionIdentify) WithContext(c *Context) {
-	self.Context = c
+func (s *SessionIdentify) UpdateID(id uint64) {
+	value, ok := s.Context.sessionMgr.alive.Load(s.id)
+	if ok {
+		s.Context.sessionMgr.alive.Delete(s.id)
+		s.id = id
+		s.Context.sessionMgr.alive.Store(s.id, value)
+	}
+}
+
+func (s *SessionIdentify) WithContext(c *Context) {
+	s.Context = c
 }
 
 // 核心功能

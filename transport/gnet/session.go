@@ -25,10 +25,12 @@ type session struct {
 
 // 新会话
 func newSession(c *Context, conn gnet.Conn) *session {
-	ses := c.CreateSession()
-	ses.(*session).conn = conn
-	ses.(interface{ SetID(id uint64) }).SetID(uint64(conn.Fd()))
-	return ses.(*session)
+	is := c.CreateSession()
+	s := is.(*session)
+	s.conn = conn
+	s.WithContext(c)
+	s.UpdateID(uint64(conn.Fd()))
+	return s
 }
 
 func (s *session) RemoteAddr() net.Addr {
