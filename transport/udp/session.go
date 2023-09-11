@@ -14,18 +14,22 @@ var remotes = map[string]uint64{}
 type session struct {
 	SessionIdentify
 	SessionStore
-	remote *net.UDPAddr
-	conn   *net.UDPConn
-	data   interface{}
-	buf    []byte
+	remoteAddr *net.UDPAddr
+	conn       *net.UDPConn
+	data       interface{}
+	buf        []byte
 }
 
 // 新会话
-func newSession(conn *net.UDPConn, remote *net.UDPAddr) *session {
-	ses := CreateSession()
-	ses.(*session).conn = conn
-	remotes[remote.String()] = ses.ID()
-	return ses.(*session)
+func newSession(c *Context, conn *net.UDPConn, remote *net.UDPAddr) *session {
+	is := c.CreateSession()
+	s := is.(*session)
+	s.conn = conn
+	s.remoteAddr = remote
+	s.buf = make([]byte, MTU)
+	s.WithContext(c)
+	remotes[remote.String()] = s.ID()
+	return s
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -34,15 +38,16 @@ func (s *session) RemoteAddr() net.Addr {
 
 // 发送封包
 func (s *session) Send(msg interface{}) error {
-	var err error
-	if s.remote == nil {
-		err = SendPacket(s.conn, msg)
-	} else {
-		err = SendUdpPacket(s.conn, msg, s.remote)
+	data, err := s.Context.Package(msg)
+	if err != nil {
+		return err
 	}
+	_, err = s.conn.WriteToUDP(data, s.remoteAddr)
 	return err
 }
 
 func (s *session) Close() error {
 	return s.conn.Close()
 }
+
+//todo 心跳检测
