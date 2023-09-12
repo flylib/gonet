@@ -51,7 +51,7 @@ func (s *session) Close() error {
 // 接收循环
 func (s *session) recvLoop() {
 	for {
-		var buf = make([]byte, 1024)
+		var buf = make([]byte, MTU)
 		n, err := s.conn.Read(buf)
 		if err != nil {
 			s.Context.RecycleSession(s, err)
