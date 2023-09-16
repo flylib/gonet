@@ -35,6 +35,10 @@ func Handler(s gonet.ISession, msg gonet.IMessage) {
 	case 101:
 		fmt.Println("session_id:", s.ID(), " say ", msg.Body().(*proto.Say).Content)
 		//fmt.Println(reflect.TypeOf(msg.Body))
+		err := s.Send(proto.Say{Content: "hell client"})
+		if err != nil {
+			log.Fatal(err)
+		}
 	default:
 		log.Println("unknown message id:", msg.ID())
 	}

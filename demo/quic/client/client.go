@@ -47,10 +47,6 @@ func test() {
 	}
 
 	stream, err := conn.OpenStreamSync(context.Background())
-	stream, err = conn.OpenStreamSync(context.Background())
-	stream, err = conn.OpenStreamSync(context.Background())
-	stream, err = conn.OpenStreamSync(context.Background())
-	stream, err = conn.OpenStreamSync(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}

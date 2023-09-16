@@ -2,20 +2,18 @@ package quic
 
 import (
 	"context"
-	"fmt"
 	"github.com/quic-go/quic-go"
 	. "github.com/zjllib/gonet/v3"
 	"log"
 	"net"
-	"sync"
 )
 
-// webSocket conn
+// conn
 type session struct {
 	SessionIdentify
 	SessionStore
-	conn    quic.Connection
-	streams sync.Map
+	conn   quic.Connection
+	stream quic.Stream
 }
 
 // 新会话
@@ -36,14 +34,7 @@ func (s *session) Send(msg any) error {
 	if err != nil {
 		return err
 	}
-	s.streams.Range(func(key, value any) bool {
-		_, err = value.(quic.Stream).Write(data)
-		if err != nil {
-			return false
-		}
-		return true
-	})
-	//_, err = s.conn.Write(data)
+	_, err = s.stream.Write(data)
 	return err
 }
 
@@ -54,17 +45,26 @@ func (s *session) Close() error {
 }
 
 // 循环读取消息
-func (s *session) readStreamLoop(stream quic.Stream) {
+func (s *session) recvLoop() {
+	var err error
+	s.stream, err = s.conn.AcceptStream(context.Background())
+	if err != nil {
+		log.Printf("session_%v AcceptStream error,reason is %v \n", s.ID(), err)
+		s.Context.RecycleSession(s, err)
+		return
+	}
+
 	for {
+		var n int
 		buf := make([]byte, 1024)
-		n, err := stream.Read(buf)
+		n, err = s.stream.Read(buf)
 		if err != nil {
-			log.Printf("session_%v stream_%v reading error,reason is %v \n", s.ID(), stream.StreamID(), err)
-			err = stream.Close()
+			log.Printf("session_%v reading error,reason is %v \n", s.ID(), err)
+			err = s.stream.Close()
 			if err != nil {
-				log.Printf("session_%v stream_%v close error,reason is %v \n", s.ID(), stream.StreamID(), err)
+				log.Printf("session_%v close error,reason is %v \n", s.ID(), err)
 			}
-			s.streams.Delete(stream.StreamID())
+			s.Context.RecycleSession(s, err)
 			return
 		}
 		msg, _, err := s.Context.UnPackage(buf[:n])
@@ -73,20 +73,5 @@ func (s *session) readStreamLoop(stream quic.Stream) {
 			continue
 		}
 		s.Context.PushGlobalMessageQueue(s, msg)
-	}
-}
-
-// stream
-func (s *session) acceptStream() {
-	for {
-		stream, err := s.conn.AcceptStream(context.Background())
-		if err != nil {
-			s.Context.RecycleSession(s, err)
-			return
-		}
-		fmt.Println(stream.StreamID())
-		s.Store(stream.StreamID(), stream)
-		//开单独go routine 去处理stream的消息
-		go s.readStreamLoop(stream)
 	}
 }

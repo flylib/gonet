@@ -36,7 +36,7 @@ func (s *server) Listen() (err error) {
 			continue
 		}
 		s := newSession(s.Context, conn)
-		go s.acceptStream()
+		go s.recvLoop()
 	}
 }
 
