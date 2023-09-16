@@ -1,8 +1,11 @@
-package tcp
+package kcp
 
 import (
+	"crypto/sha1"
+	"github.com/xtaci/kcp-go/v5"
 	"github.com/zjllib/gonet/v3"
-	"net"
+	"golang.org/x/crypto/pbkdf2"
+
 	"reflect"
 )
 
@@ -11,7 +14,7 @@ var _ gonet.IServer = new(server)
 type server struct {
 	gonet.ServerIdentify
 	gonet.SessionStore
-	ln net.Listener
+	ln *kcp.Listener
 }
 
 func NewServer(addr string) *server {
@@ -21,13 +24,15 @@ func NewServer(addr string) *server {
 }
 
 func (s *server) Listen() error {
-	ln, err := net.Listen(string(gonet.TCP), s.Addr())
+	key := pbkdf2.Key([]byte("demo pass"), []byte("demo salt"), 1024, 32, sha1.New)
+	block, _ := kcp.NewAESBlockCrypt(key)
+	ln, err := kcp.ListenWithOptions(s.Addr(), block, 10, 3)
 	if err != nil {
 		return err
 	}
 	s.ln = ln
 	for {
-		conn, err := ln.Accept()
+		conn, err := s.ln.AcceptKCP()
 		if err != nil {
 			continue
 		}

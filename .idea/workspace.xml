@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
   <component name="BranchesTreeState">
     <expand>
       <path>
@@ -19,9 +22,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="refactor">
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="add kcp">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,11 +56,11 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" url="file://C:/Program Files/Go" />
+  <component name="GOROOT" url="file://G:/env/go/go1.21.0" />
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feat/quic" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -82,6 +84,13 @@
   <component name="MacroExpansionManager">
     <option name="directoryName" value="a8uhmrvr" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 1
+}]]></component>
   <component name="ProjectId" id="1UonKaYFvF9shPXlhOluzELBNIk" />
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
@@ -89,46 +98,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="DatabaseDriversLRU" value="mysql" />
-    <property name="DefaultGoTemplateProperty" value="Go File" />
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="SHOW_RECENT_CHANGED_LOCATIONS" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="aspect.path.notification.shown" value="true" />
-    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
-    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
-    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
-    <property name="database.console.LAST_STATE" value="true" />
-    <property name="go.gopath.indexing.explicitly.defined" value="true" />
-    <property name="go.import.settings.migrated" value="true" />
-    <property name="go.sdk.automatically.set" value="true" />
-    <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/transport/ws" />
-    <property name="node.js.detected.package.tslint" value="true" />
-    <property name="node.js.path.for.package.tslint" value="project" />
-    <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
-    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="nodejs_package_manager_path" value="npm" />
-    <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="go.vgo" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
+    "last_opened_file_path": "F:/go/myproject/gonet/demo",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\go\project\goNet\transport\ws" />
-      <recent name="D:\go\project\goNet\transport\udp" />
-      <recent name="F:\go\project\goNet\demo\pprof" />
-      <recent name="E:\GOPATH\src\gitee.com\git1217105106\goNet\codec" />
+      <recent name="F:\go\myproject\gonet\demo" />
+      <recent name="F:\go\myproject\gonet\transport\kcp" />
+      <recent name="F:\go\myproject\gonet\demo\quic" />
+      <recent name="F:\go\myproject\gonet\transport" />
+      <recent name="F:\go\myproject\gonet\demo\tcp" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\go\myproject\gonet" />
       <recent name="D:\go\project\goNet\transport" />
       <recent name="D:\go\project\goNet\codec\xml" />
       <recent name="D:\go\project\goNet\codec\protobuf" />
       <recent name="D:\go\project\goNet\codec\json" />
-      <recent name="D:\go\project\goNet\codec\binary" />
     </key>
   </component>
   <component name="RemoteSynchronizer">
@@ -140,59 +136,59 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build server.go (2)">
-    <configuration name="go build client.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Build.go build github.com/zjllib/gonet/v3/demo/kcp/client">
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/gnet/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/demo/ws/client/client.go" />
-      <package value="goNet" />
-      <directory value="$PROJECT_DIR$/" />
+      <kind value="PACKAGE" />
+      <package value="github.com/zjllib/gonet/v3/demo/gnet/client" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/demo/gnet/client/client.go" />
       <method v="2" />
     </configuration>
-    <configuration name="go build client.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/kcp" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/demo/tcp/client/client.go" />
-      <package value="goNet" />
-      <directory value="$PROJECT_DIR$/" />
+      <kind value="PACKAGE" />
+      <package value="github.com/zjllib/gonet/v3/demo/kcp" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/demo/kcp/server.go" />
       <method v="2" />
     </configuration>
-    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/kcp/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/demo/pprof/main.go" />
-      <package value="github.com/Quantumoffices/goNet" />
-      <directory value="$PROJECT_DIR$/" />
+      <kind value="PACKAGE" />
+      <package value="github.com/zjllib/gonet/v3/demo/kcp/client" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/demo/kcp/client/client.go" />
       <method v="2" />
     </configuration>
-    <configuration name="go build server.go (2)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/quic" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/demo/ws/server/server.go" />
-      <package value="goNet" />
-      <directory value="$PROJECT_DIR$/" />
+      <kind value="PACKAGE" />
+      <package value="github.com/zjllib/gonet/v3/demo/quic" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/demo/quic/server.go" />
       <method v="2" />
     </configuration>
-    <configuration name="go build server.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/quic/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/demo/tcp/server/server.go" />
-      <package value="goNet" />
-      <directory value="$PROJECT_DIR$/" />
+      <kind value="PACKAGE" />
+      <package value="github.com/zjllib/gonet/v3/demo/quic/client" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/demo/quic/client/client.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build server.go (2)" />
-        <item itemvalue="Go Build.go build client.go (2)" />
-        <item itemvalue="Go Build.go build server.go" />
-        <item itemvalue="Go Build.go build main.go" />
-        <item itemvalue="Go Build.go build client.go" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/kcp/client" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/kcp" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/quic/client" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/quic" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/gnet/client" />
       </list>
     </recent_temporary>
   </component>
@@ -225,6 +221,26 @@
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="HEAD" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
@@ -246,33 +262,8 @@
         </entry>
       </map>
     </option>
-    <option name="RECENT_FILTERS">
-      <map>
-        <entry key="Branch">
-          <value>
-            <list>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="HEAD" />
-                </option>
-              </RecentGroup>
-            </list>
-          </value>
-        </entry>
-        <entry key="User">
-          <value>
-            <list />
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="优化" />
-    <MESSAGE value="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;" />
-    <MESSAGE value="修改成go mod &quot;github.com/Quantumoffices/goNet&quot;&#10;&#10;Signed-off-by: 叛逆小子 &lt;1217105106@qq.com&gt;" />
-    <MESSAGE value="1" />
     <MESSAGE value="[update]change session to conn" />
     <MESSAGE value="[update]change session to conn&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
     <MESSAGE value="[update]v3 &#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
@@ -294,16 +285,14 @@
     <MESSAGE value="add asserts that types implement expected set of interfaces&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
     <MESSAGE value="refactor&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
     <MESSAGE value="refactor" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor" />
+    <MESSAGE value="up go version 1.18+" />
+    <MESSAGE value="update" />
+    <MESSAGE value="update quic" />
+    <MESSAGE value="add kcp" />
+    <option name="LAST_COMMIT_MESSAGE" value="add kcp" />
   </component>
   <component name="VgoProject">
-    <integration-enabled>true</integration-enabled>
-    <environment>
-      <map>
-        <entry key="GOPROXY" value="https://mirrors.aliyun.com/goproxy/" />
-      </map>
-    </environment>
-    <proxy>https://mirrors.aliyun.com/goproxy/</proxy>
+    <settings-migrated>true</settings-migrated>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -312,6 +301,46 @@
           <url>file://$PROJECT_DIR$/codec/protobuf/protobuf.go</url>
           <line>6</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/tcp/client/client.go</url>
+          <line>49</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/transport/gnet/server.go</url>
+          <line>49</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/gnet/client/client.go</url>
+          <line>62</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/gnet/client/client.go</url>
+          <line>63</line>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/transport/gnet/server.go</url>
+          <line>43</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/quic/client/client.go</url>
+          <line>78</line>
+          <option name="timeStamp" value="49" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/quic/client/client.go</url>
+          <line>76</line>
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/quic/client/client.go</url>
+          <line>77</line>
+          <option name="timeStamp" value="52" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

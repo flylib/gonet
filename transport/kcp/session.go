@@ -1,7 +1,7 @@
-package ws
+package kcp
 
 import (
-	"github.com/gorilla/websocket"
+	"github.com/xtaci/kcp-go/v5"
 	. "github.com/zjllib/gonet/v3"
 	"log"
 	"net"
@@ -9,16 +9,20 @@ import (
 
 var _ ISession = new(session)
 
-// webSocket conn
+// Socket会话
 type session struct {
-	SessionAbility
+	//核心会话标志
 	SessionIdentify
+	//存储功能
 	SessionStore
-	conn *websocket.Conn
+	//累计收消息总数
+	recvCount uint64
+	//raw conn
+	conn *kcp.UDPSession
 }
 
 // 新会话
-func newSession(c *Context, conn *websocket.Conn) *session {
+func newSession(c *Context, conn *kcp.UDPSession) *session {
 	is := c.CreateSession()
 	s := is.(*session)
 	s.conn = conn
@@ -30,29 +34,32 @@ func (s *session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *session) Close() error {
-	s.Context = nil
-	return s.conn.Close()
-}
-
-// websocket does not support sending messages concurrently
-func (s *session) Send(msg any) error {
+func (s *session) Send(msg interface{}) error {
 	data, err := s.Context.Package(msg)
 	if err != nil {
 		return err
 	}
-	return s.conn.WriteMessage(websocket.BinaryMessage, data)
+	_, err = s.conn.Write(data)
+	return err
 }
 
-// 循环读取消息
+func (s *session) Close() error {
+	return s.conn.Close()
+}
+
+// 接收循环
 func (s *session) recvLoop() {
 	for {
-		_, buf, err := s.conn.ReadMessage()
+		var buf = make([]byte, MTU)
+		n, err := s.conn.Read(buf)
 		if err != nil {
 			s.Context.RecycleSession(s, err)
 			return
 		}
-		msg, _, err := s.Context.UnPackage(buf)
+		if n == 0 {
+			continue
+		}
+		msg, _, err := s.UnPackage(buf[:n])
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue

@@ -1,6 +1,7 @@
 package gonet
 
 import (
+	"container/list"
 	"fmt"
 	"os"
 	"runtime/debug"
@@ -17,27 +18,76 @@ const (
 	receiveQueueSize = 512 //默认接收队列大小
 )
 
-//处理池
+type IEvent interface {
+	Session() ISession
+	Message() IMessage
+}
+
+type event struct {
+	session ISession
+	message IMessage
+}
+
+func (e event) Session() ISession {
+	return e.session
+}
+
+func (e event) Message() IMessage {
+	return e.message
+}
+
+// 消息中间缓存层，为处理不过来的消息进行缓存
+type IEventCache interface {
+	Size() int
+	Push(event IEvent)
+	Pop() IEvent
+}
+
+// g默认的消息缓存队列
+type MessageList struct {
+	list.List
+}
+
+func (l *MessageList) Size() int {
+	return l.List.Len()
+}
+
+func (l *MessageList) Push(msg IEvent) {
+	l.List.PushFront(msg)
+}
+
+func (l *MessageList) Pop() IEvent {
+	element := l.List.Back()
+	if element == nil {
+		return nil
+	}
+	l.List.Remove(element)
+	return element.Value.(IEvent)
+}
+
+// 处理池
 type BeeWorkerPool struct {
+	*Context
 	//当前池协程数量(池大小)
 	size int32
 	//接受处理消息通道
-	rcvMsgCh, handleMsgCh chan *Message
+	rcvMsgCh, events chan IEvent
 	//创建协程通知
 	createWorkerCh chan int
 	//消息溢满通知
 	overflowNotifyCh chan int
 	//消息缓存
-	msgCache MessageCache
+	msgCache IEventCache
 }
 
-//初始化协程池
-func createBeeWorkerPool(size int32, msgCache MessageCache) (pool BeeWorkerPool) {
+// 初始化协程池
+func createBeeWorkerPool(c *Context, size int32, msgCache IEventCache) (pool BeeWorkerPool) {
 	pool = BeeWorkerPool{
+		Context:          c,
 		createWorkerCh:   make(chan int),
 		overflowNotifyCh: make(chan int, 1),
-		rcvMsgCh:         make(chan *Message),
-		handleMsgCh:      make(chan *Message, receiveQueueSize),
+		rcvMsgCh:         make(chan IEvent),
+		events:           make(chan IEvent, receiveQueueSize),
 		msgCache:         msgCache,
 	}
 	pool.run()
@@ -45,55 +95,55 @@ func createBeeWorkerPool(size int32, msgCache MessageCache) (pool BeeWorkerPool)
 	return pool
 }
 
-func (w *BeeWorkerPool) incPoolSize() {
-	atomic.AddInt32(&w.size, 1)
+func (self *BeeWorkerPool) incPoolSize() {
+	atomic.AddInt32(&self.size, 1)
 }
-func (w *BeeWorkerPool) decPoolSize() {
-	atomic.AddInt32(&w.size, -1)
+func (self *BeeWorkerPool) decPoolSize() {
+	atomic.AddInt32(&self.size, -1)
 }
 
-func (w *BeeWorkerPool) createBeeWorker(count int32) {
+func (self *BeeWorkerPool) createBeeWorker(count int32) {
 	if count <= 0 {
 		count = 1
 	}
 	for i := int32(0); i < count; i++ {
-		w.createWorkerCh <- 1
+		self.createWorkerCh <- 1
 	}
 }
 
-func (w *BeeWorkerPool) handle(msg *Message) {
-	if len(w.handleMsgCh) >= receiveQueueSize {
-		w.msgCache.Push(msg)
-		if len(w.overflowNotifyCh) < 1 {
-			w.overflowNotifyCh <- 1
+func (self *BeeWorkerPool) handle(e IEvent) {
+	if len(self.events) >= receiveQueueSize {
+		self.msgCache.Push(e)
+		if len(self.overflowNotifyCh) < 1 {
+			self.overflowNotifyCh <- 1
 		}
 	} else {
-		w.handleMsgCh <- msg
+		self.events <- e
 	}
 }
 
-//运行
-func (w *BeeWorkerPool) run() {
+// 运行
+func (self *BeeWorkerPool) run() {
 	go func() {
-		for msg := range w.rcvMsgCh {
-			w.handle(msg)
+		for msg := range self.rcvMsgCh {
+			self.handle(msg)
 		}
 	}()
 	go func() {
-		for range w.createWorkerCh {
-			w.incPoolSize()
+		for range self.createWorkerCh {
+			self.incPoolSize()
 			go func() {
 				//panic handling
 				defer func() {
-					w.decPoolSize()
+					self.decPoolSize()
 					if err := recover(); err != nil {
 						fmt.Fprintf(os.Stderr, "panic error:%s\n%s", err, debug.Stack())
 					}
-					w.createWorkerCh <- 1
+					self.createWorkerCh <- 1
 				}()
-				for msg := range w.handleMsgCh {
-					if f, ok := goNetContext.mMsgHooks[msg.ID]; ok {
-						f(msg)
+				for e := range self.events {
+					if f, ok := self.Context.mMsgHooks[e.Message().ID()]; ok {
+						f(e.Session(), e.Message())
 					}
 				}
 			}()
@@ -102,10 +152,10 @@ func (w *BeeWorkerPool) run() {
 	//消息缓存处理
 	go func() {
 		for {
-			if e := w.msgCache.Pop(); e != nil {
-				w.handleMsgCh <- e
+			if e := self.msgCache.Pop(); e != nil {
+				self.events <- e
 			} else {
-				<-w.overflowNotifyCh
+				<-self.overflowNotifyCh
 			}
 		}
 	}()

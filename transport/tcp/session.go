@@ -2,19 +2,18 @@ package tcp
 
 import (
 	. "github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/transport"
 	"log"
 	"net"
 )
 
-var _ transport.ISession = new(session)
+var _ ISession = new(session)
 
 // Socket会话
 type session struct {
 	//核心会话标志
-	transport.SessionIdentify
+	SessionIdentify
 	//存储功能
-	transport.SessionStore
+	SessionStore
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -23,11 +22,13 @@ type session struct {
 	cache []byte
 }
 
-//新会话
-func newSession(conn net.Conn) *session {
-	ses := CreateSession()
-	ses.(*session).conn = conn
-	return ses.(*session)
+// 新会话
+func newSession(c *Context, conn net.Conn) *session {
+	is := c.CreateSession()
+	s := is.(*session)
+	s.conn = conn
+	s.WithContext(c)
+	return s
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -35,7 +36,12 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msg interface{}) error {
-	return SendPacket(s.conn, msg)
+	data, err := s.Context.Package(msg)
+	if err != nil {
+		return err
+	}
+	_, err = s.conn.Write(data)
+	return err
 }
 
 func (s *session) Close() error {
@@ -45,11 +51,14 @@ func (s *session) Close() error {
 // 接收循环
 func (s *session) recvLoop() {
 	for {
-		var buf []byte
+		var buf = make([]byte, MTU)
 		n, err := s.conn.Read(buf)
 		if err != nil {
-			RecycleSession(s, err)
+			s.Context.RecycleSession(s, err)
 			return
+		}
+		if n == 0 {
+			continue
 		}
 		//如果有粘包未处理数据部分，放入本次进行处理
 		if len(s.cache) > 0 {
@@ -57,7 +66,7 @@ func (s *session) recvLoop() {
 			n = len(buf)
 			s.cache = nil
 		}
-		msg, unUsedCount, err := ParserPacket(buf[:n])
+		msg, unUsedCount, err := s.UnPackage(buf[:n])
 		if err != nil {
 			s.cache = nil
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
@@ -65,8 +74,8 @@ func (s *session) recvLoop() {
 		}
 		//存储未使用部分
 		if unUsedCount > 0 {
-			s.cache = append(s.cache, buf[len(buf)-unUsedCount-1:]...)
+			s.cache = append(s.cache, buf[n-unUsedCount-1:n]...)
 		}
-		CacheMessage(s, msg)
+		s.Context.PushGlobalMessageQueue(s, msg)
 	}
 }
