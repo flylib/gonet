@@ -10,7 +10,7 @@ import (
 var _ IServer = new(server)
 
 type server struct {
-	ServerIdentify
+	PeerIdentify
 	ln *net.UDPConn
 }
 

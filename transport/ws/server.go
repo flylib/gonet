@@ -13,7 +13,7 @@ var _ gonet.IServer = new(server)
 
 // 接收端
 type server struct {
-	gonet.ServerIdentify
+	gonet.PeerIdentify
 	//指定将HTTP连接升级到WebSocket连接的参数。
 	upGrader websocket.Upgrader
 	//响应头

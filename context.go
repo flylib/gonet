@@ -50,7 +50,7 @@ func NewContext(opts ...options) *Context {
 	}
 	//传输协议
 	c.server = option.server
-	c.server.(interface{ setContext(c *Context) }).setContext(c)
+	c.server.(IPeerIdentify).WithContext(c)
 	c.sessionType = option.server.SessionType()
 	if option.serviceName == "" {
 		option.serviceName = "gonet"
@@ -102,6 +102,7 @@ func (c *Context) CreateSession() ISession {
 	c.PushGlobalMessageQueue(session, NewSessionMessage)
 	return session
 }
+
 func (c *Context) RecycleSession(session ISession, err error) {
 	c.PushGlobalMessageQueue(session, &Message{
 		id:   SessionClose,

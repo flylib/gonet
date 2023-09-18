@@ -9,7 +9,7 @@ import (
 var _ gonet.IServer = new(server)
 
 type server struct {
-	gonet.ServerIdentify
+	gonet.PeerIdentify
 	gonet.SessionAbility
 	ln net.Listener
 }

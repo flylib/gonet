@@ -12,7 +12,7 @@ var _ gonet.IServer = new(server)
 
 type server struct {
 	gnet.EventHandler
-	gonet.ServerIdentify
+	gonet.PeerIdentify
 	ln gnet.Engine
 }
 

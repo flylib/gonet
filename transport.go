@@ -20,6 +20,10 @@ const (
 
 // Interfaces
 type (
+	ITransport interface {
+		Server() IServer
+		Client() IClient
+	}
 	//服务端
 	IServer interface {
 		// 启动监听
@@ -33,7 +37,7 @@ type (
 	}
 	//客户端
 	IClient interface {
-		Dial()
+		Dial() (ISession, error)
 	}
 	//会话
 	ISession interface {
@@ -67,30 +71,36 @@ type (
 		RunningSendLoop(handler func([]byte))
 		StopAbility()
 	}
+	IPeerIdentify interface {
+		Addr() string
+		SetAddr(addr string)
+		WithContext(c *Context)
+	}
 )
 
 var (
 	_ ISessionIdentify = new(SessionIdentify)
 	_ ISessionAbility  = new(SessionAbility)
+	_ IPeerIdentify    = new(PeerIdentify)
 )
 
-// server端属性
-type ServerIdentify struct {
+// 端属性
+type PeerIdentify struct {
 	*Context
 	uuid string
 	//地址
 	addr string
 }
 
-func (s *ServerIdentify) Addr() string {
+func (s *PeerIdentify) Addr() string {
 	return s.addr
 }
 
-func (s *ServerIdentify) SetAddr(addr string) {
+func (s *PeerIdentify) SetAddr(addr string) {
 	s.addr = addr
 }
 
-func (s *ServerIdentify) WithContext(c *Context) {
+func (s *PeerIdentify) WithContext(c *Context) {
 	s.Context = c
 }
 
@@ -114,16 +124,17 @@ func (s *SessionAbility) Load() (val any, ok bool) {
 
 func (s *SessionAbility) InitSendChanel() {
 	s.sendCh = make(chan []byte, 5)
+	s.val = nil
 }
 
 func (s *SessionAbility) WriteSendChannel(buf []byte) {
 	s.sendCh <- buf
 }
 
-func (s *SessionAbility) RunningSendLoop(handler func([]byte)) {
+func (s *SessionAbility) RunningSendLoop(writeDataHandler func([]byte)) {
 	go func() {
 		for buf := range s.sendCh {
-			handler(buf)
+			writeDataHandler(buf)
 		}
 	}()
 }

@@ -15,7 +15,7 @@ import (
 
 // 接收端
 type server struct {
-	ServerIdentify
+	PeerIdentify
 	ln *quic.Listener
 }
 
