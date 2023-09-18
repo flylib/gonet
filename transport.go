@@ -3,7 +3,7 @@ package gonet
 import (
 	"net"
 	"reflect"
-	"sync"
+	"sync/atomic"
 )
 
 type TransportProtocol string
@@ -42,13 +42,35 @@ type (
 		Close() error
 		//发送消息
 		Send(msg any) error
-		//设置键值对，存储关联数据
-		Store(key, value any)
-		//获取键值对
-		Load(key any) (value any, ok bool)
 		//地址
 		RemoteAddr() net.Addr
+		//设置键值对，存储关联数据
+		Store(value any)
+		//获取键值对
+		Load() (value any, ok bool)
 	}
+	ISessionIdentify interface {
+		ID() uint64
+		ClearIdentify()
+		SetID(id uint64)
+		UpdateID(id uint64)
+		WithContext(c *Context)
+		IsClosed() bool
+		SetClosedStatus()
+	}
+	ISessionAbility interface {
+		Store(val any)
+		Load() (val any, ok bool)
+		InitSendChanel()
+		WriteSendChannel(buf []byte)
+		RunningSendLoop(handler func([]byte))
+		ClearAbility()
+	}
+)
+
+var (
+	_ ISessionIdentify = new(SessionIdentify)
+	_ ISessionAbility  = new(SessionAbility)
 )
 
 // server端属性
@@ -70,22 +92,64 @@ func (s *ServerIdentify) setContext(c *Context) {
 	s.Context = c
 }
 
-// 存储功能
-type SessionStore struct {
-	sync.Map
+// 会话共同功能
+type SessionAbility struct {
+	val             any
+	closeSendChFlag atomic.Bool
+	sendCh          chan []byte
 }
 
-func (s *SessionStore) Clear() {
-	s.Range(func(key, value any) bool {
-		s.Delete(key)
-		return true
-	})
+func (s *SessionAbility) Store(val any) {
+	s.val = val
+}
+
+func (s *SessionAbility) Load() (val any, ok bool) {
+	if s.val == nil {
+		return
+	}
+	ok = true
+	return
+}
+
+func (s *SessionAbility) InitSendChanel() {
+	s.sendCh = make(chan []byte, 5)
+	s.closeSendChFlag.Store(false)
+}
+
+func (s *SessionAbility) WriteSendChannel(buf []byte) {
+	if s.closeSendChFlag.Load() {
+	}
+	s.sendCh <- buf
+}
+
+func (s *SessionAbility) RunningSendLoop(handler func([]byte)) {
+	go func() {
+		for buf := range s.sendCh {
+			handler(buf)
+		}
+	}()
+}
+
+func (s *SessionAbility) ClearAbility() {
+	isClosd := s.closeSendChFlag.Load()
+	s.closeSendChFlag.Store(false)
+	if isClosd {
+		close(s.sendCh)
+	}
+	s.val = nil
 }
 
 // 核心会话标志
 type SessionIdentify struct {
 	*Context
-	id uint64
+	id        uint64
+	closeFlag atomic.Bool
+}
+
+func (s *SessionIdentify) ClearIdentify() {
+	s.Context = nil
+	s.id = 0
+	s.closeFlag.Store(false)
 }
 
 func (s *SessionIdentify) ID() uint64 {
@@ -95,6 +159,7 @@ func (s *SessionIdentify) ID() uint64 {
 func (s *SessionIdentify) SetID(id uint64) {
 	s.id = id
 }
+
 func (s *SessionIdentify) UpdateID(id uint64) {
 	value, ok := s.Context.sessionMgr.alive.Load(s.id)
 	if ok {
@@ -108,36 +173,10 @@ func (s *SessionIdentify) WithContext(c *Context) {
 	s.Context = c
 }
 
-// 核心功能
-type SessionAbility struct {
-	once     *sync.Once
-	wChannel chan any
+func (s *SessionIdentify) IsClosed() bool {
+	return s.closeFlag.Load()
 }
 
-func (s *SessionAbility) Init(size int) {
-	if size < 1 {
-		size = 1
-	}
-	s.wChannel = make(chan any, size)
-	s.once = &sync.Once{}
-}
-
-func (s *SessionAbility) Close() {
-	close(s.wChannel)
-	s.wChannel = nil
-	s.once = nil
-}
-
-func (s *SessionAbility) SendQueue(msg any) {
-	s.wChannel <- msg
-}
-
-func (s *SessionAbility) WriteLoop(session ISession) {
-	s.once.Do(func() {
-		go func() {
-			for msg := range s.wChannel {
-				session.Send(msg)
-			}
-		}()
-	})
+func (s *SessionIdentify) SetClosedStatus() {
+	s.closeFlag.Store(true)
 }

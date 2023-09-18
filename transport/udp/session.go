@@ -13,7 +13,7 @@ var remotes = map[string]uint64{}
 // Socket会话
 type session struct {
 	SessionIdentify
-	SessionStore
+	SessionAbility
 	remoteAddr *net.UDPAddr
 	conn       *net.UDPConn
 	data       interface{}

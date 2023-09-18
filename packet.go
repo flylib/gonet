@@ -24,6 +24,7 @@ const (
 	HeaderOffset  = MsgIDOffset + MsgIDOffset //包头部分
 )
 
+// 封包(network package)
 type IPackageParser interface {
 	Package(v any) ([]byte, error)
 	UnPackage(data []byte) (IMessage, int, error)

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
+	"time"
 )
 
 var _ gonet.IServer = new(server)
@@ -36,7 +37,7 @@ func (s *server) Listen() error {
 }
 
 func (s *server) Stop() error {
-	// TODO 关闭处理
+	s.upGrader.HandshakeTimeout = time.Nanosecond
 	return nil
 }
 
@@ -52,5 +53,5 @@ func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	go newSession(s.Context, conn).recvLoop()
+	go newSession(s.Context, conn).readLoop()
 }

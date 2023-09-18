@@ -11,7 +11,7 @@ import (
 // conn
 type session struct {
 	SessionIdentify
-	SessionStore
+	SessionAbility
 	conn   quic.Connection
 	stream quic.Stream
 }

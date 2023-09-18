@@ -24,6 +24,19 @@
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="add kcp">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/packet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/session_mgr.go" beforeDir="false" afterPath="$PROJECT_DIR$/session_mgr.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/gnet/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/kcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/kcp/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/kcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/kcp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,10 +100,10 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="1UonKaYFvF9shPXlhOluzELBNIk" />
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
@@ -98,19 +111,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "last_opened_file_path": "F:/go/myproject/gonet/demo",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/go/myproject/gonet/demo&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="F:\go\myproject\gonet\demo" />
@@ -136,25 +149,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Build.go build github.com/zjllib/gonet/v3/demo/kcp/client">
-    <configuration name="go build github.com/zjllib/gonet/v3/demo/gnet/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="goNet" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/zjllib/gonet/v3/demo/gnet/client" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/demo/gnet/client/client.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build github.com/zjllib/gonet/v3/demo/kcp" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="goNet" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/zjllib/gonet/v3/demo/kcp" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/demo/kcp/server.go" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Go Build.go build github.com/zjllib/gonet/v3/demo/ws/client">
     <configuration name="go build github.com/zjllib/gonet/v3/demo/kcp/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="goNet" />
       <working_directory value="$PROJECT_DIR$" />
@@ -182,13 +177,31 @@
       <filePath value="$PROJECT_DIR$/demo/quic/client/client.go" />
       <method v="2" />
     </configuration>
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/ws" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="goNet" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/zjllib/gonet/v3/demo/ws" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/demo/ws/server.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build github.com/zjllib/gonet/v3/demo/ws/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="goNet" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/zjllib/gonet/v3/demo/ws/client" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/demo/ws/client/client.go" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/kcp/client" />
-        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/kcp" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/ws/client" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/ws" />
         <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/quic/client" />
         <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/quic" />
-        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/gnet/client" />
+        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/kcp/client" />
       </list>
     </recent_temporary>
   </component>

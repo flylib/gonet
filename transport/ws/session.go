@@ -11,9 +11,8 @@ var _ ISession = new(session)
 
 // webSocket conn
 type session struct {
-	SessionAbility
 	SessionIdentify
-	SessionStore
+	SessionAbility
 	conn *websocket.Conn
 }
 
@@ -31,21 +30,29 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Close() error {
-	s.Context = nil
 	return s.conn.Close()
 }
 
 // websocket does not support sending messages concurrently
 func (s *session) Send(msg any) error {
-	data, err := s.Context.Package(msg)
+	buf, err := s.Context.Package(msg)
 	if err != nil {
 		return err
 	}
-	return s.conn.WriteMessage(websocket.BinaryMessage, data)
+	s.WriteSendChannel(buf)
+	return nil
+}
+
+func (s *session) write(buf []byte) {
+	err := s.conn.WriteMessage(websocket.BinaryMessage, buf)
+	if err != nil {
+		log.Printf("session_%v msg writeLoop error,reason is %v \n", s.ID(), err)
+	}
 }
 
 // 循环读取消息
-func (s *session) recvLoop() {
+func (s *session) readLoop() {
+	s.RunningSendLoop(s.write)
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {

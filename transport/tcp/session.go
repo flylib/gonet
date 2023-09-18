@@ -13,7 +13,7 @@ type session struct {
 	//核心会话标志
 	SessionIdentify
 	//存储功能
-	SessionStore
+	SessionAbility
 	//累计收消息总数
 	recvCount uint64
 	//raw conn

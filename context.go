@@ -95,8 +95,10 @@ func (c *Context) GetSession(id uint64) (ISession, bool) {
 }
 func (c *Context) CreateSession() ISession {
 	idleSession := c.sessionMgr.getIdleSession()
+	idleSession.(ISessionIdentify).ClearIdentify()
 	session := idleSession.(ISession)
 	c.sessionMgr.addAliveSession(idleSession)
+	session.(ISessionAbility).InitSendChanel()
 	c.PushGlobalMessageQueue(session, NewSessionMessage)
 	return session
 }
@@ -105,10 +107,11 @@ func (c *Context) RecycleSession(session ISession, err error) {
 		id:   SessionClose,
 		body: err,
 	})
+	session.(ISessionAbility).ClearAbility()
 	c.sessionMgr.recycleIdleSession(session)
 }
 func (c *Context) SessionCount() int {
-	return c.sessionMgr.CountAliveSession()
+	return int(c.sessionMgr.CountAliveSession())
 }
 func (c *Context) Broadcast(msg interface{}) {
 	c.sessionMgr.alive.Range(func(_, item interface{}) bool {

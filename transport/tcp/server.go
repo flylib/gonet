@@ -10,7 +10,7 @@ var _ gonet.IServer = new(server)
 
 type server struct {
 	gonet.ServerIdentify
-	gonet.SessionStore
+	gonet.SessionAbility
 	ln net.Listener
 }
 
