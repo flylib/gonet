@@ -107,7 +107,8 @@ func (c *Context) RecycleSession(session ISession, err error) {
 		id:   SessionClose,
 		body: err,
 	})
-	session.(ISessionAbility).ClearAbility()
+	session.Close()
+	session.(ISessionAbility).StopAbility()
 	c.sessionMgr.recycleIdleSession(session)
 }
 func (c *Context) SessionCount() int {

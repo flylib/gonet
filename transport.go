@@ -33,6 +33,7 @@ type (
 	}
 	//客户端
 	IClient interface {
+		Dial()
 	}
 	//会话
 	ISession interface {
@@ -64,7 +65,7 @@ type (
 		InitSendChanel()
 		WriteSendChannel(buf []byte)
 		RunningSendLoop(handler func([]byte))
-		ClearAbility()
+		StopAbility()
 	}
 )
 
@@ -88,15 +89,15 @@ func (s *ServerIdentify) Addr() string {
 func (s *ServerIdentify) SetAddr(addr string) {
 	s.addr = addr
 }
-func (s *ServerIdentify) setContext(c *Context) {
+
+func (s *ServerIdentify) WithContext(c *Context) {
 	s.Context = c
 }
 
 // 会话共同功能
 type SessionAbility struct {
-	val             any
-	closeSendChFlag atomic.Bool
-	sendCh          chan []byte
+	val    any
+	sendCh chan []byte
 }
 
 func (s *SessionAbility) Store(val any) {
@@ -113,12 +114,9 @@ func (s *SessionAbility) Load() (val any, ok bool) {
 
 func (s *SessionAbility) InitSendChanel() {
 	s.sendCh = make(chan []byte, 5)
-	s.closeSendChFlag.Store(false)
 }
 
 func (s *SessionAbility) WriteSendChannel(buf []byte) {
-	if s.closeSendChFlag.Load() {
-	}
 	s.sendCh <- buf
 }
 
@@ -130,12 +128,8 @@ func (s *SessionAbility) RunningSendLoop(handler func([]byte)) {
 	}()
 }
 
-func (s *SessionAbility) ClearAbility() {
-	isClosd := s.closeSendChFlag.Load()
-	s.closeSendChFlag.Store(false)
-	if isClosd {
-		close(s.sendCh)
-	}
+func (s *SessionAbility) StopAbility() {
+	close(s.sendCh)
 	s.val = nil
 }
 

@@ -30,17 +30,24 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Close() error {
+	if s.IsClosed() {
+		return nil
+	}
+	s.SetClosedStatus()
 	return s.conn.Close()
 }
 
 // websocket does not support sending messages concurrently
-func (s *session) Send(msg any) error {
+func (s *session) Send(msg any) (err error) {
 	buf, err := s.Context.Package(msg)
 	if err != nil {
 		return err
 	}
+	if s.IsClosed() {
+		return
+	}
 	s.WriteSendChannel(buf)
-	return nil
+	return
 }
 
 func (s *session) write(buf []byte) {

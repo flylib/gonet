@@ -37,14 +37,6 @@ func (self *SessionManager) getAliveSession(id uint64) (session ISession, exist 
 	return s.(ISession), ok
 }
 
-func (self *SessionManager) removeAliveSession(session ISession) {
-	atomic.AddInt32(&self.aliveNum, -1)
-	session.Close()
-	session.(interface{ Clear() }).Clear()
-	self.alive.Delete(session.ID())
-	self.recycleIdleSession(session)
-}
-
 func (self *SessionManager) CountAliveSession() int32 {
 	return atomic.LoadInt32(&self.aliveNum)
 }
@@ -54,6 +46,7 @@ func (self *SessionManager) getIdleSession() ISession {
 	return self.idle.Get().(ISession)
 }
 func (self *SessionManager) recycleIdleSession(session ISession) {
+	atomic.AddInt32(&self.aliveNum, -1)
 	self.alive.Delete(session.ID())
 	self.idle.Put(session)
 }
