@@ -14,18 +14,19 @@ type server struct {
 	ln *net.UDPConn
 }
 
-func NewServer(addr string) *server {
+func NewServer(ctx *Context) IServer {
 	s := &server{}
-	s.SetAddr(addr)
+	s.WithContext(ctx)
+	ctx.InitSessionMgr(reflect.TypeOf(session{}))
 	return s
 }
-
-func (s *server) Listen() error {
-	addr, err := net.ResolveUDPAddr(string(UDP), s.Addr())
+func (s *server) Listen(addr string) error {
+	s.SetAddr(addr)
+	udpAddr, err := net.ResolveUDPAddr(string(UDP), s.Addr())
 	if err != nil {
 		return err
 	}
-	s.ln, err = net.ListenUDP("udp", addr)
+	s.ln, err = net.ListenUDP("udp", udpAddr)
 	if err != nil {
 		return err
 	}
@@ -54,8 +55,4 @@ func (s *server) Listen() error {
 }
 func (s *server) Stop() error {
 	return s.ln.Close()
-}
-
-func (s *server) SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
 }

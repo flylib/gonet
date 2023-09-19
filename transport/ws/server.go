@@ -2,31 +2,33 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	"github.com/zjllib/gonet/v3"
+	. "github.com/zjllib/gonet/v3"
 	"net/http"
 	"net/url"
 	"reflect"
 	"time"
 )
 
-var _ gonet.IServer = new(server)
+var _ IServer = new(server)
 
 // 接收端
 type server struct {
-	gonet.PeerIdentify
+	PeerIdentify
 	//指定将HTTP连接升级到WebSocket连接的参数。
 	upGrader websocket.Upgrader
 	//响应头
 	//respHeader http.Header
 }
 
-func NewServer(addr string) *server {
-	t := &server{}
-	t.SetAddr(addr)
-	return t
+func NewServer(ctx *Context) IServer {
+	s := &server{}
+	s.WithContext(ctx)
+	ctx.InitSessionMgr(reflect.TypeOf(session{}))
+	return s
 }
 
-func (s *server) Listen() error {
+func (s *server) Listen(addr string) error {
+	s.SetAddr(addr)
 	url, err := url.Parse(s.Addr())
 	if err != nil {
 		return err
@@ -39,10 +41,6 @@ func (s *server) Listen() error {
 func (s *server) Stop() error {
 	s.upGrader.HandshakeTimeout = time.Nanosecond
 	return nil
-}
-
-func (s *server) SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
 }
 
 func (s *server) newConn(w http.ResponseWriter, r *http.Request) {

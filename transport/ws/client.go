@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/websocket"
 	. "github.com/zjllib/gonet/v3"
 	"net/http"
+	"reflect"
 	"time"
 )
 
@@ -11,7 +12,15 @@ type client struct {
 	PeerIdentify
 }
 
-func (c *client) Dial() (ISession, error) {
+func NewClient(ctx *Context) IClient {
+	c := &client{}
+	c.WithContext(ctx)
+	ctx.InitSessionMgr(reflect.TypeOf(session{}))
+	return c
+}
+
+func (c *client) Dial(addr string) (ISession, error) {
+	c.SetAddr(addr)
 	dialer := websocket.Dialer{
 		Proxy:            http.ProxyFromEnvironment,
 		HandshakeTimeout: 5 * time.Second,

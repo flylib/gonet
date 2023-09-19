@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/xtaci/kcp-go/v5"
-	"github.com/zjllib/gonet/v3/demo/proto"
+	"github.com/zjllib/gonet/v3/demo/handler/proto"
 	"golang.org/x/crypto/pbkdf2"
 	"log"
 	"time"

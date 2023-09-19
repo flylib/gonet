@@ -2,7 +2,6 @@ package gonet
 
 import (
 	"net"
-	"reflect"
 	"sync/atomic"
 )
 
@@ -20,24 +19,18 @@ const (
 
 // Interfaces
 type (
-	ITransport interface {
-		Server() IServer
-		Client() IClient
-	}
 	//服务端
 	IServer interface {
 		// 启动监听
-		Listen() error
+		Listen(addr string) error
 		// 停止服务
 		Stop() error
 		// 地址
 		Addr() string
-		//会话类型
-		SessionType() reflect.Type
 	}
 	//客户端
 	IClient interface {
-		Dial() (ISession, error)
+		Dial(addr string) (ISession, error)
 	}
 	//会话
 	ISession interface {

@@ -8,91 +8,81 @@ import (
 	"github.com/zjllib/gonet/v3/codec/xml"
 	"reflect"
 	"sync"
+	"time"
 )
 
 type Context struct {
-	//会话管理
+	//session manager
 	sessionMgr *SessionManager
 	//message types
 	mMsgTypes map[MessageID]reflect.Type
 	//message ids
 	mMsgIDs map[reflect.Type]MessageID
-	//server types
-	sessionType reflect.Type
-	//消息编码器
-	defaultCodec codec.Codec
-	//传输端
-	server IServer
-	client IClient
-	//bee worker pool
-	workers BeeWorkerPool
-	//消息钩子
+	//msg route handler
 	mMsgHooks map[MessageID]MessageHandler
 
-	name string
+	//message codec
+	codec codec.ICodec
+	//bee worker pool
+	workers           BeeWorkerPool
+	maxWorkerPoolSize int
+	//cache for messages
+	msgCache IEventCache
 
 	globalLock sync.Mutex
 
 	//包解析器
 	IPackageParser
+
+	//读写超时
+	readDeadline, writeDeadline time.Duration
+	//0意味着无限制
+	maxSessionCount int
+	//contentType support json/xml/binary/protobuf
+	contentType string
 }
 
-func NewContext(opts ...options) *Context {
-	option := Option{}
-	for _, f := range opts {
-		f(&option)
+func NewContext(handlers ...HandlerFunc) *Context {
+	ctx := &Context{
+		mMsgTypes: map[MessageID]reflect.Type{},
+		mMsgIDs:   map[reflect.Type]MessageID{},
+		mMsgHooks: map[MessageID]MessageHandler{},
 	}
-	c := &Context{
-		sessionMgr: newSessionManager(option.server.SessionType()),
-		mMsgTypes:  map[MessageID]reflect.Type{},
-		mMsgIDs:    map[reflect.Type]MessageID{},
-		mMsgHooks:  map[MessageID]MessageHandler{},
+	for _, handler := range handlers {
+		err := handler(ctx)
+		if err != nil {
+			panic(err)
+		}
 	}
-	//传输协议
-	c.server = option.server
-	c.server.(IPeerIdentify).WithContext(c)
-	c.sessionType = option.server.SessionType()
-	if option.serviceName == "" {
-		option.serviceName = "gonet"
-	}
-	c.name = option.serviceName
-
 	//编码格式
-	switch option.contentType {
+	switch ctx.contentType {
 	case codec.Binary:
-		c.defaultCodec = binary.BinaryCodec{}
+		ctx.codec = binary.BinaryCodec{}
 	case codec.Xml:
-		c.defaultCodec = xml.XmlCodec{}
+		ctx.codec = xml.XmlCodec{}
 	case codec.Protobuf:
-		c.defaultCodec = protobuf.ProtobufCodec{}
+		ctx.codec = protobuf.ProtobufCodec{}
 	default:
-		c.defaultCodec = json.JsonCodec{}
+		ctx.codec = json.JsonCodec{}
 	}
-	cache := option.msgCache
+	cache := ctx.msgCache
 	if cache == nil {
 		cache = &MessageList{}
 	}
-	c.workers = createBeeWorkerPool(c, option.workerPoolSize, cache)
-	c.IPackageParser = &defaultPackageParser{c}
-	return c
-}
-
-func (c *Context) Name() string {
-	return c.name
-}
-
-// peer
-func (c *Context) Server() IServer {
-	return c.server
-}
-func (c *Context) Client() IClient {
-	return c.client
+	ctx.workers = createBeeWorkerPool(ctx, ctx.maxWorkerPoolSize, cache)
+	ctx.IPackageParser = &defaultPackageParser{ctx}
+	return ctx
 }
 
 // 会话管理
 func (c *Context) GetSession(id uint64) (ISession, bool) {
 	return c.sessionMgr.getAliveSession(id)
 }
+
+func (c *Context) InitSessionMgr(sessionType reflect.Type) {
+	c.sessionMgr = newSessionManager(sessionType)
+}
+
 func (c *Context) CreateSession() ISession {
 	idleSession := c.sessionMgr.getIdleSession()
 	idleSession.(ISessionIdentify).ClearIdentify()
@@ -102,7 +92,6 @@ func (c *Context) CreateSession() ISession {
 	c.PushGlobalMessageQueue(session, NewSessionMessage)
 	return session
 }
-
 func (c *Context) RecycleSession(session ISession, err error) {
 	c.PushGlobalMessageQueue(session, &Message{
 		id:   SessionClose,
@@ -129,9 +118,10 @@ func (c *Context) Broadcast(msg interface{}) {
 func (c *Context) Route(msgID MessageID, msg any, callback MessageHandler) {
 	c.globalLock.Lock()
 	defer c.globalLock.Unlock()
+
 	msgType := reflect.TypeOf(msg)
 	if _, ok := c.mMsgTypes[msgID]; ok {
-		panic("error:Duplicate message id")
+		panic("Duplicate message id")
 	}
 	if msgType != nil {
 		c.mMsgIDs[msgType] = msgID
@@ -141,6 +131,7 @@ func (c *Context) Route(msgID MessageID, msg any, callback MessageHandler) {
 		c.mMsgHooks[msgID] = callback
 	}
 }
+
 func (c *Context) GetMsgID(msg interface{}) (MessageID, bool) {
 	msgID, ok := c.mMsgIDs[reflect.TypeOf(msg)]
 	return msgID, ok
@@ -154,10 +145,10 @@ func (c *Context) CreateMsg(msgID MessageID) interface{} {
 
 // 消息编码
 func (c *Context) EncodeMessage(msg any) ([]byte, error) {
-	return c.defaultCodec.Encode(msg)
+	return c.codec.Encode(msg)
 }
 func (c *Context) DecodeMessage(msg any, data []byte) error {
-	return c.defaultCodec.Decode(data, msg)
+	return c.codec.Decode(data, msg)
 }
 
 // 缓存消息

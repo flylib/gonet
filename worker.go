@@ -81,7 +81,7 @@ type BeeWorkerPool struct {
 }
 
 // 初始化协程池
-func createBeeWorkerPool(c *Context, size int32, msgCache IEventCache) (pool BeeWorkerPool) {
+func createBeeWorkerPool(c *Context, size int, msgCache IEventCache) (pool BeeWorkerPool) {
 	pool = BeeWorkerPool{
 		Context:          c,
 		createWorkerCh:   make(chan int),
@@ -102,11 +102,11 @@ func (self *BeeWorkerPool) decPoolSize() {
 	atomic.AddInt32(&self.size, -1)
 }
 
-func (self *BeeWorkerPool) createBeeWorker(count int32) {
+func (self *BeeWorkerPool) createBeeWorker(count int) {
 	if count <= 0 {
 		count = 1
 	}
-	for i := int32(0); i < count; i++ {
+	for i := 0; i < count; i++ {
 		self.createWorkerCh <- 1
 	}
 }

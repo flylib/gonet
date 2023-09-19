@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/demo/proto"
+	"github.com/zjllib/gonet/v3/demo/handler/proto"
 	"github.com/zjllib/gonet/v3/transport/gnet" //协议
 	"log"
 )
@@ -13,7 +13,7 @@ var context *gonet.Context
 func main() {
 	context = gonet.NewContext(
 		gonet.Server(gnet.NewServer("tcp://:9001")),
-		gonet.MaxWorkerPoolSize(20))
+		gonet.WorkerPoolMaxSize(20))
 	InitRouter(context)
 	println("server listen on:", context.Server().Addr())
 	if err := context.Server().Listen(); err != nil {

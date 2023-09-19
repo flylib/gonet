@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/quic-go/quic-go"
-	"github.com/zjllib/gonet/v3/demo/proto"
+	"github.com/zjllib/gonet/v3/demo/handler/proto"
 	"log"
 	"time"
 )

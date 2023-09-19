@@ -1,32 +1,21 @@
-package main
+package handler
 
 import (
 	"fmt"
 	"github.com/zjllib/gonet/v3"
 	"github.com/zjllib/gonet/v3/demo/handler/proto"
-	"github.com/zjllib/gonet/v3/transport/kcp" //协议
 	"log"
 )
 
-func main() {
-	context := gonet.NewContext(
-		gonet.Server(kcp.NewServer(":9001")),
-		gonet.WorkerPoolMaxSize(20))
-	InitRouter(context)
-	println("server listen on:", context.Server().Addr())
-	if err := context.Server().Listen(); err != nil {
-		log.Fatal(err)
-	}
+// 消息路由
+func InitServerRouter(ctx *gonet.Context) error {
+	ctx.Route(gonet.SessionConnect, nil, serverHandler)
+	ctx.Route(gonet.SessionClose, nil, serverHandler)
+	ctx.Route(101, proto.Say{}, serverHandler)
+	return nil
 }
 
-func InitRouter(c *gonet.Context) {
-	//消息路由
-	c.Route(gonet.SessionConnect, nil, Handler)
-	c.Route(gonet.SessionClose, nil, Handler)
-	c.Route(101, proto.Say{}, Handler)
-}
-
-func Handler(s gonet.ISession, msg gonet.IMessage) {
+func serverHandler(s gonet.ISession, msg gonet.IMessage) {
 	switch msg.ID() {
 	case gonet.SessionConnect:
 		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())

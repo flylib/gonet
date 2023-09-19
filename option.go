@@ -1,80 +1,28 @@
 package gonet
 
-import (
-	"time"
-)
+// /////////////////////////////
+// ///    Option Func   ////////
+// ////////////////////////////
+type HandlerFunc func(*Context) error
 
-///////////////////////////////
-/////    Option Func   ////////
-//////////////////////////////
-
-// options
-type Option struct {
-	//SERVER
-	server IServer
-	//CLIENT
-	client IClient
-	//读写超时
-	readDeadline, writeDeadline time.Duration
-	//0意味着无限制
-	maxSessionCount int
-	//最小限制是1
-	maxWorkerPoolSize int32
-	//contentType support json/xml/binary/protobuf
-	contentType string
-	//worker pool size
-	workerPoolSize int32
-	//cache for messages
-	msgCache IEventCache
-	//service name
-	serviceName string
-}
-
-type options func(o *Option)
-
-// server
-func Server(s IServer) options {
-	return func(o *Option) {
-		o.server = s
-	}
-}
-
-// client
-func Client(c IClient) options {
-	return func(o *Option) {
-		o.client = c
-	}
-}
-
-func MaxSessions(max int) options {
-	return func(o *Option) {
+func MaxSessions(max int) HandlerFunc {
+	return func(o *Context) error {
 		o.maxSessionCount = max
+		return nil
 	}
 }
 
-func MaxWorkerPoolSize(max int32) options {
-	return func(o *Option) {
+func WorkerPoolMaxSize(max int) HandlerFunc {
+	return func(o *Context) error {
 		o.maxWorkerPoolSize = max
-	}
-}
-
-// Default content type of the client
-func ContentType(ct string) options {
-	return func(o *Option) {
-		o.contentType = ct
+		return nil
 	}
 }
 
 // cache for messages
-func WithMessageCache(cache IEventCache) options {
-	return func(o *Option) {
+func WithMessageCache(cache IEventCache) HandlerFunc {
+	return func(o *Context) error {
 		o.msgCache = cache
-	}
-}
-
-// cache for messages
-func ServiceName(name string) options {
-	return func(o *Option) {
-		o.serviceName = name
+		return nil
 	}
 }

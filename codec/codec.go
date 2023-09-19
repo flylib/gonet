@@ -7,7 +7,7 @@ const (
 	Xml      = "xml"
 )
 
-type Codec interface {
+type ICodec interface {
 	Encode(v interface{}) (data []byte, err error)
 	Decode(data []byte, vObj interface{}) error
 	Type() string
