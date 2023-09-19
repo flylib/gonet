@@ -12,7 +12,7 @@ func main() {
 		gonet.WorkerPoolMaxSize(20),
 		handler.InitServerRouter,
 	)
-	println("server listen on:", "ws://localhost:8088/center/ws")
+
 	if err := ws.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
 		log.Fatal(err)
 	}

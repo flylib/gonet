@@ -16,8 +16,6 @@
 ```go
 /*
 +---------------------------------------------------+
-+	            service		            +
-+---------------------------------------------------+
 +	server	       |	client	            +
 +---------------------------------------------------+
 +	    bee worker、Session pool、codec	    +
@@ -43,8 +41,8 @@
 - [x] TCP
 - [x] UDP
 - [x] WEBSOCKET
-- [ ] QUIC
-- [ ] KCP
+- [x] QUIC
+- [x] KCP
 - [ ] HTTP
 - [ ] RPC
 ## 数据编码格式支持
@@ -66,50 +64,52 @@ git clone https://github.com/zjllib/gonet.git
 
 ## 使用样例参考
 ```go
-     package main
+//main.go
+package main
 
 import (
-	"fmt"
 	"github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/demo/proto"
+	"github.com/zjllib/gonet/v3/demo/handler"
 	"github.com/zjllib/gonet/v3/transport/ws" //协议
 	"log"
 )
 
-func init() {
-	//消息路由
-	gonet.Route(gonet.SessionConnect, nil, Handler)
-	gonet.Route(gonet.SessionClose, nil, Handler)
-	gonet.Route(101, proto.Say{}, Handler)
-}
-
 func main() {
-	transport := ws.NewTransport("ws://localhost:8088/center/ws")
+	ctx := gonet.NewContext(
+		gonet.WorkerPoolMaxSize(20),
+		handler.InitServerRouter,
+	)
 
-	service := gonet.NewService(
-		gonet.WithTransport(transport),
-		gonet.MaxWorkerPoolSize(20))
-	println("server listen on:", transport.Addr())
-	if err := service.Start(); err != nil {
+	if err := ws.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func Handler(msg *gonet.Message) {
-	switch msg.ID {
-	case gonet.SessionConnect:
-		log.Println("connected session_id:", msg.Session.ID(), " ip:", msg.Session.RemoteAddr().String())
-	case gonet.SessionClose:
-		log.Println("connected session_id:", msg.Session.ID(), " error:", msg.Body)
-	case 101:
-		fmt.Println("session_id:", msg.Session.ID(), " say ", msg.Body.(*proto.Say).Content)
-		//fmt.Println(reflect.TypeOf(msg.Body))
-	default:
-		log.Println("unknown message id:", msg.ID)
-	}
+// handler.go package
+// 消息路由
+func InitServerRouter(ctx *gonet.Context) error {
+	ctx.Route(gonet.SessionConnect, nil, serverHandler)
+	ctx.Route(gonet.SessionClose, nil, serverHandler)
+	ctx.Route(101, proto.Say{}, serverHandler)
+	return nil
 }
 
-
+func serverHandler(s gonet.ISession, msg gonet.IMessage) {
+	switch msg.ID() {
+	case gonet.SessionConnect:
+		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())
+	case gonet.SessionClose:
+		log.Println("connected session_id:", s.ID(), " error:", msg.Body())
+	case 101:
+		fmt.Println("session_id:", s.ID(), " say ", msg.Body().(*proto.Say).Content)
+		err := s.Send(proto.Say{Content: "hell client"})
+		if err != nil {
+			log.Fatal(err)
+		}
+	default:
+		log.Println("unknown message id:", msg.ID())
+	}
+}
 ```
 
 

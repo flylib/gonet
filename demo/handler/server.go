@@ -23,7 +23,6 @@ func serverHandler(s gonet.ISession, msg gonet.IMessage) {
 		log.Println("connected session_id:", s.ID(), " error:", msg.Body())
 	case 101:
 		fmt.Println("session_id:", s.ID(), " say ", msg.Body().(*proto.Say).Content)
-		//fmt.Println(reflect.TypeOf(msg.Body))
 		err := s.Send(proto.Say{Content: "hell client"})
 		if err != nil {
 			log.Fatal(err)

@@ -22,30 +22,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="fix">
+    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codec/codec.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/codec.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/gnet/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/gnet/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/gnet/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/gnet/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/kcp/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/kcp/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/kcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/kcp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/proto/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/proto/test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/quic/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/quic/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/quic/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/quic/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/tcp/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/udp/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/udp/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/udp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/client/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/handler/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/demo/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +112,8 @@
     "go.import.settings.migrated": "true",
     "last_opened_file_path": "F:/go/myproject/gonet/demo/handler",
     "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)"
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -308,11 +290,11 @@
     <MESSAGE value="refactor&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
     <MESSAGE value="refactor" />
     <MESSAGE value="up go version 1.18+" />
-    <MESSAGE value="update" />
     <MESSAGE value="update quic" />
     <MESSAGE value="add kcp" />
     <MESSAGE value="fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix" />
+    <MESSAGE value="update" />
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
@@ -364,11 +346,6 @@
           <url>file://$PROJECT_DIR$/demo/quic/client/client.go</url>
           <line>77</line>
           <option name="timeStamp" value="52" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/ws/server.go</url>
-          <line>9</line>
-          <option name="timeStamp" value="66" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
