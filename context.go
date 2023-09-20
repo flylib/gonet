@@ -8,7 +8,6 @@ import (
 	"github.com/zjllib/gonet/v3/codec/xml"
 	"reflect"
 	"sync"
-	"time"
 )
 
 type Context struct {
@@ -33,9 +32,6 @@ type Context struct {
 
 	//包解析器
 	IPackageParser
-
-	//读写超时
-	readDeadline, writeDeadline time.Duration
 	//0意味着无限制
 	maxSessionCount int
 	//contentType support json/xml/binary/protobuf

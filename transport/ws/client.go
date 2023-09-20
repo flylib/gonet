@@ -5,15 +5,18 @@ import (
 	. "github.com/zjllib/gonet/v3"
 	"net/http"
 	"reflect"
-	"time"
 )
 
 type client struct {
 	PeerIdentify
+	option
 }
 
-func NewClient(ctx *Context) IClient {
+func NewClient(ctx *Context, options ...Option) IClient {
 	c := &client{}
+	for _, f := range options {
+		f(&c.option)
+	}
 	c.WithContext(ctx)
 	ctx.InitSessionMgr(reflect.TypeOf(session{}))
 	return c
@@ -23,7 +26,7 @@ func (c *client) Dial(addr string) (ISession, error) {
 	c.SetAddr(addr)
 	dialer := websocket.Dialer{
 		Proxy:            http.ProxyFromEnvironment,
-		HandshakeTimeout: 5 * time.Second,
+		HandshakeTimeout: c.option.HandshakeTimeout,
 	}
 	conn, _, err := dialer.Dial(c.Addr(), nil)
 	if err != nil {

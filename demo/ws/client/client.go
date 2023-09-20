@@ -25,7 +25,7 @@ func main() {
 
 func newConnection() {
 	ctx := gonet.NewContext(handler.InitClientRouter)
-	session, err := ws.NewClient(ctx).Dial("ws://localhost:8088/center/ws")
+	session, err := ws.NewClient(ctx, ws.HandshakeTimeout(5*time.Second)).Dial("ws://localhost:8088/center/ws")
 	if err != nil {
 		log.Fatal(err)
 	}
