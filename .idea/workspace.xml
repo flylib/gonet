@@ -23,10 +23,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="update">
+      <change afterPath="$PROJECT_DIR$/net_package.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/binary/binary.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/binary/binary.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/codec.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/json/json.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/json/json.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/protobuf/protobuf.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/protobuf/protobuf.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/xml/xml.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/xml/xml.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/client/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/gnet/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/gnet/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/handler/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/handler/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/kcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/kcp/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/quic/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/quic/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/udp/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gonet.go" beforeDir="false" afterPath="$PROJECT_DIR$/gonet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/message.go" beforeDir="false" afterPath="$PROJECT_DIR$/message.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packet.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,21 +120,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "last_opened_file_path": "F:/go/myproject/gonet/demo/handler",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/go/myproject/gonet/demo/handler&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="F:\go\myproject\gonet\demo\handler" />
@@ -125,8 +144,8 @@
       <recent name="F:\go\myproject\gonet\transport" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="F:\go\myproject\gonet\demo\handler" />
       <recent name="F:\go\myproject\gonet" />
+      <recent name="F:\go\myproject\gonet\demo\handler" />
       <recent name="D:\go\project\goNet\transport" />
       <recent name="D:\go\project\goNet\codec\xml" />
       <recent name="D:\go\project\goNet\codec\protobuf" />
@@ -304,7 +323,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/codec/protobuf/protobuf.go</url>
-          <line>6</line>
+          <line>11</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">

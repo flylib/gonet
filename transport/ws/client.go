@@ -2,17 +2,17 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	. "github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3"
 	"net/http"
 	"reflect"
 )
 
 type client struct {
-	PeerIdentify
+	gonet.PeerIdentify
 	option
 }
 
-func NewClient(ctx *Context, options ...Option) IClient {
+func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
 	c := &client{}
 	for _, f := range options {
 		f(&c.option)
@@ -22,7 +22,7 @@ func NewClient(ctx *Context, options ...Option) IClient {
 	return c
 }
 
-func (c *client) Dial(addr string) (ISession, error) {
+func (c *client) Dial(addr string) (gonet.ISession, error) {
 	c.SetAddr(addr)
 	dialer := websocket.Dialer{
 		Proxy:            http.ProxyFromEnvironment,

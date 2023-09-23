@@ -1,11 +1,7 @@
 package gonet
 
 import (
-	"github.com/zjllib/gonet/v3/codec"
-	"github.com/zjllib/gonet/v3/codec/binary"
 	"github.com/zjllib/gonet/v3/codec/json"
-	"github.com/zjllib/gonet/v3/codec/protobuf"
-	"github.com/zjllib/gonet/v3/codec/xml"
 	"reflect"
 	"sync"
 )
@@ -21,28 +17,28 @@ type Context struct {
 	mMsgHooks map[MessageID]MessageHandler
 
 	//message codec
-	codec codec.ICodec
+	codec ICodec
 	//bee worker pool
-	workers           BeeWorkerPool
+	bees              BeeWorkerPool
 	maxWorkerPoolSize int
 	//cache for messages
-	msgCache IEventCache
+	msgCache IMessageCache
 
 	globalLock sync.Mutex
 
 	//包解析器
-	IPackageParser
+	INetPackageParser
 	//0意味着无限制
 	maxSessionCount int
 	//contentType support json/xml/binary/protobuf
 	contentType string
 }
 
-func NewContext(handlers ...HandlerFunc) *Context {
+func NewContext(handlers ...Option) *Context {
 	ctx := &Context{
-		mMsgTypes: map[MessageID]reflect.Type{},
-		mMsgIDs:   map[reflect.Type]MessageID{},
-		mMsgHooks: map[MessageID]MessageHandler{},
+		mMsgTypes: make(map[MessageID]reflect.Type),
+		mMsgIDs:   make(map[reflect.Type]MessageID),
+		mMsgHooks: make(map[MessageID]MessageHandler),
 	}
 	for _, handler := range handlers {
 		err := handler(ctx)
@@ -51,22 +47,14 @@ func NewContext(handlers ...HandlerFunc) *Context {
 		}
 	}
 	//编码格式
-	switch ctx.contentType {
-	case codec.Binary:
-		ctx.codec = binary.BinaryCodec{}
-	case codec.Xml:
-		ctx.codec = xml.XmlCodec{}
-	case codec.Protobuf:
-		ctx.codec = protobuf.ProtobufCodec{}
-	default:
-		ctx.codec = json.JsonCodec{}
+	if ctx.codec == nil {
+		ctx.codec = new(json.Codec)
 	}
-	cache := ctx.msgCache
-	if cache == nil {
-		cache = &MessageList{}
+	if ctx.msgCache == nil {
+		ctx.msgCache = new(DefaultMessageCacheList)
 	}
-	ctx.workers = createBeeWorkerPool(ctx, ctx.maxWorkerPoolSize, cache)
-	ctx.IPackageParser = &defaultPackageParser{ctx}
+	ctx.bees = createBeeWorkerPool(ctx, ctx.maxWorkerPoolSize, ctx.msgCache)
+	ctx.INetPackageParser = &DefaultNetPackageParser{ctx}
 	return ctx
 }
 
@@ -85,14 +73,11 @@ func (c *Context) CreateSession() ISession {
 	session := idleSession.(ISession)
 	c.sessionMgr.addAliveSession(idleSession)
 	session.(ISessionAbility).InitSendChanel()
-	c.PushGlobalMessageQueue(session, NewSessionMessage)
+	c.PushGlobalMessageQueue(newSessionConnectMessage(session))
 	return session
 }
 func (c *Context) RecycleSession(session ISession, err error) {
-	c.PushGlobalMessageQueue(session, &Message{
-		id:   SessionClose,
-		body: err,
-	})
+	c.PushGlobalMessageQueue(newSessionCloseMessage(session, err))
 	session.Close()
 	session.(ISessionAbility).StopAbility()
 	c.sessionMgr.recycleIdleSession(session)
@@ -148,6 +133,7 @@ func (c *Context) DecodeMessage(msg any, data []byte) error {
 }
 
 // 缓存消息
-func (c *Context) PushGlobalMessageQueue(session ISession, msg IMessage) {
-	c.workers.rcvMsgCh <- event{session: session, message: msg}
+func (c *Context) PushGlobalMessageQueue(msg IMessage) {
+	//主动防御，避免消息过多
+	c.bees.rcvMsgCh <- msg
 }

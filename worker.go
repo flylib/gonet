@@ -1,7 +1,6 @@
 package gonet
 
 import (
-	"container/list"
 	"fmt"
 	"os"
 	"runtime/debug"
@@ -18,76 +17,29 @@ const (
 	receiveQueueSize = 512 //默认接收队列大小
 )
 
-type IEvent interface {
-	Session() ISession
-	Message() IMessage
-}
-
-type event struct {
-	session ISession
-	message IMessage
-}
-
-func (e event) Session() ISession {
-	return e.session
-}
-
-func (e event) Message() IMessage {
-	return e.message
-}
-
-// 消息中间缓存层，为处理不过来的消息进行缓存
-type IEventCache interface {
-	Size() int
-	Push(event IEvent)
-	Pop() IEvent
-}
-
-// g默认的消息缓存队列
-type MessageList struct {
-	list.List
-}
-
-func (l *MessageList) Size() int {
-	return l.List.Len()
-}
-
-func (l *MessageList) Push(msg IEvent) {
-	l.List.PushFront(msg)
-}
-
-func (l *MessageList) Pop() IEvent {
-	element := l.List.Back()
-	if element == nil {
-		return nil
-	}
-	l.List.Remove(element)
-	return element.Value.(IEvent)
-}
-
 // 处理池
 type BeeWorkerPool struct {
 	*Context
 	//当前池协程数量(池大小)
 	size int32
 	//接受处理消息通道
-	rcvMsgCh, events chan IEvent
+	rcvMsgCh, handingCh chan IMessage
 	//创建协程通知
 	createWorkerCh chan int
 	//消息溢满通知
 	overflowNotifyCh chan int
 	//消息缓存
-	msgCache IEventCache
+	msgCache IMessageCache
 }
 
 // 初始化协程池
-func createBeeWorkerPool(c *Context, size int, msgCache IEventCache) (pool BeeWorkerPool) {
+func createBeeWorkerPool(c *Context, size int, msgCache IMessageCache) (pool BeeWorkerPool) {
 	pool = BeeWorkerPool{
 		Context:          c,
 		createWorkerCh:   make(chan int),
 		overflowNotifyCh: make(chan int, 1),
-		rcvMsgCh:         make(chan IEvent),
-		events:           make(chan IEvent, receiveQueueSize),
+		rcvMsgCh:         make(chan IMessage),
+		handingCh:        make(chan IMessage, receiveQueueSize),
 		msgCache:         msgCache,
 	}
 	pool.run()
@@ -111,14 +63,14 @@ func (self *BeeWorkerPool) createBeeWorker(count int) {
 	}
 }
 
-func (self *BeeWorkerPool) handle(e IEvent) {
-	if len(self.events) >= receiveQueueSize {
+func (self *BeeWorkerPool) handle(e IMessage) {
+	if len(self.handingCh) >= receiveQueueSize {
 		self.msgCache.Push(e)
 		if len(self.overflowNotifyCh) < 1 {
 			self.overflowNotifyCh <- 1
 		}
 	} else {
-		self.events <- e
+		self.handingCh <- e
 	}
 }
 
@@ -141,9 +93,9 @@ func (self *BeeWorkerPool) run() {
 					}
 					self.createWorkerCh <- 1
 				}()
-				for e := range self.events {
-					if f, ok := self.Context.mMsgHooks[e.Message().ID()]; ok {
-						f(e.Session(), e.Message())
+				for msg := range self.handingCh {
+					if f, ok := self.Context.mMsgHooks[msg.ID()]; ok {
+						f(msg)
 					}
 				}
 			}()
@@ -153,7 +105,7 @@ func (self *BeeWorkerPool) run() {
 	go func() {
 		for {
 			if e := self.msgCache.Pop(); e != nil {
-				self.events <- e
+				self.handingCh <- e
 			} else {
 				<-self.overflowNotifyCh
 			}

@@ -2,22 +2,22 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	. "github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3"
 	"log"
 	"net"
 )
 
-var _ ISession = new(session)
+var _ gonet.ISession = new(session)
 
 // webSocket conn
 type session struct {
-	SessionIdentify
-	SessionAbility
+	gonet.SessionIdentify
+	gonet.SessionAbility
 	conn *websocket.Conn
 }
 
 // 新会话
-func newSession(c *Context, conn *websocket.Conn) *session {
+func newSession(c *gonet.Context, conn *websocket.Conn) *session {
 	is := c.CreateSession()
 	s := is.(*session)
 	s.conn = conn
@@ -66,11 +66,11 @@ func (s *session) readLoop() {
 			s.Context.RecycleSession(s, err)
 			return
 		}
-		msg, _, err := s.Context.UnPackage(buf)
+		msg, _, err := s.Context.UnPackage(s, buf)
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(s, msg)
+		s.Context.PushGlobalMessageQueue(msg)
 	}
 }

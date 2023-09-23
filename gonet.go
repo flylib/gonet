@@ -4,7 +4,7 @@ import (
 	"log"
 )
 
-type MessageHandler func(ISession, IMessage)
+type MessageHandler func(IMessage)
 
 func init() {
 	log.SetPrefix("[gonet]")

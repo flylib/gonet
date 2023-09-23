@@ -21,16 +21,16 @@ func main() {
 
 func InitRouter(c *gonet.Context) {
 	//消息路由
-	c.Route(gonet.SessionConnect, nil, Handler)
-	c.Route(gonet.SessionClose, nil, Handler)
+	c.Route(gonet.MessageID_SessionConnect, nil, Handler)
+	c.Route(gonet.MessageID_SessionClose, nil, Handler)
 	c.Route(101, proto.Say{}, Handler)
 }
 
 func Handler(s gonet.ISession, msg gonet.IMessage) {
 	switch msg.ID() {
-	case gonet.SessionConnect:
+	case gonet.MessageID_SessionConnect:
 		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())
-	case gonet.SessionClose:
+	case gonet.MessageID_SessionClose:
 		log.Println("connected session_id:", s.ID(), " error:", msg.Body())
 	case 101:
 		fmt.Println("session_id:", s.ID(), " say ", msg.Body().(*proto.Say).Content)

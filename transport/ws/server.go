@@ -2,25 +2,25 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
-	. "github.com/zjllib/gonet/v3"
+	"github.com/zjllib/gonet/v3"
 	"net/http"
 	"net/url"
 	"reflect"
 	"time"
 )
 
-var _ IServer = new(server)
+var _ gonet.IServer = new(server)
 
 // 接收端
 type server struct {
-	PeerIdentify
+	gonet.PeerIdentify
 	//指定将HTTP连接升级到WebSocket连接的参数。
 	upGrader websocket.Upgrader
 	//响应头
 	//respHeader http.Header
 }
 
-func NewServer(ctx *Context) IServer {
+func NewServer(ctx *gonet.Context) gonet.IServer {
 	s := &server{}
 	s.WithContext(ctx)
 	ctx.InitSessionMgr(reflect.TypeOf(session{}))
