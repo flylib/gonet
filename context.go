@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-type Context struct {
+type AppContext struct {
 	//session manager
 	sessionMgr *SessionManager
 	//message types
@@ -27,15 +27,15 @@ type Context struct {
 	globalLock sync.Mutex
 
 	//包解析器
-	INetPackageParser
+	netPackageParser INetPackageParser
 	//0意味着无限制
 	maxSessionCount int
 	//contentType support json/xml/binary/protobuf
 	contentType string
 }
 
-func NewContext(handlers ...Option) *Context {
-	ctx := &Context{
+func NewContext(handlers ...Option) *AppContext {
+	ctx := &AppContext{
 		mMsgTypes: make(map[MessageID]reflect.Type),
 		mMsgIDs:   make(map[reflect.Type]MessageID),
 		mMsgHooks: make(map[MessageID]MessageHandler),
@@ -54,20 +54,20 @@ func NewContext(handlers ...Option) *Context {
 		ctx.msgCache = new(DefaultMessageCacheList)
 	}
 	ctx.bees = createBeeWorkerPool(ctx, ctx.maxWorkerPoolSize, ctx.msgCache)
-	ctx.INetPackageParser = &DefaultNetPackageParser{ctx}
+	ctx.netPackageParser = new(DefaultNetPackageParser)
 	return ctx
 }
 
 // 会话管理
-func (c *Context) GetSession(id uint64) (ISession, bool) {
+func (c *AppContext) GetSession(id uint64) (ISession, bool) {
 	return c.sessionMgr.getAliveSession(id)
 }
 
-func (c *Context) InitSessionMgr(sessionType reflect.Type) {
+func (c *AppContext) InitSessionMgr(sessionType reflect.Type) {
 	c.sessionMgr = newSessionManager(sessionType)
 }
 
-func (c *Context) CreateSession() ISession {
+func (c *AppContext) CreateSession() ISession {
 	idleSession := c.sessionMgr.getIdleSession()
 	idleSession.(ISessionIdentify).ClearIdentify()
 	session := idleSession.(ISession)
@@ -76,16 +76,16 @@ func (c *Context) CreateSession() ISession {
 	c.PushGlobalMessageQueue(newSessionConnectMessage(session))
 	return session
 }
-func (c *Context) RecycleSession(session ISession, err error) {
+func (c *AppContext) RecycleSession(session ISession, err error) {
 	c.PushGlobalMessageQueue(newSessionCloseMessage(session, err))
 	session.Close()
 	session.(ISessionAbility).StopAbility()
 	c.sessionMgr.recycleIdleSession(session)
 }
-func (c *Context) SessionCount() int {
+func (c *AppContext) SessionCount() int {
 	return int(c.sessionMgr.CountAliveSession())
 }
-func (c *Context) Broadcast(msg interface{}) {
+func (c *AppContext) Broadcast(msg interface{}) {
 	c.sessionMgr.alive.Range(func(_, item interface{}) bool {
 		session, ok := item.(ISession)
 		if ok {
@@ -96,7 +96,7 @@ func (c *Context) Broadcast(msg interface{}) {
 }
 
 // 消息管理
-func (c *Context) Route(msgID MessageID, msg any, callback MessageHandler) {
+func (c *AppContext) Route(msgID MessageID, msg any, callback MessageHandler) {
 	c.globalLock.Lock()
 	defer c.globalLock.Unlock()
 
@@ -113,11 +113,11 @@ func (c *Context) Route(msgID MessageID, msg any, callback MessageHandler) {
 	}
 }
 
-func (c *Context) GetMsgID(msg interface{}) (MessageID, bool) {
+func (c *AppContext) GetMsgID(msg interface{}) (MessageID, bool) {
 	msgID, ok := c.mMsgIDs[reflect.TypeOf(msg)]
 	return msgID, ok
 }
-func (c *Context) CreateMsg(msgID MessageID) interface{} {
+func (c *AppContext) CreateMsg(msgID MessageID) interface{} {
 	if msg, ok := c.mMsgTypes[msgID]; ok {
 		return reflect.New(msg).Interface()
 	}
@@ -125,15 +125,22 @@ func (c *Context) CreateMsg(msgID MessageID) interface{} {
 }
 
 // 消息编码
-func (c *Context) EncodeMessage(msg any) ([]byte, error) {
+func (c *AppContext) EncodeMessage(msg any) ([]byte, error) {
 	return c.codec.Encode(msg)
 }
-func (c *Context) DecodeMessage(msg any, data []byte) error {
+func (c *AppContext) DecodeMessage(msg any, data []byte) error {
 	return c.codec.Decode(data, msg)
 }
 
+func (c *AppContext) PackageMessage(msg any) ([]byte, error) {
+	return c.netPackageParser.Package(c, msg)
+}
+func (c *AppContext) UnPackageMessage(s ISession, data []byte) (IMessage, int, error) {
+	return c.netPackageParser.UnPackage(c, s, data)
+}
+
 // 缓存消息
-func (c *Context) PushGlobalMessageQueue(msg IMessage) {
+func (c *AppContext) PushGlobalMessageQueue(msg IMessage) {
 	//主动防御，避免消息过多
 	c.bees.rcvMsgCh <- msg
 }

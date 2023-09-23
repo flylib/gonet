@@ -10,7 +10,7 @@ var _ ISession = new(session)
 
 // Socket会话
 type session struct {
-	*Context
+	*AppContext
 	//核心会话标志
 	SessionIdentify
 	//存储功能
@@ -24,7 +24,7 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *Context, conn gnet.Conn) *session {
+func newSession(c *AppContext, conn gnet.Conn) *session {
 	is := c.CreateSession()
 	s := is.(*session)
 	s.conn = conn
@@ -38,7 +38,7 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msg interface{}) error {
-	bytes, err := s.Context.Package(msg)
+	bytes, err := s.AppContext.Package(msg)
 	if err != nil {
 		return err
 	}

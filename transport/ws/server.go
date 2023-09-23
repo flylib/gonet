@@ -20,7 +20,7 @@ type server struct {
 	//respHeader http.Header
 }
 
-func NewServer(ctx *gonet.Context) gonet.IServer {
+func NewServer(ctx *gonet.AppContext) gonet.IServer {
 	s := &server{}
 	s.WithContext(ctx)
 	ctx.InitSessionMgr(reflect.TypeOf(session{}))
@@ -51,5 +51,5 @@ func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	go newSession(s.Context, conn).readLoop()
+	go newSession(s.AppContext, conn).readLoop()
 }

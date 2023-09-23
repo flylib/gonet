@@ -29,13 +29,13 @@ func (s *server) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	return
 }
 func (s *server) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
-	newSession(s.Context, c)
+	newSession(s.AppContext, c)
 	return nil, gnet.None
 }
 func (s *server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
-	is, ok := s.Context.GetSession(uint64(c.Fd()))
+	is, ok := s.AppContext.GetSession(uint64(c.Fd()))
 	if ok {
-		s.Context.RecycleSession(is, err)
+		s.AppContext.RecycleSession(is, err)
 	}
 	return gnet.None
 }
@@ -45,14 +45,14 @@ func (s *server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	if err != nil {
 		return gnet.Close
 	}
-	message, _, err := s.Context.UnPackage(buf)
+	message, _, err := s.AppContext.UnPackage(buf)
 	if err != nil {
 		log.Printf("session_%v msg parser error,reason is %v \n", c.Fd(), err)
 		return gnet.None
 	}
-	is, ok := s.Context.GetSession(uint64(c.Fd()))
+	is, ok := s.AppContext.GetSession(uint64(c.Fd()))
 	if ok {
-		s.Context.PushGlobalMessageQueue(is, message)
+		s.AppContext.PushGlobalMessageQueue(is, message)
 	}
 	return gnet.None
 }

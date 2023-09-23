@@ -21,7 +21,7 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *Context, conn *net.UDPConn, remote *net.UDPAddr) *session {
+func newSession(c *AppContext, conn *net.UDPConn, remote *net.UDPAddr) *session {
 	is := c.CreateSession()
 	s := is.(*session)
 	s.conn = conn
@@ -38,7 +38,7 @@ func (s *session) RemoteAddr() net.Addr {
 
 // 发送封包
 func (s *session) Send(msg interface{}) error {
-	data, err := s.Context.Package(msg)
+	data, err := s.AppContext.Package(msg)
 	if err != nil {
 		return err
 	}

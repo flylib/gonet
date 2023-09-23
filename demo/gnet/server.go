@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-var context *gonet.Context
+var context *gonet.AppContext
 
 func main() {
 	context = gonet.NewContext(
@@ -22,7 +22,7 @@ func main() {
 }
 
 // 消息路由
-func InitRouter(c *gonet.Context) {
+func InitRouter(c *gonet.AppContext) {
 	c.Route(gonet.MessageID_SessionConnect, nil, Handler)
 	c.Route(gonet.MessageID_SessionClose, nil, Handler)
 	c.Route(101, proto.Say{}, Handler)

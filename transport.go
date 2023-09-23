@@ -52,7 +52,7 @@ type (
 		ClearIdentify()
 		SetID(id uint64)
 		UpdateID(id uint64)
-		WithContext(c *Context)
+		WithContext(c *AppContext)
 		IsClosed() bool
 		SetClosedStatus()
 	}
@@ -67,7 +67,7 @@ type (
 	IPeerIdentify interface {
 		Addr() string
 		SetAddr(addr string)
-		WithContext(c *Context)
+		WithContext(c *AppContext)
 	}
 )
 
@@ -79,7 +79,7 @@ var (
 
 // 端属性
 type PeerIdentify struct {
-	*Context
+	*AppContext
 	uuid string
 	//地址
 	addr string
@@ -93,8 +93,8 @@ func (s *PeerIdentify) SetAddr(addr string) {
 	s.addr = addr
 }
 
-func (s *PeerIdentify) WithContext(c *Context) {
-	s.Context = c
+func (s *PeerIdentify) WithContext(c *AppContext) {
+	s.AppContext = c
 }
 
 // 会话共同功能
@@ -139,13 +139,13 @@ func (s *SessionAbility) StopAbility() {
 
 // 核心会话标志
 type SessionIdentify struct {
-	*Context
+	*AppContext
 	id        uint64
 	closeFlag atomic.Bool
 }
 
 func (s *SessionIdentify) ClearIdentify() {
-	s.Context = nil
+	s.AppContext = nil
 	s.id = 0
 	s.closeFlag.Store(false)
 }
@@ -159,16 +159,16 @@ func (s *SessionIdentify) SetID(id uint64) {
 }
 
 func (s *SessionIdentify) UpdateID(id uint64) {
-	value, ok := s.Context.sessionMgr.alive.Load(s.id)
+	value, ok := s.AppContext.sessionMgr.alive.Load(s.id)
 	if ok {
-		s.Context.sessionMgr.alive.Delete(s.id)
+		s.AppContext.sessionMgr.alive.Delete(s.id)
 		s.id = id
-		s.Context.sessionMgr.alive.Store(s.id, value)
+		s.AppContext.sessionMgr.alive.Store(s.id, value)
 	}
 }
 
-func (s *SessionIdentify) WithContext(c *Context) {
-	s.Context = c
+func (s *SessionIdentify) WithContext(c *AppContext) {
+	s.AppContext = c
 }
 
 func (s *SessionIdentify) IsClosed() bool {

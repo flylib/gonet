@@ -8,14 +8,15 @@ import (
 )
 
 // 消息路由
-func InitClientRouter(ctx *gonet.Context) error {
+func InitClientRouter(ctx *gonet.AppContext) error {
 	ctx.Route(gonet.MessageID_SessionConnect, nil, clientHandler)
 	ctx.Route(gonet.MessageID_SessionClose, nil, clientHandler)
 	ctx.Route(101, proto.Say{}, clientHandler)
 	return nil
 }
 
-func clientHandler(s gonet.ISession, msg gonet.IMessage) {
+func clientHandler(msg gonet.IMessage) {
+	s := msg.FromSession()
 	switch msg.ID() {
 	case gonet.MessageID_SessionConnect:
 		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())

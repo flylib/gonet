@@ -14,7 +14,7 @@ type server struct {
 	ln *net.UDPConn
 }
 
-func NewServer(ctx *Context) IServer {
+func NewServer(ctx *AppContext) IServer {
 	s := &server{}
 	s.WithContext(ctx)
 	ctx.InitSessionMgr(reflect.TypeOf(session{}))
@@ -39,17 +39,17 @@ func (s *server) Listen(addr string) error {
 		}
 		var ses *session
 		if sid, exit := remotes[remote.String()]; exit {
-			s, _ := s.Context.GetSession(sid)
+			s, _ := s.AppContext.GetSession(sid)
 			ses, _ = s.(*session)
 		} else {
-			ses = newSession(s.Context, s.ln, remote)
+			ses = newSession(s.AppContext, s.ln, remote)
 		}
-		msg, _, err := s.Context.UnPackage(buf[:n])
+		msg, _, err := s.AppContext.UnPackage(buf[:n])
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(ses, msg)
+		s.AppContext.PushGlobalMessageQueue(ses, msg)
 	}
 	return nil
 }

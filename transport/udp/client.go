@@ -10,7 +10,7 @@ type client struct {
 	PeerIdentify
 }
 
-func NewClient(ctx *Context) IClient {
+func NewClient(ctx *AppContext) IClient {
 	c := &client{}
 	c.WithContext(ctx)
 	ctx.InitSessionMgr(reflect.TypeOf(session{}))
@@ -29,7 +29,7 @@ func (c *client) Dial(addr string) (ISession, error) {
 	if err != nil {
 		return nil, err
 	}
-	s := newSession(c.Context, conn, udpAddr)
+	s := newSession(c.AppContext, conn, udpAddr)
 	go s.()
 	return s, nil
 }

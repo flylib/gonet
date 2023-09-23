@@ -35,7 +35,7 @@ func (s *server) Listen() (err error) {
 		if err != nil {
 			continue
 		}
-		s := newSession(s.Context, conn)
+		s := newSession(s.AppContext, conn)
 		go s.recvLoop()
 	}
 }

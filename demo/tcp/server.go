@@ -19,7 +19,7 @@ func main() {
 	}
 }
 
-func InitRouter(c *gonet.Context) {
+func InitRouter(c *gonet.AppContext) {
 	//消息路由
 	c.Route(gonet.MessageID_SessionConnect, nil, Handler)
 	c.Route(gonet.MessageID_SessionClose, nil, Handler)

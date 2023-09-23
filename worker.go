@@ -19,7 +19,7 @@ const (
 
 // 处理池
 type BeeWorkerPool struct {
-	*Context
+	*AppContext
 	//当前池协程数量(池大小)
 	size int32
 	//接受处理消息通道
@@ -33,9 +33,9 @@ type BeeWorkerPool struct {
 }
 
 // 初始化协程池
-func createBeeWorkerPool(c *Context, size int, msgCache IMessageCache) (pool BeeWorkerPool) {
+func createBeeWorkerPool(c *AppContext, size int, msgCache IMessageCache) (pool BeeWorkerPool) {
 	pool = BeeWorkerPool{
-		Context:          c,
+		AppContext:       c,
 		createWorkerCh:   make(chan int),
 		overflowNotifyCh: make(chan int, 1),
 		rcvMsgCh:         make(chan IMessage),
@@ -94,7 +94,7 @@ func (self *BeeWorkerPool) run() {
 					self.createWorkerCh <- 1
 				}()
 				for msg := range self.handingCh {
-					if f, ok := self.Context.mMsgHooks[msg.ID()]; ok {
+					if f, ok := self.AppContext.mMsgHooks[msg.ID()]; ok {
 						f(msg)
 					}
 				}

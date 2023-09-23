@@ -23,7 +23,7 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *Context, conn net.Conn) *session {
+func newSession(c *AppContext, conn net.Conn) *session {
 	is := c.CreateSession()
 	s := is.(*session)
 	s.conn = conn
@@ -36,7 +36,7 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msg interface{}) error {
-	data, err := s.Context.Package(msg)
+	data, err := s.AppContext.Package(msg)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (s *session) recvLoop() {
 		var buf = make([]byte, MTU)
 		n, err := s.conn.Read(buf)
 		if err != nil {
-			s.Context.RecycleSession(s, err)
+			s.AppContext.RecycleSession(s, err)
 			return
 		}
 		if n == 0 {
@@ -76,6 +76,6 @@ func (s *session) recvLoop() {
 		if unUsedCount > 0 {
 			s.cache = append(s.cache, buf[n-unUsedCount-1:n]...)
 		}
-		s.Context.PushGlobalMessageQueue(s, msg)
+		s.AppContext.PushGlobalMessageQueue(s, msg)
 	}
 }

@@ -3,17 +3,17 @@ package gonet
 // /////////////////////////////
 // ///    Option Func   ////////
 // ////////////////////////////
-type Option func(*Context) error
+type Option func(*AppContext) error
 
 func MaxSessions(max int) Option {
-	return func(o *Context) error {
+	return func(o *AppContext) error {
 		o.maxSessionCount = max
 		return nil
 	}
 }
 
 func WorkerPoolMaxSize(max int) Option {
-	return func(o *Context) error {
+	return func(o *AppContext) error {
 		o.maxWorkerPoolSize = max
 		return nil
 	}
@@ -21,7 +21,7 @@ func WorkerPoolMaxSize(max int) Option {
 
 // cache for messages
 func WithMessageCache(cache IMessageCache) Option {
-	return func(o *Context) error {
+	return func(o *AppContext) error {
 		o.msgCache = cache
 		return nil
 	}
@@ -29,7 +29,7 @@ func WithMessageCache(cache IMessageCache) Option {
 
 // message codec,default is json codec
 func WithMessageCodec(codec ICodec) Option {
-	return func(o *Context) error {
+	return func(o *AppContext) error {
 		o.codec = codec
 		return nil
 	}

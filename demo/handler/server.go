@@ -8,7 +8,7 @@ import (
 )
 
 // 消息路由
-func InitServerRouter(ctx *gonet.Context) error {
+func InitServerRouter(ctx *gonet.AppContext) error {
 	ctx.Route(gonet.MessageID_SessionConnect, nil, serverHandler)
 	ctx.Route(gonet.MessageID_SessionClose, nil, serverHandler)
 	ctx.Route(101, proto.Say{}, serverHandler)

@@ -17,7 +17,7 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *Context, conn quic.Connection) *session {
+func newSession(c *AppContext, conn quic.Connection) *session {
 	ses := c.CreateSession()
 	s, _ := ses.(*session)
 	s.conn = conn
@@ -30,7 +30,7 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msg any) error {
-	data, err := s.Context.Package(msg)
+	data, err := s.AppContext.Package(msg)
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func (s *session) recvLoop() {
 	s.stream, err = s.conn.AcceptStream(context.Background())
 	if err != nil {
 		log.Printf("session_%v AcceptStream error,reason is %v \n", s.ID(), err)
-		s.Context.RecycleSession(s, err)
+		s.AppContext.RecycleSession(s, err)
 		return
 	}
 
@@ -64,14 +64,14 @@ func (s *session) recvLoop() {
 			if err != nil {
 				log.Printf("session_%v close error,reason is %v \n", s.ID(), err)
 			}
-			s.Context.RecycleSession(s, err)
+			s.AppContext.RecycleSession(s, err)
 			return
 		}
-		msg, _, err := s.Context.UnPackage(buf[:n])
+		msg, _, err := s.AppContext.UnPackage(buf[:n])
 		if err != nil {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(s, msg)
+		s.AppContext.PushGlobalMessageQueue(s, msg)
 	}
 }
