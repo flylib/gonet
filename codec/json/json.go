@@ -2,12 +2,10 @@ package json
 
 import (
 	"github.com/json-iterator/go" //高性能json编码库
-	"github.com/zjllib/gonet/v3"
 )
 
 var (
-	_    gonet.ICodec = new(Codec)
-	json              = jsoniter.ConfigCompatibleWithStandardLibrary
+	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 type Codec struct {

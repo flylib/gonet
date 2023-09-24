@@ -23,13 +23,13 @@ func newSessionManager(sessionType reflect.Type) *SessionManager {
 }
 
 // 活跃会话
-func (self *SessionManager) addAliveSession(session ISession) {
+func (self *SessionManager) AddAliveSession(session ISession) {
 	atomic.AddInt32(&self.aliveNum, 1)
 	session.(interface{ SetID(id uint64) }).SetID(atomic.AddUint64(&self.incr, 1))
 	self.alive.Store(session.ID(), session)
 }
 
-func (self *SessionManager) getAliveSession(id uint64) (session ISession, exist bool) {
+func (self *SessionManager) GetAliveSession(id uint64) (session ISession, exist bool) {
 	s, ok := self.alive.Load(id)
 	if !ok {
 		return nil, ok
@@ -42,10 +42,10 @@ func (self *SessionManager) CountAliveSession() int32 {
 }
 
 // 空闲会话
-func (self *SessionManager) getIdleSession() ISession {
+func (self *SessionManager) GetIdleSession() ISession {
 	return self.idle.Get().(ISession)
 }
-func (self *SessionManager) recycleIdleSession(session ISession) {
+func (self *SessionManager) RecycleIdleSession(session ISession) {
 	atomic.AddInt32(&self.aliveNum, -1)
 	self.alive.Delete(session.ID())
 	self.idle.Put(session)

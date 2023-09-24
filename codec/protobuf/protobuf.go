@@ -2,11 +2,6 @@ package protobuf
 
 import (
 	"github.com/gogo/protobuf/proto"
-	"github.com/zjllib/gonet/v3"
-)
-
-var (
-	_ gonet.ICodec = new(Codec)
 )
 
 type Codec struct {

@@ -34,14 +34,14 @@ type AppContext struct {
 	contentType string
 }
 
-func NewContext(handlers ...Option) *AppContext {
+func NewContext(options ...Option) *AppContext {
 	ctx := &AppContext{
 		mMsgTypes: make(map[MessageID]reflect.Type),
 		mMsgIDs:   make(map[reflect.Type]MessageID),
 		mMsgHooks: make(map[MessageID]MessageHandler),
 	}
-	for _, handler := range handlers {
-		err := handler(ctx)
+	for _, f := range options {
+		err := f(ctx)
 		if err != nil {
 			panic(err)
 		}
@@ -60,7 +60,7 @@ func NewContext(handlers ...Option) *AppContext {
 
 // 会话管理
 func (c *AppContext) GetSession(id uint64) (ISession, bool) {
-	return c.sessionMgr.getAliveSession(id)
+	return c.sessionMgr.GetAliveSession(id)
 }
 
 func (c *AppContext) InitSessionMgr(sessionType reflect.Type) {
@@ -68,10 +68,10 @@ func (c *AppContext) InitSessionMgr(sessionType reflect.Type) {
 }
 
 func (c *AppContext) CreateSession() ISession {
-	idleSession := c.sessionMgr.getIdleSession()
+	idleSession := c.sessionMgr.GetIdleSession()
 	idleSession.(ISessionIdentify).ClearIdentify()
 	session := idleSession.(ISession)
-	c.sessionMgr.addAliveSession(idleSession)
+	c.sessionMgr.AddAliveSession(idleSession)
 	session.(ISessionAbility).InitSendChanel()
 	c.PushGlobalMessageQueue(newSessionConnectMessage(session))
 	return session
@@ -80,7 +80,7 @@ func (c *AppContext) RecycleSession(session ISession, err error) {
 	c.PushGlobalMessageQueue(newSessionCloseMessage(session, err))
 	session.Close()
 	session.(ISessionAbility).StopAbility()
-	c.sessionMgr.recycleIdleSession(session)
+	c.sessionMgr.RecycleIdleSession(session)
 }
 func (c *AppContext) SessionCount() int {
 	return int(c.sessionMgr.CountAliveSession())
@@ -141,6 +141,6 @@ func (c *AppContext) UnPackageMessage(s ISession, data []byte) (IMessage, int, e
 
 // 缓存消息
 func (c *AppContext) PushGlobalMessageQueue(msg IMessage) {
-	//主动防御，避免消息过多
+	//todo 主动防御，避免消息过多
 	c.bees.rcvMsgCh <- msg
 }

@@ -24,32 +24,12 @@
   <component name="ChangeListManager">
     <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/binary/binary.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/binary/binary.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/json/json.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/json/json.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/protobuf/protobuf.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/protobuf/protobuf.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codec/xml/xml.go" beforeDir="false" afterPath="$PROJECT_DIR$/codec/xml/xml.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/gnet/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/gnet/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/handler/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/handler/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/kcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/kcp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/quic/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/quic/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/udp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/net_package.go" beforeDir="false" afterPath="$PROJECT_DIR$/net_package.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/gnet/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/gnet/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/kcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/kcp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/kcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/kcp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/quic/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/quic/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/session_mgr.go" beforeDir="false" afterPath="$PROJECT_DIR$/session_mgr.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -327,7 +307,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/codec/protobuf/protobuf.go</url>
-          <line>11</line>
+          <line>6</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">

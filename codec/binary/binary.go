@@ -2,11 +2,6 @@ package binary
 
 import (
 	"github.com/davyxu/goobjfmt"
-	"github.com/zjllib/gonet/v3"
-)
-
-var (
-	_ gonet.ICodec = new(Codec)
 )
 
 type Codec struct {
