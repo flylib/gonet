@@ -1,10 +1,10 @@
 package gonet
 
 import (
-	"fmt"
-	"os"
+	"math"
 	"runtime/debug"
 	"sync/atomic"
+	"time"
 )
 
 /*----------------------------------------------------------------
@@ -17,98 +17,104 @@ const (
 	receiveQueueSize = 512 //默认接收队列大小
 )
 
-// 处理池
 type BeeWorkerPool struct {
 	*AppContext
-	//当前池协程数量(池大小)
-	size int32
-	//接受处理消息通道
-	rcvMsgCh, handingCh chan IMessage
-	//创建协程通知
-	createWorkerCh chan int
-	//消息溢满通知
-	overflowNotifyCh chan int
-	//消息缓存
-	msgCache IMessageCache
+	size            int32
+	maxBeeWorkerNum int32
+	idleWorkerNum   int32
+	cacheQueueSize  int
+	queue           chan IMessage
+	addWorkerNotify chan int
 }
 
-// 初始化协程池
-func createBeeWorkerPool(c *AppContext, size int, msgCache IMessageCache) (pool BeeWorkerPool) {
-	pool = BeeWorkerPool{
-		AppContext:       c,
-		createWorkerCh:   make(chan int),
-		overflowNotifyCh: make(chan int, 1),
-		rcvMsgCh:         make(chan IMessage),
-		handingCh:        make(chan IMessage, receiveQueueSize),
-		msgCache:         msgCache,
+func maxBeeWorkers(num int32) func(pool *BeeWorkerPool) {
+	return func(pool *BeeWorkerPool) {
+		pool.maxBeeWorkerNum = num
 	}
-	pool.run()
-	pool.createBeeWorker(size)
+}
+
+func allowIdleBeesWorkers(num int32) func(pool *BeeWorkerPool) {
+	return func(pool *BeeWorkerPool) {
+		pool.idleWorkerNum = num
+	}
+}
+
+func setQueueSize(num int) func(pool *BeeWorkerPool) {
+	if num < 0 {
+		num = 0
+	}
+	return func(pool *BeeWorkerPool) {
+		pool.cacheQueueSize = num
+		pool.queue = make(chan IMessage, num)
+	}
+}
+
+func newBeeWorkerPool(c *AppContext, options ...func(pool *BeeWorkerPool)) (pool BeeWorkerPool) {
+	pool = BeeWorkerPool{
+		AppContext:      c,
+		addWorkerNotify: make(chan int),
+		queue:           make(chan IMessage, receiveQueueSize),
+	}
+
+	for _, option := range options {
+		option(&pool)
+	}
+
+	go pool.run()
+	pool.addBeeWorker(pool.idleWorkerNum)
 	return pool
 }
 
-func (self *BeeWorkerPool) incPoolSize() {
-	atomic.AddInt32(&self.size, 1)
-}
-func (self *BeeWorkerPool) decPoolSize() {
-	atomic.AddInt32(&self.size, -1)
-}
-
-func (self *BeeWorkerPool) createBeeWorker(count int) {
+func (b *BeeWorkerPool) addBeeWorker(count int32) {
 	if count <= 0 {
 		count = 1
 	}
-	for i := 0; i < count; i++ {
-		self.createWorkerCh <- 1
+	for i := int32(0); i < count; i++ {
+		b.addWorkerNotify <- 1
 	}
 }
 
-func (self *BeeWorkerPool) handle(message IMessage) {
-	if len(self.handingCh) >= receiveQueueSize {
-		self.msgCache.Push(message)
-		if len(self.overflowNotifyCh) < 1 {
-			self.overflowNotifyCh <- 1
-		}
-	} else {
-		self.handingCh <- message
-	}
-}
+func (b *BeeWorkerPool) run() {
 
-// 运行
-func (self *BeeWorkerPool) run() {
 	go func() {
-		for msg := range self.rcvMsgCh {
-			self.handle(msg)
+		tick := time.Tick(time.Minute)
+		for range tick {
+
 		}
 	}()
-	go func() {
-		for range self.createWorkerCh {
-			self.incPoolSize()
-			go func() {
-				//panic handling
-				defer func() {
-					self.decPoolSize()
-					if err := recover(); err != nil {
-						fmt.Fprintf(os.Stderr, "panic error:%s\n%s", err, debug.Stack())
-					}
-					self.createWorkerCh <- 1
-				}()
-				for msg := range self.handingCh {
-					if f, ok := self.AppContext.mMsgHooks[msg.ID()]; ok {
-						f(msg)
-					}
+
+	for range b.addWorkerNotify {
+		atomic.AddInt32(&b.size, 1)
+		go func() {
+			// panic handling
+			defer func() {
+				atomic.AddInt32(&b.size, -1)
+				if err := recover(); err != nil {
+					b.Errorf("panic error:%s\n%s", err, debug.Stack())
 				}
+				b.addWorkerNotify <- 1
 			}()
-		}
-	}()
-	//消息缓存处理
-	go func() {
-		for {
-			if message := self.msgCache.Pop(); message != nil {
-				self.handingCh <- message
-			} else {
-				<-self.overflowNotifyCh
+
+			// message handling
+			for msg := range b.queue {
+				if f, ok := b.AppContext.GetMessageHandler(msg.ID()); ok {
+					f(msg)
+				} else {
+					break //release go routine
+				}
 			}
+		}()
+	}
+}
+func (b *BeeWorkerPool) monitor() {
+	tick := time.Tick(time.Minute)
+	var preCount int
+	for range tick {
+		curCount := len(b.queue)
+
+		between := curCount - preCount
+		if between > 0 {
+			count := math.Abs(between / b.cacheQueueSize * (b.maxBeeWorkerNum - b.size))
 		}
-	}()
+	}
 }

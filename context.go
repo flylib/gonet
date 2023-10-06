@@ -23,7 +23,7 @@ type AppContext struct {
 	bees              BeeWorkerPool
 	maxWorkerPoolSize int
 	//cache for messages
-	msgCache IMessageCache
+	//msgCache IMessageCache
 
 	globalLock sync.Mutex
 
@@ -53,10 +53,10 @@ func NewContext(options ...Option) *AppContext {
 	if ctx.codec == nil {
 		ctx.codec = new(json.Codec)
 	}
-	if ctx.msgCache == nil {
-		ctx.msgCache = new(DefaultMessageCacheList)
-	}
-	ctx.bees = createBeeWorkerPool(ctx, ctx.maxWorkerPoolSize, ctx.msgCache)
+	//if ctx.msgCache == nil {
+	//	ctx.msgCache = new(DefaultMessageCacheList)
+	//}
+	ctx.bees = newBeeWorkerPool(ctx, ctx.maxWorkerPoolSize, ctx.msgCache)
 	ctx.netPackageParser = new(DefaultNetPackageParser)
 	return ctx
 }
@@ -145,5 +145,5 @@ func (c *AppContext) UnPackageMessage(s ISession, data []byte) (IMessage, int, e
 // 缓存消息
 func (c *AppContext) PushGlobalMessageQueue(msg IMessage) {
 	//todo 主动防御，避免消息过多
-	c.bees.rcvMsgCh <- msg
+	c.bees.queue <- msg
 }
