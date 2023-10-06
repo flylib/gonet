@@ -63,14 +63,14 @@ func (self *BeeWorkerPool) createBeeWorker(count int) {
 	}
 }
 
-func (self *BeeWorkerPool) handle(e IMessage) {
+func (self *BeeWorkerPool) handle(message IMessage) {
 	if len(self.handingCh) >= receiveQueueSize {
-		self.msgCache.Push(e)
+		self.msgCache.Push(message)
 		if len(self.overflowNotifyCh) < 1 {
 			self.overflowNotifyCh <- 1
 		}
 	} else {
-		self.handingCh <- e
+		self.handingCh <- message
 	}
 }
 
@@ -104,8 +104,8 @@ func (self *BeeWorkerPool) run() {
 	//消息缓存处理
 	go func() {
 		for {
-			if e := self.msgCache.Pop(); e != nil {
-				self.handingCh <- e
+			if message := self.msgCache.Pop(); message != nil {
+				self.handingCh <- message
 			} else {
 				<-self.overflowNotifyCh
 			}

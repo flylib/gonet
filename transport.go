@@ -60,8 +60,8 @@ type (
 		Store(val any)
 		Load() (val any, ok bool)
 		InitSendChanel()
-		WriteSendChannel(buf []byte)
-		RunningSendLoop(handler func([]byte))
+		PushSendChannel(buf []byte)
+		SendLoop(handler func([]byte))
 		StopAbility()
 	}
 	IPeerIdentify interface {
@@ -120,16 +120,14 @@ func (s *SessionAbility) InitSendChanel() {
 	s.val = nil
 }
 
-func (s *SessionAbility) WriteSendChannel(buf []byte) {
+func (s *SessionAbility) PushSendChannel(buf []byte) {
 	s.sendCh <- buf
 }
 
-func (s *SessionAbility) RunningSendLoop(writeDataHandler func([]byte)) {
-	go func() {
-		for buf := range s.sendCh {
-			writeDataHandler(buf)
-		}
-	}()
+func (s *SessionAbility) SendLoop(writeDataHandler func([]byte)) {
+	for buf := range s.sendCh {
+		writeDataHandler(buf)
+	}
 }
 
 func (s *SessionAbility) StopAbility() {

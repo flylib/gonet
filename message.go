@@ -6,7 +6,10 @@ var (
 	_ IMessageCache = new(DefaultMessageCacheList)
 )
 
-type MessageID uint32
+type (
+	MessageHandler func(IMessage)
+	MessageID      uint32
+)
 
 // 系统消息
 const (

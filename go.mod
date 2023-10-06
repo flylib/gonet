@@ -30,6 +30,7 @@ require (
 	github.com/templexxx/xorsimd v0.4.2 // indirect
 	github.com/tjfoc/gmsm v1.4.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/zjllib/gologger v0.0.0-20231003141431-1bbbdad8a0e6 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.25.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect

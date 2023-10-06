@@ -3,7 +3,6 @@ package ws
 import (
 	"github.com/gorilla/websocket"
 	"github.com/zjllib/gonet/v3"
-	"log"
 	"net"
 )
 
@@ -44,22 +43,21 @@ func (s *session) Send(msg any) (err error) {
 		return err
 	}
 	if s.IsClosed() {
-		return
+		return gonet.ErrorSessionClosed
 	}
-	s.WriteSendChannel(buf)
+	s.PushSendChannel(buf)
 	return
 }
 
 func (s *session) write(buf []byte) {
 	err := s.conn.WriteMessage(websocket.BinaryMessage, buf)
 	if err != nil {
-		log.Printf("session_%v msg writeLoop error,reason is %v \n", s.ID(), err)
+		s.ILogger.Warnf("session_%v msg writeLoop error,reason is %v \n", s.ID(), err)
 	}
 }
 
-// 循环读取消息
-func (s *session) readLoop() {
-	s.RunningSendLoop(s.write)
+// Loop to read messages
+func (s *session) ReadLoop() {
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {
@@ -68,9 +66,28 @@ func (s *session) readLoop() {
 		}
 		msg, _, err := s.AppContext.UnPackageMessage(s, buf)
 		if err != nil {
-			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
+			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
 			continue
 		}
 		s.AppContext.PushGlobalMessageQueue(msg)
+	}
+}
+
+// Loop to read messages
+func (s *session) ReadHandingMessage() {
+	for {
+		_, buf, err := s.conn.ReadMessage()
+		if err != nil {
+			s.AppContext.RecycleSession(s, err)
+			return
+		}
+		msg, _, err := s.AppContext.UnPackageMessage(s, buf)
+		if err != nil {
+			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
+			continue
+		}
+		if handler, ok := s.AppContext.GetMessageHandler(msg.ID()); ok {
+			handler(msg)
+		}
 	}
 }

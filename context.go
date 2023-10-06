@@ -1,6 +1,7 @@
 package gonet
 
 import (
+	logger "github.com/zjllib/gologger"
 	"github.com/zjllib/gonet/v3/codec/json"
 	"reflect"
 	"sync"
@@ -32,6 +33,8 @@ type AppContext struct {
 	maxSessionCount int
 	//contentType support json/xml/binary/protobuf
 	contentType string
+
+	logger.ILogger
 }
 
 func NewContext(options ...Option) *AppContext {
@@ -62,11 +65,9 @@ func NewContext(options ...Option) *AppContext {
 func (c *AppContext) GetSession(id uint64) (ISession, bool) {
 	return c.sessionMgr.GetAliveSession(id)
 }
-
 func (c *AppContext) InitSessionMgr(sessionType reflect.Type) {
 	c.sessionMgr = newSessionManager(sessionType)
 }
-
 func (c *AppContext) CreateSession() ISession {
 	idleSession := c.sessionMgr.GetIdleSession()
 	idleSession.(ISessionIdentify).ClearIdentify()
@@ -112,7 +113,6 @@ func (c *AppContext) Route(msgID MessageID, msg any, callback MessageHandler) {
 		c.mMsgHooks[msgID] = callback
 	}
 }
-
 func (c *AppContext) GetMsgID(msg interface{}) (MessageID, bool) {
 	msgID, ok := c.mMsgIDs[reflect.TypeOf(msg)]
 	return msgID, ok
@@ -123,6 +123,10 @@ func (c *AppContext) CreateMsg(msgID MessageID) interface{} {
 	}
 	return nil
 }
+func (c *AppContext) GetMessageHandler(msgID MessageID) (MessageHandler, bool) {
+	f, ok := c.mMsgHooks[msgID]
+	return f, ok
+}
 
 // 消息编码
 func (c *AppContext) EncodeMessage(msg any) ([]byte, error) {
@@ -131,7 +135,6 @@ func (c *AppContext) EncodeMessage(msg any) ([]byte, error) {
 func (c *AppContext) DecodeMessage(msg any, data []byte) error {
 	return c.codec.Decode(data, msg)
 }
-
 func (c *AppContext) PackageMessage(msg any) ([]byte, error) {
 	return c.netPackageParser.Package(c, msg)
 }

@@ -1,5 +1,7 @@
 package gonet
 
+import logger "github.com/zjllib/gologger"
+
 // /////////////////////////////
 // ///    Option Func   ////////
 // ////////////////////////////
@@ -31,6 +33,14 @@ func WithMessageCache(cache IMessageCache) Option {
 func WithMessageCodec(codec ICodec) Option {
 	return func(o *AppContext) error {
 		o.codec = codec
+		return nil
+	}
+}
+
+// set logger
+func Logger(l logger.ILogger) Option {
+	return func(o *AppContext) error {
+		o.ILogger = l
 		return nil
 	}
 }

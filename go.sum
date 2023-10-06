@@ -90,6 +90,8 @@ github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyC
 github.com/xtaci/kcp-go/v5 v5.6.3 h1:yd59SKXdJ0PBxeMBy3apalxFCEmBLGgQmL6nP46tU0g=
 github.com/xtaci/kcp-go/v5 v5.6.3/go.mod h1:uIuw2KEg3FcmEdS4PeXHaGty9Ui7NYb1WKIrSDwpMg4=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
+github.com/zjllib/gologger v0.0.0-20231003141431-1bbbdad8a0e6 h1:VPCON1xYQEFlmeVGUC3EsoAITbYZJXNcroUA56V94ho=
+github.com/zjllib/gologger v0.0.0-20231003141431-1bbbdad8a0e6/go.mod h1:RZskGOpUYMGPUemoWCxxAYISpeJHnOjI6f2aFDYBLxE=
 go.uber.org/goleak v1.2.0 h1:xqgm/S+aQvhWFTtR0XK3Jvg7z8kGV8P4X14IzwN3Eqk=
 go.uber.org/goleak v1.2.0/go.mod h1:XJYK+MuIchqpmGmUSAzotztawfKvYLUIgg7guXrwVUo=
 go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
