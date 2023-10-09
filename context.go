@@ -27,7 +27,7 @@ type AppContext struct {
 
 	globalLock sync.Mutex
 
-	//包解析器
+	//net package parser
 	netPackageParser INetPackageParser
 	//0意味着无限制
 	maxSessionCount int
@@ -81,6 +81,7 @@ func (c *AppContext) CreateSession() ISession {
 	c.PushGlobalMessageQueue(newSessionConnectMessage(session))
 	return session
 }
+
 func (c *AppContext) RecycleSession(session ISession, err error) {
 	c.PushGlobalMessageQueue(newSessionCloseMessage(session, err))
 	session.Close()
