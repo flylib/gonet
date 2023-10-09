@@ -13,7 +13,8 @@ type (
 
 // 系统消息
 const (
-	MessageID_SessionConnect MessageID = iota + 1
+	MessageID_Invalid MessageID = iota
+	MessageID_SessionConnect
 	MessageID_SessionClose
 )
 
@@ -30,6 +31,12 @@ type Message struct {
 	body    any
 	rawData []byte
 	session ISession
+}
+
+func newInvalidMessage() *Message {
+	return &Message{
+		id: MessageID_Invalid,
+	}
 }
 
 func newSessionConnectMessage(s ISession) *Message {

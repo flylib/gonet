@@ -19,17 +19,17 @@ const (
 
 type BeeWorkerPool struct {
 	*AppContext
-	size            int32
-	maxBeeWorkerNum int32
+	curWorkingNum   int32
+	maxWorkerNum    int32
 	idleWorkerNum   int32
 	cacheQueueSize  int
 	queue           chan IMessage
-	addWorkerNotify chan int
+	addWorkerNotify chan bool
 }
 
 func maxBeeWorkers(num int32) func(pool *BeeWorkerPool) {
 	return func(pool *BeeWorkerPool) {
-		pool.maxBeeWorkerNum = num
+		pool.maxWorkerNum = num
 	}
 }
 
@@ -52,7 +52,7 @@ func setQueueSize(num int) func(pool *BeeWorkerPool) {
 func newBeeWorkerPool(c *AppContext, options ...func(pool *BeeWorkerPool)) (pool BeeWorkerPool) {
 	pool = BeeWorkerPool{
 		AppContext:      c,
-		addWorkerNotify: make(chan int),
+		addWorkerNotify: make(chan bool),
 		queue:           make(chan IMessage, receiveQueueSize),
 	}
 
@@ -70,29 +70,33 @@ func (b *BeeWorkerPool) addBeeWorker(count int32) {
 		count = 1
 	}
 	for i := int32(0); i < count; i++ {
-		b.addWorkerNotify <- 1
+		b.addWorkerNotify <- true
+	}
+}
+
+func (b *BeeWorkerPool) descBeeWorker(count int32) {
+	if count <= 0 {
+		count = 1
+	}
+	for i := int32(0); i < count; i++ {
+		b.queue <- newInvalidMessage()
 	}
 }
 
 func (b *BeeWorkerPool) run() {
-
-	go func() {
-		tick := time.Tick(time.Minute)
-		for range tick {
-
-		}
-	}()
-
 	for range b.addWorkerNotify {
-		atomic.AddInt32(&b.size, 1)
+		if b.curWorkingNum >= b.maxWorkerNum {
+			continue
+		}
+		atomic.AddInt32(&b.curWorkingNum, 1)
 		go func() {
 			// panic handling
 			defer func() {
-				atomic.AddInt32(&b.size, -1)
+				atomic.AddInt32(&b.curWorkingNum, -1)
 				if err := recover(); err != nil {
 					b.Errorf("panic error:%s\n%s", err, debug.Stack())
+					b.addBeeWorker(1)
 				}
-				b.addWorkerNotify <- 1
 			}()
 
 			// message handling
@@ -106,15 +110,21 @@ func (b *BeeWorkerPool) run() {
 		}()
 	}
 }
+
 func (b *BeeWorkerPool) monitor() {
-	tick := time.Tick(time.Minute)
+	tick := time.Tick(time.Second * 30)
 	var preCount int
 	for range tick {
 		curCount := len(b.queue)
-
 		between := curCount - preCount
 		if between > 0 {
-			count := math.Abs(between / b.cacheQueueSize * (b.maxBeeWorkerNum - b.size))
+			count := math.Abs(float64(between) / float64(b.cacheQueueSize) * float64(b.maxWorkerNum))
+			b.addBeeWorker(int32(count))
+		} else if preCount > 0 && curCount == 0 {
+			curWorkingNum := atomic.LoadInt32(&b.curWorkingNum)
+			if curWorkingNum > b.idleWorkerNum {
+				b.descBeeWorker(1)
+			}
 		}
 	}
 }

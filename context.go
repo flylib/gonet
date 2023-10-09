@@ -39,7 +39,11 @@ type AppContext struct {
 
 func NewContext(options ...Option) *AppContext {
 	ctx := &AppContext{
-		mMsgTypes: make(map[MessageID]reflect.Type),
+		mMsgTypes: map[MessageID]reflect.Type{
+			MessageID_Invalid:        nil,
+			MessageID_SessionConnect: nil,
+			MessageID_SessionClose:   nil,
+		},
 		mMsgIDs:   make(map[reflect.Type]MessageID),
 		mMsgHooks: make(map[MessageID]MessageHandler),
 	}
@@ -56,7 +60,7 @@ func NewContext(options ...Option) *AppContext {
 	//if ctx.msgCache == nil {
 	//	ctx.msgCache = new(DefaultMessageCacheList)
 	//}
-	ctx.bees = newBeeWorkerPool(ctx, ctx.maxWorkerPoolSize, ctx.msgCache)
+	ctx.bees = newBeeWorkerPool(ctx)
 	ctx.netPackageParser = new(DefaultNetPackageParser)
 	return ctx
 }
