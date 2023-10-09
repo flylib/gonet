@@ -2,6 +2,7 @@ package gonet
 
 import (
 	"math"
+	"runtime"
 	"runtime/debug"
 	"sync/atomic"
 	"time"
@@ -54,6 +55,7 @@ func newBeeWorkerPool(c *AppContext, options ...func(pool *BeeWorkerPool)) (pool
 		AppContext:      c,
 		addWorkerNotify: make(chan bool),
 		queue:           make(chan IMessage, receiveQueueSize),
+		idleWorkerNum:   int32(runtime.NumCPU()),
 	}
 
 	for _, option := range options {
