@@ -1,8 +1,7 @@
 package kcp
 
 import (
-	"github.com/xtaci/kcp-go/v5"
-	. "github.com/zjllib/gonet/v3"
+	. "github.com/flylib/gonet"
 	"log"
 	"net"
 )

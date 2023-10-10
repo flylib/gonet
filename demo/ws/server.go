@@ -1,9 +1,8 @@
 package main
 
 import (
-	"github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/demo/handler"
-	"github.com/zjllib/gonet/v3/transport/ws" //协议
+	"github.com/flylib/gonet/demo/handler"
+	"github.com/flylib/gonet/transport/ws" //协议
 	"log"
 )
 

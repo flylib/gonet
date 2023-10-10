@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/zjllib/gonet/v3/demo/handler/proto"
+	"github.com/flylib/gonet/demo/handler/proto"
 	"net"
 	"time"
 )

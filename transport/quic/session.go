@@ -2,8 +2,6 @@ package quic
 
 import (
 	"context"
-	"github.com/quic-go/quic-go"
-	. "github.com/zjllib/gonet/v3"
 	"log"
 	"net"
 )

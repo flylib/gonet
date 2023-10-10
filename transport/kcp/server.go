@@ -2,8 +2,6 @@ package kcp
 
 import (
 	"crypto/sha1"
-	"github.com/xtaci/kcp-go/v5"
-	"github.com/zjllib/gonet/v3"
 	"golang.org/x/crypto/pbkdf2"
 
 	"reflect"

@@ -59,7 +59,7 @@
 ### **1.** git clone到 GOPATH/src目录下
 
 ```
-git clone https://github.com/zjllib/gonet.git
+git clone https://github.com/flylib/gonet.git
 ```
 
 ## 使用样例参考
@@ -68,9 +68,9 @@ git clone https://github.com/zjllib/gonet.git
 package main
 
 import (
-	"github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/demo/handler"
-	"github.com/zjllib/gonet/v3/transport/ws" //协议
+	"github.com/flylib/gonet"
+	"github.com/flylib/gonet/demo/handler"
+	"github.com/flylib/gonet/transport/ws" //协议
 	"log"
 )
 

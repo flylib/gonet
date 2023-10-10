@@ -8,7 +8,6 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"github.com/quic-go/quic-go"
-	. "github.com/zjllib/gonet/v3"
 	"math/big"
 	"reflect"
 )

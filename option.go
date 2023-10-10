@@ -1,10 +1,5 @@
 package gonet
 
-import logger "github.com/zjllib/gologger"
-
-// /////////////////////////////
-// ///    Option Func   ////////
-// ////////////////////////////
 type Option func(*AppContext) error
 
 func MaxSessions(max int) Option {
@@ -30,7 +25,7 @@ func WithMessageCodec(codec ICodec) Option {
 }
 
 // set logger
-func Logger(l logger.ILogger) Option {
+func Logger(l ILogger) Option {
 	return func(o *AppContext) error {
 		o.ILogger = l
 		return nil

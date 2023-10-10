@@ -1,8 +1,8 @@
 package gonet
 
 import (
-	logger "github.com/zjllib/gologger"
-	"github.com/zjllib/gonet/v3/codec/json"
+	"github.com/flylib/gonet/codec/json"
+	"github.com/flylib/goutils/logger/log"
 	"reflect"
 	"sync"
 )
@@ -34,7 +34,7 @@ type AppContext struct {
 	//contentType support json/xml/binary/protobuf
 	contentType string
 
-	logger.ILogger
+	ILogger
 }
 
 func NewContext(options ...Option) *AppContext {
@@ -57,9 +57,9 @@ func NewContext(options ...Option) *AppContext {
 	if ctx.codec == nil {
 		ctx.codec = new(json.Codec)
 	}
-	//if ctx.msgCache == nil {
-	//	ctx.msgCache = new(DefaultMessageCacheList)
-	//}
+	if ctx.ILogger == nil {
+		ctx.ILogger = log.NewLogger()
+	}
 	ctx.bees = newBeeWorkerPool(ctx)
 	ctx.netPackageParser = new(DefaultNetPackageParser)
 	return ctx

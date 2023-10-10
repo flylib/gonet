@@ -1,8 +1,7 @@
 package gnet
 
 import (
-	"github.com/panjf2000/gnet/v2"
-	. "github.com/zjllib/gonet/v3"
+	. "github.com/flylib/gonet"
 	"net"
 )
 

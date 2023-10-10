@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/demo/handler"
-	"github.com/zjllib/gonet/v3/demo/handler/proto"
-	"github.com/zjllib/gonet/v3/transport/ws"
+	"github.com/flylib/gonet/demo/handler"
+	"github.com/flylib/gonet/demo/handler/proto"
+	"github.com/flylib/gonet/transport/ws"
 	"log"
 	"time"
 )

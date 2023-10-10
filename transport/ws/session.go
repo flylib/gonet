@@ -1,8 +1,8 @@
 package ws
 
 import (
+	"github.com/flylib/gonet"
 	"github.com/gorilla/websocket"
-	"github.com/zjllib/gonet/v3"
 	"net"
 )
 

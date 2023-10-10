@@ -2,8 +2,6 @@ package gnet
 
 import (
 	"context"
-	"github.com/panjf2000/gnet/v2"
-	"github.com/zjllib/gonet/v3"
 	"log"
 	"reflect"
 )

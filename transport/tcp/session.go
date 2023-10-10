@@ -1,7 +1,7 @@
 package tcp
 
 import (
-	. "github.com/zjllib/gonet/v3"
+	. "github.com/flylib/gonet"
 	"log"
 	"net"
 )
