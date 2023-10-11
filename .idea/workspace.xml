@@ -3,53 +3,40 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="ALL" />
   </component>
-  <component name="BranchesTreeState">
-    <expand>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-    </expand>
-    <select />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="update">
+    <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/zjl.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/watcherTasks.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/gnet/client/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/gnet/server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/handler/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/handler/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/kcp/client/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/kcp/server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/quic/client/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/quic/server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/tcp/client/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/tcp/server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/udp/client/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/udp/server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws/client/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws/server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/net_package.go" beforeDir="false" afterPath="$PROJECT_DIR$/net_package.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="DatabaseView">
-    <option name="SHOW_INTERMEDIATE" value="true" />
-    <option name="GROUP_DATA_SOURCES" value="true" />
-    <option name="GROUP_SCHEMA" value="true" />
-    <option name="GROUP_CONTENTS" value="false" />
-    <option name="SORT_POSITIONED" value="false" />
-    <option name="SHOW_EMPTY_GROUPS" value="false" />
-    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
-    <option name="HIDDEN_KINDS">
-      <set />
-    </option>
-    <expand>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="hangzhou" type="feb32156:DbDataSourceImpl" />
-      </path>
-    </expand>
-    <select />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -58,242 +45,98 @@
       </list>
     </option>
   </component>
-  <component name="GOROOT" url="file://G:/env/go/go1.21.0" />
+  <component name="GOROOT" url="file://C:/Program Files/Go" />
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="master" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="MIXED" />
-    <option name="SIGN_OFF_COMMIT" value="true" />
-  </component>
-  <component name="GitSEFilterConfiguration">
-    <file-type-list>
-      <filtered-out-file-type name="LOCAL_BRANCH" />
-      <filtered-out-file-type name="REMOTE_BRANCH" />
-      <filtered-out-file-type name="TAG" />
-      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
-    </file-type-list>
-  </component>
-  <component name="GitToolBoxStore">
-    <option name="projectConfigVersion" value="2" />
-  </component>
-  <component name="GoLibraries">
-    <option name="indexEntireGoPath" value="false" />
-  </component>
-  <component name="MacroExpansionManager">
-    <option name="directoryName" value="a8uhmrvr" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 1
 }</component>
-  <component name="ProjectId" id="1UonKaYFvF9shPXlhOluzELBNIk" />
+  <component name="ProjectId" id="2WZLho52lEdZDqqeHu1HOaHqMDn" />
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
     <option name="autoscrollToSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="openDirectoriesWithSingleClick" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;F:/go/myproject/gonet/demo/handler&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "deletionFromPopupRequiresConfirmation": "false",
+    "git-widget-placeholder": "dev",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/zanso",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
-}</component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="F:\go\myproject\gonet\demo\handler" />
-      <recent name="F:\go\myproject\gonet\demo" />
-      <recent name="F:\go\myproject\gonet\transport\kcp" />
-      <recent name="F:\go\myproject\gonet\demo\quic" />
-      <recent name="F:\go\myproject\gonet\transport" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="F:\go\myproject\gonet" />
-      <recent name="F:\go\myproject\gonet\demo\handler" />
-      <recent name="D:\go\project\goNet\transport" />
-      <recent name="D:\go\project\goNet\codec\xml" />
-      <recent name="D:\go\project\goNet\codec\protobuf" />
-    </key>
-  </component>
-  <component name="RemoteSynchronizer">
-    <option name="targetMappings">
-      <list>
-        <TargetMappings>
-          <option name="name" value="Default" />
-        </TargetMappings>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Go Build.go build github.com/zjllib/gonet/v3/demo/ws/client">
-    <configuration name="go build github.com/zjllib/gonet/v3/demo/kcp/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="goNet" />
-      <working_directory value="$PROJECT_DIR$" />
+}]]></component>
+  <component name="RunManager" selected="Go Build.go build github.com/flylib/gonet/transport/ws/example/client">
+    <configuration name="go build github.com/flylib/gonet/transport/ws/example" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="gonet" />
+      <working_directory value="$PROJECT_DIR$/transport/ws" />
       <kind value="PACKAGE" />
-      <package value="github.com/zjllib/gonet/v3/demo/kcp/client" />
+      <package value="github.com/flylib/gonet/transport/ws/example" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/demo/kcp/client/client.go" />
+      <filePath value="$PROJECT_DIR$/transport/ws/example/server.go" />
       <method v="2" />
     </configuration>
-    <configuration name="go build github.com/zjllib/gonet/v3/demo/quic" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="goNet" />
-      <working_directory value="$PROJECT_DIR$" />
+    <configuration name="go build github.com/flylib/gonet/transport/ws/example/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="gonet" />
+      <working_directory value="$PROJECT_DIR$/transport/ws" />
       <kind value="PACKAGE" />
-      <package value="github.com/zjllib/gonet/v3/demo/quic" />
+      <package value="github.com/flylib/gonet/transport/ws/example/client" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/demo/quic/server.go" />
+      <filePath value="$PROJECT_DIR$/transport/ws/example/client/client.go" />
       <method v="2" />
     </configuration>
-    <configuration name="go build github.com/zjllib/gonet/v3/demo/quic/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="goNet" />
-      <working_directory value="$PROJECT_DIR$" />
+    <configuration name="TestClient in github.com/flylib/gonet/transport/ws" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="gonet" />
+      <working_directory value="$PROJECT_DIR$/transport/ws" />
       <kind value="PACKAGE" />
-      <package value="github.com/zjllib/gonet/v3/demo/quic/client" />
+      <package value="github.com/flylib/gonet/transport/ws" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/demo/quic/client/client.go" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestClient\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build github.com/zjllib/gonet/v3/demo/ws" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="goNet" />
-      <working_directory value="$PROJECT_DIR$" />
+    <configuration name="TestServer in github.com/flylib/gonet/transport/ws" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="gonet" />
+      <working_directory value="$PROJECT_DIR$/transport/ws" />
       <kind value="PACKAGE" />
-      <package value="github.com/zjllib/gonet/v3/demo/ws" />
+      <package value="github.com/flylib/gonet/transport/ws" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/demo/ws/server.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build github.com/zjllib/gonet/v3/demo/ws/client" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="goNet" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/zjllib/gonet/v3/demo/ws/client" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/demo/ws/client/client.go" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestServer\E$" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/ws/client" />
-        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/ws" />
-        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/quic/client" />
-        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/quic" />
-        <item itemvalue="Go Build.go build github.com/zjllib/gonet/v3/demo/kcp/client" />
+        <item itemvalue="Go Build.go build github.com/flylib/gonet/transport/ws/example/client" />
+        <item itemvalue="Go Build.go build github.com/flylib/gonet/transport/ws/example" />
+        <item itemvalue="Go Test.TestClient in github.com/flylib/gonet/transport/ws" />
+        <item itemvalue="Go Test.TestServer in github.com/flylib/gonet/transport/ws" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
-  <component name="SvnConfiguration">
-    <configuration />
-  </component>
-  <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="abe9662a-2e11-4a75-86a0-eae9e64d8429" name="Default Changelist" comment="" />
-      <created>1576031753890</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1576031753890</updated>
-      <workItem from="1576031775371" duration="1340000" />
-      <workItem from="1576114451749" duration="57000" />
-    </task>
-    <servers />
-  </component>
-  <component name="TodoView">
-    <todo-panel id="selected-file">
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-  </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="RECENT_FILTERS">
-      <map>
-        <entry key="Branch">
-          <value>
-            <list>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="HEAD" />
-                </option>
-              </RecentGroup>
-            </list>
-          </value>
-        </entry>
-        <entry key="User">
-          <value>
-            <list />
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="HEAD" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="[update]change session to conn&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <MESSAGE value="[update]v3 &#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <MESSAGE value="[update]v3 阶段完成&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <MESSAGE value="[update]workers&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <MESSAGE value="[update]v3&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <MESSAGE value="[update]done websocket&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <MESSAGE value="[update]done tcp&#10;&#10;Signed-off-by: zhangjunli &lt;1217105106@qq.com&gt;" />
-    <MESSAGE value="modify add docs folder" />
-    <MESSAGE value="add docs folder" />
-    <MESSAGE value="up worker ===&gt; bee worker" />
-    <MESSAGE value="up worker ===&gt; bee worker&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
-    <MESSAGE value="up server ===&gt; transport" />
-    <MESSAGE value="up server ===&gt; transport&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
-    <MESSAGE value="up server ===&gt; transport 2" />
-    <MESSAGE value="up server ===&gt; transport 2&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
-    <MESSAGE value="update readme.md" />
-    <MESSAGE value="add asserts that types implement expected set of interfaces" />
-    <MESSAGE value="add asserts that types implement expected set of interfaces&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
-    <MESSAGE value="refactor&#10;&#10;Signed-off-by: zhangjunli &lt;zjl188318&gt;" />
-    <MESSAGE value="refactor" />
-    <MESSAGE value="up go version 1.18+" />
-    <MESSAGE value="update quic" />
-    <MESSAGE value="add kcp" />
-    <MESSAGE value="fix" />
-    <MESSAGE value="update" />
-    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
@@ -302,66 +145,36 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/codec/protobuf/protobuf.go</url>
-          <line>6</line>
-          <option name="timeStamp" value="1" />
+          <url>file://$PROJECT_DIR$/worker.go</url>
+          <line>102</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/tcp/client/client.go</url>
-          <line>49</line>
-          <option name="timeStamp" value="22" />
+          <url>file://$PROJECT_DIR$/transport/ws/session.go</url>
+          <line>67</line>
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/transport/gnet/server.go</url>
-          <line>49</line>
-          <option name="timeStamp" value="28" />
+          <url>file://$PROJECT_DIR$/demo/handler/client.go</url>
+          <line>25</line>
+          <option name="timeStamp" value="12" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/gnet/client/client.go</url>
-          <line>62</line>
-          <option name="timeStamp" value="31" />
+          <url>file://$PROJECT_DIR$/demo/handler/server.go</url>
+          <line>26</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/gnet/client/client.go</url>
-          <line>63</line>
-          <option name="timeStamp" value="32" />
+          <url>file://$PROJECT_DIR$/transport.go</url>
+          <line>41</line>
+          <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/transport/gnet/server.go</url>
-          <line>43</line>
-          <option name="timeStamp" value="33" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/quic/client/client.go</url>
-          <line>78</line>
-          <option name="timeStamp" value="49" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/quic/client/client.go</url>
-          <line>76</line>
-          <option name="timeStamp" value="51" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/quic/client/client.go</url>
-          <line>77</line>
-          <option name="timeStamp" value="52" />
+          <url>file://$PROJECT_DIR$/transport/ws/client.go</url>
+          <line>36</line>
+          <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
-  </component>
-  <component name="masterDetails">
-    <states>
-      <state key="ScopeChooserConfigurable.UI">
-        <settings>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-    </states>
   </component>
 </project>

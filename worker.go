@@ -8,75 +8,70 @@ import (
 	"time"
 )
 
-/*----------------------------------------------------------------
-					////////////////////////////
-					////  BEE WORKER POOL   ////
-					////////////////////////////
-----------------------------------------------------------------*/
-
 const (
-	receiveQueueSize = 512 //默认接收队列大小
+	defaultReceiveQueueSize = 512
 )
 
-type BeeWorkerPool struct {
+type goroutinePoolOption func(*GoroutinePool)
+
+// Lightweight goroutine pool
+type GoroutinePool struct {
 	*AppContext
-	curWorkingNum   int32
-	maxWorkerNum    int32
-	idleWorkerNum   int32
-	cacheQueueSize  int
-	queue           chan IMessage
-	addWorkerNotify chan bool
+	curWorkingNum, maxWorkingNum, maxIdleNum int32
+	cacheQueueSize                           int
+	queue                                    chan IMessage
+	addRoutineChannel                        chan bool
 }
 
-func maxBeeWorkers(num int32) func(pool *BeeWorkerPool) {
-	return func(pool *BeeWorkerPool) {
-		pool.maxWorkerNum = num
+func maxWorkingGoroutines(num int32) goroutinePoolOption {
+	return func(pool *GoroutinePool) {
+		pool.maxWorkingNum = num
 	}
 }
 
-func allowIdleBeesWorkers(num int32) func(pool *BeeWorkerPool) {
-	return func(pool *BeeWorkerPool) {
-		pool.idleWorkerNum = num
+func maxIdleGoroutines(num int32) goroutinePoolOption {
+	return func(pool *GoroutinePool) {
+		pool.maxIdleNum = num
 	}
 }
 
-func setQueueSize(num int) func(pool *BeeWorkerPool) {
+func setQueueSize(num int) goroutinePoolOption {
 	if num < 0 {
 		num = 0
 	}
-	return func(pool *BeeWorkerPool) {
+	return func(pool *GoroutinePool) {
 		pool.cacheQueueSize = num
 		pool.queue = make(chan IMessage, num)
 	}
 }
 
-func newBeeWorkerPool(c *AppContext, options ...func(pool *BeeWorkerPool)) (pool BeeWorkerPool) {
-	pool = BeeWorkerPool{
-		AppContext:      c,
-		addWorkerNotify: make(chan bool),
-		queue:           make(chan IMessage, receiveQueueSize),
-		idleWorkerNum:   int32(runtime.NumCPU()),
+func newGoroutinePool(c *AppContext, options ...goroutinePoolOption) *GoroutinePool {
+	pool := &GoroutinePool{
+		AppContext:        c,
+		addRoutineChannel: make(chan bool),
+		queue:             make(chan IMessage, defaultReceiveQueueSize),
+		maxIdleNum:        int32(runtime.NumCPU()),
 	}
 
 	for _, option := range options {
-		option(&pool)
+		option(pool)
 	}
 
 	go pool.run()
-	pool.addBeeWorker(pool.idleWorkerNum)
+	pool.ascRoutine(pool.maxIdleNum)
 	return pool
 }
 
-func (b *BeeWorkerPool) addBeeWorker(count int32) {
+func (b *GoroutinePool) ascRoutine(count int32) {
 	if count <= 0 {
 		count = 1
 	}
 	for i := int32(0); i < count; i++ {
-		b.addWorkerNotify <- true
+		b.addRoutineChannel <- true
 	}
 }
 
-func (b *BeeWorkerPool) descBeeWorker(count int32) {
+func (b *GoroutinePool) descRoutine(count int32) {
 	if count <= 0 {
 		count = 1
 	}
@@ -85,9 +80,10 @@ func (b *BeeWorkerPool) descBeeWorker(count int32) {
 	}
 }
 
-func (b *BeeWorkerPool) run() {
-	for range b.addWorkerNotify {
-		if b.curWorkingNum >= b.maxWorkerNum {
+func (b *GoroutinePool) run() {
+	for range b.addRoutineChannel {
+		if b.maxWorkingNum != 0 &&
+			b.curWorkingNum >= b.maxWorkingNum {
 			continue
 		}
 		atomic.AddInt32(&b.curWorkingNum, 1)
@@ -97,7 +93,7 @@ func (b *BeeWorkerPool) run() {
 				atomic.AddInt32(&b.curWorkingNum, -1)
 				if err := recover(); err != nil {
 					b.Errorf("panic error:%s\n%s", err, debug.Stack())
-					b.addBeeWorker(1)
+					b.ascRoutine(1)
 				}
 			}()
 
@@ -113,19 +109,22 @@ func (b *BeeWorkerPool) run() {
 	}
 }
 
-func (b *BeeWorkerPool) monitor() {
+func (b *GoroutinePool) monitor() {
+	if b.maxWorkingNum == 0 {
+		return
+	}
 	tick := time.Tick(time.Second * 30)
 	var preCount int
 	for range tick {
 		curCount := len(b.queue)
 		between := curCount - preCount
 		if between > 0 {
-			count := math.Abs(float64(between) / float64(b.cacheQueueSize) * float64(b.maxWorkerNum))
-			b.addBeeWorker(int32(count))
+			count := math.Abs(float64(between) / float64(b.cacheQueueSize) * float64(b.maxWorkingNum))
+			b.ascRoutine(int32(count))
 		} else if preCount > 0 && curCount == 0 {
 			curWorkingNum := atomic.LoadInt32(&b.curWorkingNum)
-			if curWorkingNum > b.idleWorkerNum {
-				b.descBeeWorker(1)
+			if curWorkingNum > b.maxIdleNum {
+				b.descRoutine(1)
 			}
 		}
 	}

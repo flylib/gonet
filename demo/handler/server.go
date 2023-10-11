@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"github.com/flylib/gonet"
 	"github.com/flylib/gonet/demo/handler/proto"
 	"log"
 )

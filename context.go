@@ -19,11 +19,6 @@ type AppContext struct {
 
 	//message codec
 	codec ICodec
-	//bee worker pool
-	bees              BeeWorkerPool
-	maxWorkerPoolSize int
-	//cache for messages
-	//msgCache IMessageCache
 
 	globalLock sync.Mutex
 
@@ -34,15 +29,15 @@ type AppContext struct {
 	//contentType support json/xml/binary/protobuf
 	contentType string
 
+	workers       *GoroutinePool
+	workerOptions []goroutinePoolOption
 	ILogger
 }
 
 func NewContext(options ...Option) *AppContext {
 	ctx := &AppContext{
 		mMsgTypes: map[MessageID]reflect.Type{
-			MessageID_Invalid:        nil,
-			MessageID_SessionConnect: nil,
-			MessageID_SessionClose:   nil,
+			MessageID_Invalid: nil,
 		},
 		mMsgIDs:   make(map[reflect.Type]MessageID),
 		mMsgHooks: make(map[MessageID]MessageHandler),
@@ -60,7 +55,7 @@ func NewContext(options ...Option) *AppContext {
 	if ctx.ILogger == nil {
 		ctx.ILogger = log.NewLogger()
 	}
-	ctx.bees = newBeeWorkerPool(ctx)
+	ctx.workers = newGoroutinePool(ctx, ctx.workerOptions...)
 	ctx.netPackageParser = new(DefaultNetPackageParser)
 	return ctx
 }
@@ -69,9 +64,11 @@ func NewContext(options ...Option) *AppContext {
 func (c *AppContext) GetSession(id uint64) (ISession, bool) {
 	return c.sessionMgr.GetAliveSession(id)
 }
+
 func (c *AppContext) InitSessionMgr(sessionType reflect.Type) {
 	c.sessionMgr = newSessionManager(sessionType)
 }
+
 func (c *AppContext) CreateSession() ISession {
 	idleSession := c.sessionMgr.GetIdleSession()
 	idleSession.(ISessionIdentify).ClearIdentify()
@@ -108,7 +105,7 @@ func (c *AppContext) Route(msgID MessageID, msg any, callback MessageHandler) {
 
 	msgType := reflect.TypeOf(msg)
 	if _, ok := c.mMsgTypes[msgID]; ok {
-		panic("Duplicate message id")
+		panic("Duplicate message")
 	}
 	if msgType != nil {
 		c.mMsgIDs[msgType] = msgID
@@ -150,5 +147,5 @@ func (c *AppContext) UnPackageMessage(s ISession, data []byte) (IMessage, int, e
 // 缓存消息
 func (c *AppContext) PushGlobalMessageQueue(msg IMessage) {
 	//todo 主动防御，避免消息过多
-	c.bees.queue <- msg
+	c.workers.queue <- msg
 }

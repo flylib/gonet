@@ -1,14 +1,15 @@
 package main
 
 import (
+	"github.com/flylib/gonet"
 	"github.com/flylib/gonet/demo/handler"
-	"github.com/flylib/gonet/transport/ws" //协议
+	"github.com/flylib/gonet/transport/ws"
 	"log"
 )
 
 func main() {
 	ctx := gonet.NewContext(
-		gonet.WorkerPoolMaxSize(20),
+		gonet.MaxWorkers(20),
 		handler.InitServerRouter,
 	)
 

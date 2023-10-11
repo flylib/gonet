@@ -2,15 +2,6 @@ package gonet
 
 import "encoding/binary"
 
-//
-//import (
-//	"encoding/binary"
-//	"github.com/gorilla/websocket"
-//	"io"
-//	"net"
-//	"reflect"
-//)
-//
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+                   +              +                 +
 //+  消息总长度（2）    + 消息ID（4）   + 消息内容         +

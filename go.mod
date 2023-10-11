@@ -8,7 +8,6 @@ require (
 	github.com/davyxu/goobjfmt v0.1.0
 	github.com/flylib/goutils/logger/log v0.0.0-20231010072000-719eaf1057f5
 	github.com/gogo/protobuf v1.3.1
-	github.com/gorilla/websocket v1.4.1
 	github.com/json-iterator/go v1.1.10
 	github.com/quic-go/quic-go v0.38.1
 	golang.org/x/crypto v0.13.0
