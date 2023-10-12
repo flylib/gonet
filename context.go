@@ -1,7 +1,7 @@
 package gonet
 
 import (
-	"github.com/flylib/gonet/codec/json"
+	"github.com/flylib/goutils/codec/json"
 	"github.com/flylib/goutils/logger/log"
 	"reflect"
 	"sync"
@@ -39,8 +39,11 @@ func NewContext(options ...Option) *AppContext {
 		mMsgTypes: map[MessageID]reflect.Type{
 			MessageID_Invalid: nil,
 		},
-		mMsgIDs:   make(map[reflect.Type]MessageID),
-		mMsgHooks: make(map[MessageID]MessageHandler),
+		mMsgIDs:          make(map[reflect.Type]MessageID),
+		mMsgHooks:        make(map[MessageID]MessageHandler),
+		codec:            new(json.Codec),
+		ILogger:          log.NewLogger(),
+		netPackageParser: new(DefaultNetPackageParser),
 	}
 	for _, f := range options {
 		err := f(ctx)
@@ -48,15 +51,7 @@ func NewContext(options ...Option) *AppContext {
 			panic(err)
 		}
 	}
-	//编码格式
-	if ctx.codec == nil {
-		ctx.codec = new(json.Codec)
-	}
-	if ctx.ILogger == nil {
-		ctx.ILogger = log.NewLogger()
-	}
 	ctx.workers = newGoroutinePool(ctx, ctx.workerOptions...)
-	ctx.netPackageParser = new(DefaultNetPackageParser)
 	return ctx
 }
 
@@ -132,10 +127,10 @@ func (c *AppContext) GetMessageHandler(msgID MessageID) (MessageHandler, bool) {
 
 // 消息编码
 func (c *AppContext) EncodeMessage(msg any) ([]byte, error) {
-	return c.codec.Encode(msg)
+	return c.codec.Marshal(msg)
 }
 func (c *AppContext) DecodeMessage(msg any, data []byte) error {
-	return c.codec.Decode(data, msg)
+	return c.codec.Unmarshal(data, msg)
 }
 func (c *AppContext) PackageMessage(msg any) ([]byte, error) {
 	return c.netPackageParser.Package(c, msg)

@@ -17,8 +17,8 @@ const (
 
 // message Codec
 type ICodec interface {
-	Encode(v interface{}) (data []byte, err error)
-	Decode(data []byte, vObj interface{}) error
+	Marshal(v any) (data []byte, err error)
+	Unmarshal(data []byte, v any) error
 }
 
 // 网络包解析器(network package)
