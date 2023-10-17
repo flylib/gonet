@@ -64,30 +64,11 @@ func (s *session) ReadLoop() {
 			s.AppContext.RecycleSession(s, err)
 			return
 		}
-		msg, _, err := s.AppContext.UnPackageMessage(s, buf)
+		msg, _, err := s.AppContext.UnPackageMessage(buf)
 		if err != nil {
 			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
 			continue
 		}
 		s.AppContext.PushGlobalMessageQueue(msg)
-	}
-}
-
-// Loop to read messages
-func (s *session) ReadHandingMessage() {
-	for {
-		_, buf, err := s.conn.ReadMessage()
-		if err != nil {
-			s.AppContext.RecycleSession(s, err)
-			return
-		}
-		msg, _, err := s.AppContext.UnPackageMessage(s, buf)
-		if err != nil {
-			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
-			continue
-		}
-		if handler, ok := s.AppContext.GetMessageHandler(msg.ID()); ok {
-			handler(msg)
-		}
 	}
 }

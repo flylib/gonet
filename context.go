@@ -4,23 +4,17 @@ import (
 	"github.com/flylib/goutils/codec/json"
 	"github.com/flylib/goutils/logger/log"
 	"reflect"
-	"sync"
 )
 
 type AppContext struct {
 	//session manager
 	sessionMgr *SessionManager
-	//message types
-	mMsgTypes map[MessageID]reflect.Type
-	//message ids
-	mMsgIDs map[reflect.Type]MessageID
+
 	//msg route handler
 	mMsgHooks map[MessageID]MessageHandler
 
 	//message codec
 	codec ICodec
-
-	globalLock sync.Mutex
 
 	//net package parser
 	netPackageParser INetPackageParser
@@ -36,10 +30,6 @@ type AppContext struct {
 
 func NewContext(options ...Option) *AppContext {
 	ctx := &AppContext{
-		mMsgTypes: map[MessageID]reflect.Type{
-			MessageID_Invalid: nil,
-		},
-		mMsgIDs:          make(map[reflect.Type]MessageID),
 		mMsgHooks:        make(map[MessageID]MessageHandler),
 		codec:            new(json.Codec),
 		ILogger:          log.NewLogger(),
@@ -94,32 +84,15 @@ func (c *AppContext) Broadcast(msg interface{}) {
 }
 
 // 消息管理
-func (c *AppContext) Route(msgID MessageID, msg any, callback MessageHandler) {
-	c.globalLock.Lock()
-	defer c.globalLock.Unlock()
-
-	msgType := reflect.TypeOf(msg)
-	if _, ok := c.mMsgTypes[msgID]; ok {
+func (c *AppContext) Route(msgID MessageID, callback MessageHandler) {
+	if _, ok := c.mMsgHooks[msgID]; ok {
 		panic("Duplicate message")
-	}
-	if msgType != nil {
-		c.mMsgIDs[msgType] = msgID
-		c.mMsgTypes[msgID] = msgType
 	}
 	if callback != nil {
 		c.mMsgHooks[msgID] = callback
 	}
 }
-func (c *AppContext) GetMsgID(msg interface{}) (MessageID, bool) {
-	msgID, ok := c.mMsgIDs[reflect.TypeOf(msg)]
-	return msgID, ok
-}
-func (c *AppContext) CreateMsg(msgID MessageID) interface{} {
-	if msg, ok := c.mMsgTypes[msgID]; ok {
-		return reflect.New(msg).Interface()
-	}
-	return nil
-}
+
 func (c *AppContext) GetMessageHandler(msgID MessageID) (MessageHandler, bool) {
 	f, ok := c.mMsgHooks[msgID]
 	return f, ok
@@ -132,11 +105,12 @@ func (c *AppContext) EncodeMessage(msg any) ([]byte, error) {
 func (c *AppContext) DecodeMessage(msg any, data []byte) error {
 	return c.codec.Unmarshal(data, msg)
 }
-func (c *AppContext) PackageMessage(msg any) ([]byte, error) {
-	return c.netPackageParser.Package(c, msg)
+func (c *AppContext) PackageMessage(messageId MessageID, v any) ([]byte, error) {
+	return c.netPackageParser.Package(messageId, v)
 }
-func (c *AppContext) UnPackageMessage(s ISession, data []byte) (IMessage, int, error) {
-	return c.netPackageParser.UnPackage(c, s, data)
+
+func (c *AppContext) UnPackageMessage(data []byte) (IMessage, int, error) {
+	return c.netPackageParser.UnPackage(data)
 }
 
 // 缓存消息

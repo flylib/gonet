@@ -7,7 +7,7 @@ var (
 )
 
 type (
-	MessageHandler func(IMessage)
+	MessageHandler func(ISession, IMessage)
 	MessageID      uint32
 )
 
@@ -18,19 +18,9 @@ const (
 	MessageID_SessionClose
 )
 
-type IMessage interface {
-	ID() MessageID
-	Body() any
-	RawData() []byte
-	FromSession() ISession
-}
-
-// 消息体
 type Message struct {
-	id      MessageID
-	body    any
-	rawData []byte
-	session ISession
+	id   MessageID
+	body []byte
 }
 
 func newInvalidMessage() *Message {
@@ -41,16 +31,13 @@ func newInvalidMessage() *Message {
 
 func newSessionConnectMessage(s ISession) *Message {
 	return &Message{
-		id:      MessageID_SessionConnect,
-		session: s,
+		id: MessageID_SessionConnect,
 	}
 }
 
 func newSessionCloseMessage(s ISession, err error) *Message {
 	return &Message{
-		id:      MessageID_SessionConnect,
-		body:    err,
-		session: s,
+		id: MessageID_SessionConnect,
 	}
 }
 
@@ -58,22 +45,8 @@ func (m *Message) ID() MessageID {
 	return m.id
 }
 
-func (m *Message) Body() any {
+func (m *Message) Payload() []byte {
 	return m.body
-}
-
-func (m *Message) RawData() []byte {
-	return m.rawData
-}
-func (m *Message) FromSession() ISession {
-	return m.session
-}
-
-// 消息中间缓存层，为处理不过来的消息进行缓存
-type IMessageCache interface {
-	Size() int
-	Push(IMessage)
-	Pop() IMessage
 }
 
 // g默认的消息缓存队列

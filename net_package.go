@@ -23,34 +23,26 @@ type ICodec interface {
 
 // 网络包解析器(network package)
 type INetPackageParser interface {
-	Package(ctx *AppContext, v any) ([]byte, error)
-	UnPackage(ctx *AppContext, s ISession, data []byte) (IMessage, int, error)
+	Package(msgID MessageID, v any) ([]byte, error)
+	UnPackage(data []byte) (IMessage, int, error)
 }
 
 type DefaultNetPackageParser struct {
+	*AppContext
 }
 
-func (d *DefaultNetPackageParser) Package(ctx *AppContext, v any) ([]byte, error) {
-	body, err := ctx.EncodeMessage(v)
+func (d *DefaultNetPackageParser) Package(msgID MessageID, v any) ([]byte, error) {
+	body, err := d.EncodeMessage(v)
 	if err != nil {
 		return nil, err
 	}
-	p := make([]byte, MsgIDOffset, MsgIDOffset+len(body))
-	msgID, ok := ctx.GetMsgID(v)
-	if ok {
-		binary.LittleEndian.PutUint32(p, uint32(msgID))
-		p = append(p, body...)
-		return p, nil
-	}
+	payload := make([]byte, MsgIDOffset, MsgIDOffset+len(body))
+	binary.LittleEndian.PutUint32(payload, uint32(msgID))
+	payload = append(payload, body...)
 	return nil, ErrorNotExistMsg
 }
 
-func (d *DefaultNetPackageParser) UnPackage(ctx *AppContext, from ISession, data []byte) (IMessage, int, error) {
+func (d *DefaultNetPackageParser) UnPackage(data []byte) (IMessage, int, error) {
 	msgID := MessageID(binary.LittleEndian.Uint32(data[:MsgIDOffset]))
-	newMsg := ctx.CreateMsg(msgID)
-	err := ctx.DecodeMessage(newMsg, data[MsgIDOffset:])
-	if err != nil {
-		return nil, 0, err
-	}
-	return &Message{id: msgID, body: newMsg, session: from}, 0, err
+	return &Message{id: msgID, body: data[MsgIDOffset:]}, 0, nil
 }

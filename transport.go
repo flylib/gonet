@@ -1,7 +1,6 @@
 package gonet
 
 import (
-	"net"
 	"sync/atomic"
 )
 
@@ -15,60 +14,6 @@ const (
 	HTTP TransportProtocol = "http"
 	QUIC TransportProtocol = "quic"
 	RPC  TransportProtocol = "rpc"
-)
-
-// Interfaces
-type (
-	//服务端
-	IServer interface {
-		// 启动监听
-		Listen(addr string) error
-		// 停止服务
-		Stop() error
-		// 地址
-		Addr() string
-	}
-	//客户端
-	IClient interface {
-		Dial(addr string) (ISession, error)
-	}
-	//会话
-	ISession interface {
-		//ID
-		ID() uint64
-		//断开
-		Close() error
-		//发送消息
-		Send(msg any) error
-		//地址
-		RemoteAddr() net.Addr
-		//设置键值对，存储关联数据
-		Store(value any)
-		//获取键值对
-		Load() (value any, ok bool)
-	}
-	ISessionIdentify interface {
-		ID() uint64
-		ClearIdentify()
-		SetID(id uint64)
-		UpdateID(id uint64)
-		WithContext(c *AppContext)
-		IsClosed() bool
-		SetClosedStatus()
-	}
-	ISessionAbility interface {
-		Store(val any)
-		Load() (val any, ok bool)
-		InitSendChanel()
-		PushSendChannel(buf []byte)
-		SendLoop(handler func([]byte))
-		StopAbility()
-	}
-	IPeerIdentify interface {
-		Addr() string
-		SetAddr(addr string)
-		WithContext(c *AppContext)
-	}
 )
 
 var (
