@@ -1,72 +1,49 @@
 package gonet
 
-import "container/list"
+// 系统消息
+const (
+	MessageID_Invalid uint32 = iota
+	MessageID_Connection_Connect
+	MessageID_Connection_Close
+)
 
 var (
-	_ IMessageCache = new(DefaultMessageCacheList)
+	msgNewConnection = &message{
+		id: MessageID_Connection_Connect,
+	}
 )
 
 type (
 	MessageHandler func(ISession, IMessage)
-	MessageID      uint32
 )
 
-// 系统消息
-const (
-	MessageID_Invalid MessageID = iota
-	MessageID_SessionConnect
-	MessageID_SessionClose
-)
+type IMessage interface {
+	ID() uint32
+	Body() []byte
+}
 
-type Message struct {
-	id   MessageID
+type message struct {
+	id   uint32
 	body []byte
 }
 
-func newInvalidMessage() *Message {
-	return &Message{
-		id: MessageID_Invalid,
+func newErrorMessage(err error) *message {
+	return &message{
+		id:   MessageID_Invalid,
+		body: []byte(err.Error()),
+	}
+}
+func newCloseMessage(err error) *message {
+	return &message{
+		id:   MessageID_Connection_Close,
+		body: []byte(err.Error()),
 	}
 }
 
-func newSessionConnectMessage(s ISession) *Message {
-	return &Message{
-		id: MessageID_SessionConnect,
-	}
-}
-
-func newSessionCloseMessage(s ISession, err error) *Message {
-	return &Message{
-		id: MessageID_SessionConnect,
-	}
-}
-
-func (m *Message) ID() MessageID {
+func (m *message) ID() uint32 {
 	return m.id
 }
 
-func (m *Message) Payload() []byte {
+func (m *message) Body() []byte {
 	return m.body
-}
-
-// g默认的消息缓存队列
-type DefaultMessageCacheList struct {
-	list.List
-}
-
-func (l *DefaultMessageCacheList) Size() int {
-	return l.List.Len()
-}
-
-func (l *DefaultMessageCacheList) Push(msg IMessage) {
-	l.List.PushFront(msg)
-}
-
-func (l *DefaultMessageCacheList) Pop() IMessage {
-	element := l.List.Back()
-	if element == nil {
-		return nil
-	}
-	l.List.Remove(element)
-	return element.Value.(IMessage)
 }

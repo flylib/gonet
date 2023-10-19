@@ -9,8 +9,8 @@ import (
 
 // 消息路由
 func InitServerRouter(ctx *gonet.AppContext) error {
-	ctx.Route(gonet.MessageID_SessionConnect, nil, serverHandler)
-	ctx.Route(gonet.MessageID_SessionClose, nil, serverHandler)
+	ctx.Route(gonet.MessageID_Connection_Connect, nil, serverHandler)
+	ctx.Route(gonet.MessageID_Connection_Close, nil, serverHandler)
 	ctx.Route(101, proto.Say{}, serverHandler)
 	return nil
 }
@@ -18,9 +18,9 @@ func InitServerRouter(ctx *gonet.AppContext) error {
 func serverHandler(msg gonet.IMessage) {
 	s := msg.FromSession()
 	switch msg.ID() {
-	case gonet.MessageID_SessionConnect:
+	case gonet.MessageID_Connection_Connect:
 		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())
-	case gonet.MessageID_SessionClose:
+	case gonet.MessageID_Connection_Close:
 		log.Println("connected session_id:", s.ID(), " error:", msg.Body())
 	case 101:
 		fmt.Println("session_id:", s.ID(), " say ", msg.Body().(*proto.Say).Content)

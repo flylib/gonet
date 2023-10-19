@@ -15,6 +15,7 @@ require (
 
 require (
 	github.com/flylib/goutils/codec/json v0.0.0-20231012070911-2cf6c2bcb71d // indirect
+	github.com/flylib/goutils/sync/spinlock v0.0.0-20231019075452-c7b2623472a2 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/pprof v0.0.0-20230907193218-d3ddc7976beb // indirect

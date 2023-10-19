@@ -34,6 +34,5 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 	}
 	s := newSession(c.AppContext, conn)
 	go s.ReadLoop()
-	go s.SendLoop(s.write)
 	return s, nil
 }

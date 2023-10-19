@@ -7,11 +7,9 @@ import (
 )
 
 type AppContext struct {
+	callback MessageHandler
 	//session manager
 	sessionMgr *SessionManager
-
-	//msg route handler
-	mMsgHooks map[MessageID]MessageHandler
 
 	//message codec
 	codec ICodec
@@ -20,8 +18,6 @@ type AppContext struct {
 	netPackageParser INetPackageParser
 	//0意味着无限制
 	maxSessionCount int
-	//contentType support json/xml/binary/protobuf
-	contentType string
 
 	workers       *GoroutinePool
 	workerOptions []goroutinePoolOption
@@ -30,7 +26,6 @@ type AppContext struct {
 
 func NewContext(options ...Option) *AppContext {
 	ctx := &AppContext{
-		mMsgHooks:        make(map[MessageID]MessageHandler),
 		codec:            new(json.Codec),
 		ILogger:          log.NewLogger(),
 		netPackageParser: new(DefaultNetPackageParser),
@@ -59,53 +54,40 @@ func (c *AppContext) CreateSession() ISession {
 	idleSession.(ISessionIdentify).ClearIdentify()
 	session := idleSession.(ISession)
 	c.sessionMgr.AddAliveSession(idleSession)
-	session.(ISessionAbility).InitSendChanel()
-	c.PushGlobalMessageQueue(newSessionConnectMessage(session))
+	c.PushGlobalMessageQueue(session, msgNewConnection)
 	return session
 }
 
 func (c *AppContext) RecycleSession(session ISession, err error) {
-	c.PushGlobalMessageQueue(newSessionCloseMessage(session, err))
+	c.PushGlobalMessageQueue(session, newCloseMessage(err))
 	session.Close()
-	session.(ISessionAbility).StopAbility()
+	session.(ISessionAbility).ClearAbility()
 	c.sessionMgr.RecycleIdleSession(session)
 }
-func (c *AppContext) SessionCount() int {
-	return int(c.sessionMgr.CountAliveSession())
+
+func (c *AppContext) SessionCount() uint32 {
+	return c.sessionMgr.CountAliveSession()
 }
-func (c *AppContext) Broadcast(msg interface{}) {
+func (c *AppContext) Broadcast(msgId uint32, msg any) {
 	c.sessionMgr.alive.Range(func(_, item interface{}) bool {
 		session, ok := item.(ISession)
 		if ok {
-			session.Send(msg)
+			session.Send(msgId, msg)
 		}
 		return true
 	})
 }
 
-// 消息管理
-func (c *AppContext) Route(msgID MessageID, callback MessageHandler) {
-	if _, ok := c.mMsgHooks[msgID]; ok {
-		panic("Duplicate message")
-	}
-	if callback != nil {
-		c.mMsgHooks[msgID] = callback
-	}
-}
-
-func (c *AppContext) GetMessageHandler(msgID MessageID) (MessageHandler, bool) {
-	f, ok := c.mMsgHooks[msgID]
-	return f, ok
-}
-
-// 消息编码
+// message encoding
 func (c *AppContext) EncodeMessage(msg any) ([]byte, error) {
 	return c.codec.Marshal(msg)
 }
 func (c *AppContext) DecodeMessage(msg any, data []byte) error {
 	return c.codec.Unmarshal(data, msg)
 }
-func (c *AppContext) PackageMessage(messageId MessageID, v any) ([]byte, error) {
+
+// network packet
+func (c *AppContext) PackageMessage(messageId uint32, v any) ([]byte, error) {
 	return c.netPackageParser.Package(messageId, v)
 }
 
@@ -113,8 +95,8 @@ func (c *AppContext) UnPackageMessage(data []byte) (IMessage, int, error) {
 	return c.netPackageParser.UnPackage(data)
 }
 
-// 缓存消息
-func (c *AppContext) PushGlobalMessageQueue(msg IMessage) {
-	//todo 主动防御，避免消息过多
-	c.workers.queue <- msg
+// push the message to the routine pool
+func (c *AppContext) PushGlobalMessageQueue(s ISession, msg IMessage) {
+	// active defense to avoid too many message
+	c.workers.queue <- E{s, msg}
 }

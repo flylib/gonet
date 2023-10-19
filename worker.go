@@ -14,12 +14,17 @@ const (
 
 type goroutinePoolOption func(*GoroutinePool)
 
+type E struct {
+	session ISession
+	msg     IMessage
+}
+
 // Lightweight goroutine pool
 type GoroutinePool struct {
 	*AppContext
 	curWorkingNum, maxWorkingNum, maxIdleNum int32
 	cacheQueueSize                           int
-	queue                                    chan IMessage
+	queue                                    chan E
 	addRoutineChannel                        chan bool
 }
 
@@ -41,7 +46,7 @@ func setQueueSize(num int) goroutinePoolOption {
 	}
 	return func(pool *GoroutinePool) {
 		pool.cacheQueueSize = num
-		pool.queue = make(chan IMessage, num)
+		pool.queue = make(chan E, num)
 	}
 }
 
@@ -49,7 +54,7 @@ func newGoroutinePool(c *AppContext, options ...goroutinePoolOption) *GoroutineP
 	pool := &GoroutinePool{
 		AppContext:        c,
 		addRoutineChannel: make(chan bool),
-		queue:             make(chan IMessage, defaultReceiveQueueSize),
+		queue:             make(chan E, defaultReceiveQueueSize),
 		maxIdleNum:        int32(runtime.NumCPU()),
 	}
 
@@ -76,7 +81,7 @@ func (b *GoroutinePool) descRoutine(count int32) {
 		count = 1
 	}
 	for i := int32(0); i < count; i++ {
-		b.queue <- newInvalidMessage()
+		//b.queue <- newErrorMessage(nil)
 	}
 }
 
@@ -98,12 +103,8 @@ func (b *GoroutinePool) run() {
 			}()
 
 			// message handling
-			for msg := range b.queue {
-				if f, ok := b.AppContext.GetMessageHandler(msg.ID()); ok {
-					f(msg)
-				} else {
-					break //release go routine
-				}
+			for e := range b.queue {
+				b.AppContext.callback(e.session, e.msg)
 			}
 		}()
 	}

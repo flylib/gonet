@@ -53,5 +53,4 @@ func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	}
 	ns := newSession(s.AppContext, conn)
 	go ns.ReadLoop()
-	go ns.SendLoop(ns.write)
 }

@@ -7,6 +7,8 @@ github.com/flylib/goutils/codec/json v0.0.0-20231012070911-2cf6c2bcb71d h1:D2jpM
 github.com/flylib/goutils/codec/json v0.0.0-20231012070911-2cf6c2bcb71d/go.mod h1:Wj1xXeavXwTDMZVrzQ386Cieqk2fQLa08hb5SEqacq0=
 github.com/flylib/goutils/logger/log v0.0.0-20231010072000-719eaf1057f5 h1:krs0MzSePUq/D7314E2OJrsm5xXwAJpdVDRPyApceIQ=
 github.com/flylib/goutils/logger/log v0.0.0-20231010072000-719eaf1057f5/go.mod h1:SO31BOi9uMnhv5C84rUcwpi7QM466A93C6SMU+8VWG0=
+github.com/flylib/goutils/sync/spinlock v0.0.0-20231019075452-c7b2623472a2 h1:YObGJCl68rKYCizLReivUm+lV/rtHLiYsAkml5g/qDo=
+github.com/flylib/goutils/sync/spinlock v0.0.0-20231019075452-c7b2623472a2/go.mod h1:NBOxCoj1hfvXEtSDbB1yQG2avab26Mj9/ru09oCjoYI=
 github.com/go-logr/logr v1.2.4 h1:g01GSCwiDw2xSZfjJ2/T9M+S6pFdcNtFYsp+Y43HYDQ=
 github.com/go-logr/logr v1.2.4/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
 github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 h1:tfuBGBXKqDEevZMzYi5KSi8KkcZtzBcTgAUUtapy0OI=
