@@ -9,34 +9,34 @@ import (
 )
 
 type poolConfig struct {
-	queueSize  uint32
-	maxNum     uint32
-	maxIdleNum uint32
+	queueSize  int32
+	maxNum     int32
+	maxIdleNum int32
 }
 
 // Lightweight goroutine pool
 type GoroutinePool struct {
 	cfg poolConfig
 	*AppContext
-	curWorkingNum     uint32
+	curWorkingNum     int32
 	cacheQueueSize    int
 	queue             chan IMessage
 	addRoutineChannel chan bool
 }
 
-func newGoroutinePool(ctx *AppContext, cfg poolConfig) *GoroutinePool {
-	if cfg.maxIdleNum == 0 {
-		cfg.maxIdleNum = uint32(runtime.NumCPU())
+func newGoroutinePool(ctx *AppContext) *GoroutinePool {
+	if ctx.opt.poolCfg.maxIdleNum == 0 {
+		ctx.opt.poolCfg.maxIdleNum = int32(runtime.NumCPU())
 	}
-	if cfg.queueSize == 0 {
-		cfg.queueSize = 64
+	if ctx.opt.poolCfg.queueSize == 0 {
+		ctx.opt.poolCfg.queueSize = 64
 	}
 
 	pool := &GoroutinePool{
 		AppContext:        ctx,
-		cfg:               cfg,
+		cfg:               ctx.opt.poolCfg,
 		addRoutineChannel: make(chan bool),
-		queue:             make(chan IMessage, cfg.queueSize),
+		queue:             make(chan IMessage, ctx.opt.poolCfg.queueSize),
 	}
 
 	go pool.run()
@@ -44,11 +44,11 @@ func newGoroutinePool(ctx *AppContext, cfg poolConfig) *GoroutinePool {
 	return pool
 }
 
-func (b *GoroutinePool) ascRoutine(count uint32) {
+func (b *GoroutinePool) ascRoutine(count int32) {
 	if count <= 0 {
 		count = 1
 	}
-	for i := uint32(0); i < count; i++ {
+	for i := int32(0); i < count; i++ {
 		b.addRoutineChannel <- true
 	}
 }
@@ -68,11 +68,11 @@ func (b *GoroutinePool) run() {
 			b.curWorkingNum >= b.cfg.maxNum {
 			continue
 		}
-		atomic.AddUint32(&b.curWorkingNum, 1)
+		atomic.AddInt32(&b.curWorkingNum, 1)
 		go func() {
 			// panic handling
 			defer func() {
-				atomic.AddUint32(&b.curWorkingNum, -1)
+				atomic.AddInt32(&b.curWorkingNum, -1)
 				if err := recover(); err != nil {
 					b.Errorf("panic error:%s\n%s", err, debug.Stack())
 					b.ascRoutine(1)
@@ -98,9 +98,9 @@ func (b *GoroutinePool) monitor() {
 		between := curCount - preCount
 		if between > 0 {
 			count := math.Abs(float64(between) / float64(b.cacheQueueSize) * float64(b.cfg.maxNum))
-			b.ascRoutine(uint32(count))
+			b.ascRoutine(int32(count))
 		} else if preCount > 0 && curCount == 0 {
-			curWorkingNum := atomic.LoadUint32(&b.curWorkingNum)
+			curWorkingNum := atomic.LoadInt32(&b.curWorkingNum)
 			if curWorkingNum > b.cfg.maxIdleNum {
 				b.descRoutine(1)
 			}

@@ -34,7 +34,7 @@ func (s *session) Close() error {
 
 // websocket does not support sending messages concurrently
 func (s *session) Send(msgID uint32, msg any) (err error) {
-	buf, err := s.AppContext.PackageMessage(msgID, msg)
+	buf, err := s.AppContext.PackageMessage(s, msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -52,11 +52,11 @@ func (s *session) ReadLoop() {
 			s.AppContext.RecycleSession(s, err)
 			return
 		}
-		msg, _, err := s.AppContext.UnPackageMessage(buf)
+		msg, _, err := s.AppContext.UnPackageMessage(s, buf)
 		if err != nil {
 			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
 			continue
 		}
-		s.AppContext.PushGlobalMessageQueue(s, msg)
+		s.AppContext.PushGlobalMessageQueue(msg)
 	}
 }

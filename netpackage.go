@@ -23,16 +23,15 @@ type ICodec interface {
 
 // 网络包解析器(network package)
 type INetPackageParser interface {
-	Package(msgID uint32, v any) ([]byte, error)
+	Package(s ISession, msgID uint32, v any) ([]byte, error)
 	UnPackage(s ISession, data []byte) (IMessage, int, error)
 }
 
 type DefaultNetPackageParser struct {
-	*AppContext
 }
 
-func (d *DefaultNetPackageParser) Package(msgID uint32, v any) ([]byte, error) {
-	body, err := d.Marshal(v)
+func (d *DefaultNetPackageParser) Package(s ISession, msgID uint32, v any) ([]byte, error) {
+	body, err := s.Context().Marshal(v)
 	if err != nil {
 		return nil, err
 	}

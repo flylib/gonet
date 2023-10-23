@@ -26,20 +26,23 @@ type message struct {
 
 func newConnectionConnectMessage(s ISession) *message {
 	return &message{
-		id: MessageID_Connection_Connect,
+		id:      MessageID_Connection_Connect,
+		session: s,
 	}
 }
 
 func newConnectionCloseMessage(s ISession, err error) *message {
 	return &message{
-		id: MessageID_Connection_Close,
+		id:      MessageID_Connection_Close,
+		session: s,
 	}
 }
 
 func newErrorMessage(s ISession, err error) *message {
 	return &message{
-		id:   MessageID_Invalid,
-		body: []byte(err.Error()),
+		id:      MessageID_Invalid,
+		body:    []byte(err.Error()),
+		session: s,
 	}
 }
 

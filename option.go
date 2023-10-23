@@ -16,6 +16,13 @@ type option struct {
 }
 
 // Default:0 means is no limit
+func WithMessageHandler(handler MessageHandler) Option {
+	return func(o *option) {
+		o.msgHook = handler
+	}
+}
+
+// Default:0 means is no limit
 func WithMaxSessions(max int) Option {
 	return func(o *option) {
 		o.maxSessionCount = max
@@ -23,7 +30,7 @@ func WithMaxSessions(max int) Option {
 }
 
 // Default is runtime.NumCPU(), means no goroutines will be dynamically scaled
-func WithPoolMaxRoutines(num uint32) Option {
+func WithPoolMaxRoutines(num int32) Option {
 	return func(o *option) {
 
 		o.poolCfg.maxNum = num
@@ -31,14 +38,14 @@ func WithPoolMaxRoutines(num uint32) Option {
 }
 
 // allow max idle routines
-func WithPoolMaxIdleRoutines(num uint32) Option {
+func WithPoolMaxIdleRoutines(num int32) Option {
 	return func(o *option) {
 		o.poolCfg.maxIdleNum = num
 	}
 }
 
 // Default 512,global queue size
-func WithGQSize(size uint32) Option {
+func WithGQSize(size int32) Option {
 	return func(o *option) {
 		o.poolCfg.queueSize = size
 	}

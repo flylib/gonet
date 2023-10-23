@@ -79,6 +79,11 @@ type SessionAbility struct {
 	spinlock.Locker
 }
 
+type invalidData struct {
+}
+
+var zeroData = invalidData{}
+
 func (s *SessionAbility) ClearAbility() {
-	s.Store(nil)
+	s.Store(&zeroData)
 }

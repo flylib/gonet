@@ -31,7 +31,7 @@ func NewContext(options ...Option) *AppContext {
 	if ctx.opt.log != nil {
 		ctx.ILogger = ctx.opt.log
 	}
-	ctx.routines = newGoroutinePool(ctx, ctx.opt.poolCfg)
+	ctx.routines = newGoroutinePool(ctx)
 	return ctx
 }
 
@@ -49,7 +49,7 @@ func (c *AppContext) CreateSession() ISession {
 	idleSession.(ISessionIdentify).ClearIdentify()
 	session := idleSession.(ISession)
 	c.sessionMgr.AddAliveSession(idleSession)
-	c.PushGlobalMessageQueue(newConnectionConnectMessage(idleSession))
+	c.PushGlobalMessageQueue(newConnectionConnectMessage(session))
 	return session
 }
 
@@ -60,7 +60,7 @@ func (c *AppContext) RecycleSession(session ISession, err error) {
 	c.sessionMgr.RecycleIdleSession(session)
 }
 
-func (c *AppContext) SessionCount() uint32 {
+func (c *AppContext) SessionCount() int32 {
 	return c.sessionMgr.CountAliveSession()
 }
 func (c *AppContext) Broadcast(msgId uint32, msg any) {
@@ -82,8 +82,8 @@ func (c *AppContext) Unmarshal(data []byte, v any) error {
 }
 
 // network packet
-func (c *AppContext) PackageMessage(messageId uint32, v any) ([]byte, error) {
-	return c.opt.netPackageParser.Package(messageId, v)
+func (c *AppContext) PackageMessage(s ISession, messageId uint32, v any) ([]byte, error) {
+	return c.opt.netPackageParser.Package(s, messageId, v)
 }
 
 func (c *AppContext) UnPackageMessage(s ISession, data []byte) (IMessage, int, error) {
