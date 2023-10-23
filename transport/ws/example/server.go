@@ -8,7 +8,7 @@ import (
 
 func main() {
 	ctx := gonet.NewContext(
-		gonet.MaxWorkers(20),
+		gonet.WithPoolMaxRoutines(20),
 	)
 	if err := ws.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
 		log.Fatal(err)

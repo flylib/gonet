@@ -7,7 +7,6 @@ import (
 )
 
 type AppContext struct {
-	callback MessageHandler
 	//session manager
 	sessionMgr *SessionManager
 
@@ -16,11 +15,11 @@ type AppContext struct {
 
 	//net package parser
 	netPackageParser INetPackageParser
+
 	//0意味着无限制
 	maxSessionCount int
 
-	workers       *GoroutinePool
-	workerOptions []goroutinePoolOption
+	workers *GoroutinePool
 	ILogger
 }
 
@@ -30,12 +29,11 @@ func NewContext(options ...Option) *AppContext {
 		ILogger:          log.NewLogger(),
 		netPackageParser: new(DefaultNetPackageParser),
 	}
+	var opt option
 	for _, f := range options {
-		err := f(ctx)
-		if err != nil {
-			panic(err)
-		}
+		f(&opt)
 	}
+
 	ctx.workers = newGoroutinePool(ctx, ctx.workerOptions...)
 	return ctx
 }

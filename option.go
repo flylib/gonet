@@ -1,59 +1,57 @@
 package gonet
 
-import "errors"
-
-type Option func(*AppContext) error
+type Option func(o *option)
 
 type option struct {
+	//Message callback processing
+	msgHook         MessageHandler
+	maxSessionCount int
+	//routine pool config
+	poolCfg poolConfig
+	//message codec
+	codec ICodec
+	log   ILogger
 }
 
-func MaxSessions(max int) Option {
-	return func(o *AppContext) error {
+// Default:0 means is no limit
+func WithMaxSessions(max int) Option {
+	return func(o *option) {
 		o.maxSessionCount = max
-		return nil
 	}
 }
 
-// 0 means no goroutines will be dynamically scaled
-func MaxWorkers(num uint32) Option {
-	return func(o *AppContext) error {
-		if num > 1024 {
-			return errors.New("Setting too many workers is not allowed")
-		}
-		o.workerOptions = append(o.workerOptions, maxWorkingGoroutines(int32(num)))
-		return nil
+// Default is runtime.NumCPU(), means no goroutines will be dynamically scaled
+func WithPoolMaxRoutines(num uint32) Option {
+	return func(o *option) {
+
+		o.poolCfg.maxNum = num
 	}
 }
 
-func MaxIdleWorkers(num uint32) Option {
-	return func(o *AppContext) error {
-		if num == 0 {
-			return errors.New("zero workers is not allowed")
-		}
-		o.workerOptions = append(o.workerOptions, maxIdleGoroutines(int32(num)))
-		return nil
+// allow max idle routines
+func WithPoolMaxIdleRoutines(num uint32) Option {
+	return func(o *option) {
+		o.poolCfg.maxIdleNum = num
 	}
 }
 
-func GlobalMessageQueueSize(num uint32) Option {
-	return func(o *AppContext) error {
-		o.workerOptions = append(o.workerOptions, setQueueSize(int(num)))
-		return nil
+// Default 512,global queue size
+func WithGQSize(size uint32) Option {
+	return func(o *option) {
+		o.poolCfg.queueSize = size
 	}
 }
 
-// message codec,default is json codec
+// Default json codec, message codec
 func WithMessageCodec(codec ICodec) Option {
-	return func(o *AppContext) error {
+	return func(o *option) {
 		o.codec = codec
-		return nil
 	}
 }
 
 // set logger
-func Logger(l ILogger) Option {
-	return func(o *AppContext) error {
-		o.ILogger = l
-		return nil
+func WithLogger(l ILogger) Option {
+	return func(o *option) {
+		o.log = l
 	}
 }

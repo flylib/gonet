@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/flylib/gonet"
-	"github.com/flylib/gonet/demo/handler"
 	"github.com/flylib/gonet/demo/handler/proto"
 	"github.com/flylib/gonet/transport/ws"
 	"log"
@@ -11,7 +10,7 @@ import (
 )
 
 func main() {
-	ctx := gonet.NewContext(handler.InitClientRouter)
+	ctx := gonet.NewContext()
 	session, err := ws.NewClient(ctx, ws.HandshakeTimeout(5*time.Second)).Dial("ws://localhost:8088/center/ws")
 	if err != nil {
 		log.Fatal(err)

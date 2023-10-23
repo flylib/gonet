@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-const (
-	defaultReceiveQueueSize = 512
-)
-
-type goroutinePoolOption func(*GoroutinePool)
+type poolConfig struct {
+	queueSize  uint32
+	maxNum     uint32
+	maxIdleNum uint32
+}
 
 // Lightweight goroutine pool
 type GoroutinePool struct {
@@ -53,7 +53,7 @@ func newGoroutinePool(c *AppContext, options ...goroutinePoolOption) *GoroutineP
 		maxIdleNum:        int32(runtime.NumCPU()),
 	}
 
-	for _, option := range options {
+	for _, opt := range options {
 		option(pool)
 	}
 
