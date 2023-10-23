@@ -7,34 +7,31 @@ import (
 )
 
 type AppContext struct {
+	opt option
 	//session manager
 	sessionMgr *SessionManager
-
-	//message codec
-	codec ICodec
-
-	//net package parser
-	netPackageParser INetPackageParser
-
-	//0意味着无限制
-	maxSessionCount int
-
-	workers *GoroutinePool
+	//go routine pool
+	routines *GoroutinePool
 	ILogger
 }
 
 func NewContext(options ...Option) *AppContext {
 	ctx := &AppContext{
-		codec:            new(json.Codec),
-		ILogger:          log.NewLogger(),
-		netPackageParser: new(DefaultNetPackageParser),
-	}
-	var opt option
-	for _, f := range options {
-		f(&opt)
+		ILogger: log.NewLogger(),
+		opt: option{
+			codec:            new(json.Codec),
+			netPackageParser: new(DefaultNetPackageParser),
+		},
 	}
 
-	ctx.workers = newGoroutinePool(ctx, ctx.workerOptions...)
+	for _, f := range options {
+		f(&ctx.opt)
+	}
+
+	if ctx.opt.log != nil {
+		ctx.ILogger = ctx.opt.log
+	}
+	ctx.routines = newGoroutinePool(ctx, ctx.opt.poolCfg)
 	return ctx
 }
 
@@ -78,23 +75,23 @@ func (c *AppContext) Broadcast(msgId uint32, msg any) {
 
 // message encoding
 func (c *AppContext) Marshal(msg any) ([]byte, error) {
-	return c.codec.Marshal(msg)
+	return c.opt.codec.Marshal(msg)
 }
 func (c *AppContext) Unmarshal(data []byte, v any) error {
-	return c.codec.Unmarshal(data, v)
+	return c.opt.codec.Unmarshal(data, v)
 }
 
 // network packet
 func (c *AppContext) PackageMessage(messageId uint32, v any) ([]byte, error) {
-	return c.netPackageParser.Package(messageId, v)
+	return c.opt.netPackageParser.Package(messageId, v)
 }
 
 func (c *AppContext) UnPackageMessage(s ISession, data []byte) (IMessage, int, error) {
-	return c.netPackageParser.UnPackage(s, data)
+	return c.opt.netPackageParser.UnPackage(s, data)
 }
 
 // push the message to the routine pool
 func (c *AppContext) PushGlobalMessageQueue(msg IMessage) {
 	// active defense to avoid too many message
-	c.workers.queue <- msg
+	c.routines.queue <- msg
 }

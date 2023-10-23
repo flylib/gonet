@@ -16,57 +16,39 @@ type poolConfig struct {
 
 // Lightweight goroutine pool
 type GoroutinePool struct {
+	cfg poolConfig
 	*AppContext
-	curWorkingNum, maxWorkingNum, maxIdleNum int32
-	cacheQueueSize                           int
-	queue                                    chan IMessage
-	addRoutineChannel                        chan bool
+	curWorkingNum     uint32
+	cacheQueueSize    int
+	queue             chan IMessage
+	addRoutineChannel chan bool
 }
 
-func maxWorkingGoroutines(num int32) goroutinePoolOption {
-	return func(pool *GoroutinePool) {
-		pool.maxWorkingNum = num
+func newGoroutinePool(ctx *AppContext, cfg poolConfig) *GoroutinePool {
+	if cfg.maxIdleNum == 0 {
+		cfg.maxIdleNum = uint32(runtime.NumCPU())
 	}
-}
+	if cfg.queueSize == 0 {
+		cfg.queueSize = 64
+	}
 
-func maxIdleGoroutines(num int32) goroutinePoolOption {
-	return func(pool *GoroutinePool) {
-		pool.maxIdleNum = num
-	}
-}
-
-func setQueueSize(num int) goroutinePoolOption {
-	if num < 0 {
-		num = 0
-	}
-	return func(pool *GoroutinePool) {
-		pool.cacheQueueSize = num
-		pool.queue = make(chan IMessage, num)
-	}
-}
-
-func newGoroutinePool(c *AppContext, options ...goroutinePoolOption) *GoroutinePool {
 	pool := &GoroutinePool{
-		AppContext:        c,
+		AppContext:        ctx,
+		cfg:               cfg,
 		addRoutineChannel: make(chan bool),
-		queue:             make(chan IMessage, defaultReceiveQueueSize),
-		maxIdleNum:        int32(runtime.NumCPU()),
-	}
-
-	for _, opt := range options {
-		option(pool)
+		queue:             make(chan IMessage, cfg.queueSize),
 	}
 
 	go pool.run()
-	pool.ascRoutine(pool.maxIdleNum)
+	pool.ascRoutine(pool.cfg.maxIdleNum)
 	return pool
 }
 
-func (b *GoroutinePool) ascRoutine(count int32) {
+func (b *GoroutinePool) ascRoutine(count uint32) {
 	if count <= 0 {
 		count = 1
 	}
-	for i := int32(0); i < count; i++ {
+	for i := uint32(0); i < count; i++ {
 		b.addRoutineChannel <- true
 	}
 }
@@ -82,15 +64,15 @@ func (b *GoroutinePool) descRoutine(count int32) {
 
 func (b *GoroutinePool) run() {
 	for range b.addRoutineChannel {
-		if b.maxWorkingNum != 0 &&
-			b.curWorkingNum >= b.maxWorkingNum {
+		if b.cfg.maxNum != 0 &&
+			b.curWorkingNum >= b.cfg.maxNum {
 			continue
 		}
-		atomic.AddInt32(&b.curWorkingNum, 1)
+		atomic.AddUint32(&b.curWorkingNum, 1)
 		go func() {
 			// panic handling
 			defer func() {
-				atomic.AddInt32(&b.curWorkingNum, -1)
+				atomic.AddUint32(&b.curWorkingNum, -1)
 				if err := recover(); err != nil {
 					b.Errorf("panic error:%s\n%s", err, debug.Stack())
 					b.ascRoutine(1)
@@ -99,14 +81,14 @@ func (b *GoroutinePool) run() {
 
 			// message handling
 			for e := range b.queue {
-				b.AppContext.callback(e)
+				b.AppContext.opt.msgHook(e)
 			}
 		}()
 	}
 }
 
 func (b *GoroutinePool) monitor() {
-	if b.maxWorkingNum == 0 {
+	if b.cfg.maxNum == 0 {
 		return
 	}
 	tick := time.Tick(time.Second * 30)
@@ -115,11 +97,11 @@ func (b *GoroutinePool) monitor() {
 		curCount := len(b.queue)
 		between := curCount - preCount
 		if between > 0 {
-			count := math.Abs(float64(between) / float64(b.cacheQueueSize) * float64(b.maxWorkingNum))
-			b.ascRoutine(int32(count))
+			count := math.Abs(float64(between) / float64(b.cacheQueueSize) * float64(b.cfg.maxNum))
+			b.ascRoutine(uint32(count))
 		} else if preCount > 0 && curCount == 0 {
-			curWorkingNum := atomic.LoadInt32(&b.curWorkingNum)
-			if curWorkingNum > b.maxIdleNum {
+			curWorkingNum := atomic.LoadUint32(&b.curWorkingNum)
+			if curWorkingNum > b.cfg.maxIdleNum {
 				b.descRoutine(1)
 			}
 		}

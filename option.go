@@ -11,6 +11,8 @@ type option struct {
 	//message codec
 	codec ICodec
 	log   ILogger
+	//net package parser
+	netPackageParser INetPackageParser
 }
 
 // Default:0 means is no limit
@@ -53,5 +55,12 @@ func WithMessageCodec(codec ICodec) Option {
 func WithLogger(l ILogger) Option {
 	return func(o *option) {
 		o.log = l
+	}
+}
+
+// network package paser
+func WithNetPackageParser(parser INetPackageParser) Option {
+	return func(o *option) {
+		o.netPackageParser = parser
 	}
 }

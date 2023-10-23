@@ -8,8 +8,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/example/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/example/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/example/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/example/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
