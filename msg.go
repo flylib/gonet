@@ -13,8 +13,13 @@ var (
 	}
 )
 
+type Event struct {
+	Message IMessage
+	Session ISession
+}
+
 type (
-	MessageHandler func(ISession, IMessage)
+	EventHandler func(event Event)
 )
 
 type IMessage interface {

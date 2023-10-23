@@ -7,7 +7,7 @@ import (
 )
 
 type AppContext struct {
-	callback MessageHandler
+	callback EventHandler
 	//session manager
 	sessionMgr *SessionManager
 
@@ -98,5 +98,5 @@ func (c *AppContext) UnPackageMessage(data []byte) (IMessage, int, error) {
 // push the message to the routine pool
 func (c *AppContext) PushGlobalMessageQueue(s ISession, msg IMessage) {
 	// active defense to avoid too many message
-	c.workers.queue <- E{s, msg}
+	c.workers.queue <- Event{Session: s, Message: msg}
 }

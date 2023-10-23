@@ -4,6 +4,9 @@ import "errors"
 
 type Option func(*AppContext) error
 
+type option struct {
+}
+
 func MaxSessions(max int) Option {
 	return func(o *AppContext) error {
 		o.maxSessionCount = max

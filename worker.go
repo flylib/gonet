@@ -14,17 +14,12 @@ const (
 
 type goroutinePoolOption func(*GoroutinePool)
 
-type E struct {
-	session ISession
-	msg     IMessage
-}
-
 // Lightweight goroutine pool
 type GoroutinePool struct {
 	*AppContext
 	curWorkingNum, maxWorkingNum, maxIdleNum int32
 	cacheQueueSize                           int
-	queue                                    chan E
+	queue                                    chan Event
 	addRoutineChannel                        chan bool
 }
 
@@ -46,7 +41,7 @@ func setQueueSize(num int) goroutinePoolOption {
 	}
 	return func(pool *GoroutinePool) {
 		pool.cacheQueueSize = num
-		pool.queue = make(chan E, num)
+		pool.queue = make(chan Event, num)
 	}
 }
 
@@ -54,7 +49,7 @@ func newGoroutinePool(c *AppContext, options ...goroutinePoolOption) *GoroutineP
 	pool := &GoroutinePool{
 		AppContext:        c,
 		addRoutineChannel: make(chan bool),
-		queue:             make(chan E, defaultReceiveQueueSize),
+		queue:             make(chan Event, defaultReceiveQueueSize),
 		maxIdleNum:        int32(runtime.NumCPU()),
 	}
 
@@ -104,7 +99,7 @@ func (b *GoroutinePool) run() {
 
 			// message handling
 			for e := range b.queue {
-				b.AppContext.callback(e.session, e.msg)
+				b.AppContext.callback(e)
 			}
 		}()
 	}
