@@ -7,40 +7,38 @@ const (
 	MessageID_Connection_Close
 )
 
-var (
-	msgNewConnection = &message{
-		id: MessageID_Connection_Connect,
-	}
-)
-
-type Event struct {
-	Message IMessage
-	Session ISession
-}
-
 type (
-	EventHandler func(event Event)
+	MessageHandler func(IMessage)
 )
 
 type IMessage interface {
 	ID() uint32
 	Body() []byte
+	Session() ISession
+	UnmarshalTo(v any) error
 }
 
 type message struct {
-	id   uint32
-	body []byte
+	id      uint32
+	body    []byte
+	session ISession
 }
 
-func newErrorMessage(err error) *message {
+func newConnectionConnectMessage(s ISession) *message {
 	return &message{
-		id:   MessageID_Invalid,
-		body: []byte(err.Error()),
+		id: MessageID_Connection_Connect,
 	}
 }
-func newCloseMessage(err error) *message {
+
+func newConnectionCloseMessage(s ISession, err error) *message {
 	return &message{
-		id:   MessageID_Connection_Close,
+		id: MessageID_Connection_Close,
+	}
+}
+
+func newErrorMessage(s ISession, err error) *message {
+	return &message{
+		id:   MessageID_Invalid,
 		body: []byte(err.Error()),
 	}
 }
@@ -51,4 +49,12 @@ func (m *message) ID() uint32 {
 
 func (m *message) Body() []byte {
 	return m.body
+}
+
+func (m *message) Session() ISession {
+	return m.session
+}
+
+func (m *message) UnmarshalTo(v any) error {
+	return m.session.Context().Unmarshal(m.Body(), v)
 }

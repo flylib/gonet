@@ -24,7 +24,7 @@ type ICodec interface {
 // 网络包解析器(network package)
 type INetPackageParser interface {
 	Package(msgID uint32, v any) ([]byte, error)
-	UnPackage(data []byte) (IMessage, int, error)
+	UnPackage(s ISession, data []byte) (IMessage, int, error)
 }
 
 type DefaultNetPackageParser struct {
@@ -32,7 +32,7 @@ type DefaultNetPackageParser struct {
 }
 
 func (d *DefaultNetPackageParser) Package(msgID uint32, v any) ([]byte, error) {
-	body, err := d.EncodeMessage(v)
+	body, err := d.Marshal(v)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (d *DefaultNetPackageParser) Package(msgID uint32, v any) ([]byte, error) {
 	return content, nil
 }
 
-func (d *DefaultNetPackageParser) UnPackage(data []byte) (IMessage, int, error) {
+func (d *DefaultNetPackageParser) UnPackage(s ISession, data []byte) (IMessage, int, error) {
 	msgID := binary.LittleEndian.Uint32(data[:MsgIDOffset])
-	return &message{id: msgID, body: data[MsgIDOffset:]}, 0, nil
+	return &message{id: msgID, body: data[MsgIDOffset:], session: s}, 0, nil
 }

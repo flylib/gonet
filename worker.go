@@ -19,7 +19,7 @@ type GoroutinePool struct {
 	*AppContext
 	curWorkingNum, maxWorkingNum, maxIdleNum int32
 	cacheQueueSize                           int
-	queue                                    chan Event
+	queue                                    chan IMessage
 	addRoutineChannel                        chan bool
 }
 
@@ -41,7 +41,7 @@ func setQueueSize(num int) goroutinePoolOption {
 	}
 	return func(pool *GoroutinePool) {
 		pool.cacheQueueSize = num
-		pool.queue = make(chan Event, num)
+		pool.queue = make(chan IMessage, num)
 	}
 }
 
@@ -49,7 +49,7 @@ func newGoroutinePool(c *AppContext, options ...goroutinePoolOption) *GoroutineP
 	pool := &GoroutinePool{
 		AppContext:        c,
 		addRoutineChannel: make(chan bool),
-		queue:             make(chan Event, defaultReceiveQueueSize),
+		queue:             make(chan IMessage, defaultReceiveQueueSize),
 		maxIdleNum:        int32(runtime.NumCPU()),
 	}
 

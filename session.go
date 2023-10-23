@@ -2,14 +2,34 @@ package gonet
 
 import (
 	"github.com/flylib/goutils/sync/spinlock"
+	"net"
 	"sync/atomic"
 )
+
+type ISession interface {
+	//ID
+	ID() uint64
+	//close the connection
+	Close() error
+	//send the message to the other side
+	Send(msgID uint32, msg any) error
+	//remote addr
+	RemoteAddr() net.Addr
+	//convenient session storage data
+	Store(value any)
+	//load the data
+	Load() (value any)
+	//get the working Contentx
+	Context() *AppContext
+}
 
 type ISessionIdentify interface {
 	ID() uint64
 	SetID(id uint64)
 	UpdateID(id uint64)
 	WithContext(c *AppContext)
+	//get the working Contentx
+	Context() *AppContext
 	ClearIdentify()
 }
 
@@ -38,6 +58,10 @@ func (s *SessionIdentify) UpdateID(id uint64) {
 
 func (s *SessionIdentify) WithContext(c *AppContext) {
 	s.AppContext = c
+}
+
+func (s *SessionIdentify) Context() *AppContext {
+	return s.AppContext
 }
 
 func (s *SessionIdentify) ClearIdentify() {

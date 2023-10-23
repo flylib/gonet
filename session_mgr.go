@@ -14,7 +14,7 @@ type SessionManager struct {
 	idle     sync.Pool //空闲会话
 }
 
-func newSessionManager(sessionType reflect.Type) *SessionManager {
+func NewSessionManager(sessionType reflect.Type) *SessionManager {
 	return &SessionManager{
 		idle: sync.Pool{New: func() any {
 			return reflect.New(sessionType).Interface()
@@ -23,30 +23,29 @@ func newSessionManager(sessionType reflect.Type) *SessionManager {
 }
 
 // 活跃会话
-func (self *SessionManager) AddAliveSession(session ISession) {
-	atomic.AddUint32(&self.aliveNum, 1)
-	session.(interface{ SetID(id uint64) }).SetID(atomic.AddUint64(&self.incr, 1))
-	self.alive.Store(session.ID(), session)
+func (s *SessionManager) AddAliveSession(session ISession) {
+	atomic.AddUint32(&s.aliveNum, 1)
+	session.(interface{ SetID(id uint64) }).SetID(atomic.AddUint64(&s.incr, 1))
+	s.alive.Store(session.ID(), session)
 }
 
-func (self *SessionManager) GetAliveSession(id uint64) (session ISession, exist bool) {
-	s, ok := self.alive.Load(id)
+func (s *SessionManager) GetAliveSession(id uint64) (session ISession, exist bool) {
+	ss, ok := s.alive.Load(id)
 	if !ok {
 		return nil, ok
 	}
-	return s.(ISession), ok
+	return ss.(ISession), ok
 }
 
-func (self *SessionManager) CountAliveSession() uint32 {
-	return atomic.LoadUint32(&self.aliveNum)
+func (s *SessionManager) CountAliveSession() uint32 {
+	return atomic.LoadUint32(&s.aliveNum)
 }
 
-// 空闲会话
-func (self *SessionManager) GetIdleSession() ISession {
-	return self.idle.Get().(ISession)
+func (s *SessionManager) GetIdleSession() ISession {
+	return s.idle.Get().(ISession)
 }
-func (self *SessionManager) RecycleIdleSession(session ISession) {
-	atomic.AddUint32(&self.aliveNum, -1)
-	self.alive.Delete(session.ID())
-	self.idle.Put(session)
+func (s *SessionManager) RecycleIdleSession(session ISession) {
+	atomic.AddUint32(&s.aliveNum, -1)
+	s.alive.Delete(session.ID())
+	s.idle.Put(session)
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type AppContext struct {
-	callback EventHandler
+	callback MessageHandler
 	//session manager
 	sessionMgr *SessionManager
 
@@ -46,7 +46,7 @@ func (c *AppContext) GetSession(id uint64) (ISession, bool) {
 }
 
 func (c *AppContext) InitSessionMgr(sessionType reflect.Type) {
-	c.sessionMgr = newSessionManager(sessionType)
+	c.sessionMgr = NewSessionManager(sessionType)
 }
 
 func (c *AppContext) CreateSession() ISession {
@@ -54,12 +54,12 @@ func (c *AppContext) CreateSession() ISession {
 	idleSession.(ISessionIdentify).ClearIdentify()
 	session := idleSession.(ISession)
 	c.sessionMgr.AddAliveSession(idleSession)
-	c.PushGlobalMessageQueue(session, msgNewConnection)
+	c.PushGlobalMessageQueue(newConnectionConnectMessage(idleSession))
 	return session
 }
 
 func (c *AppContext) RecycleSession(session ISession, err error) {
-	c.PushGlobalMessageQueue(session, newCloseMessage(err))
+	c.PushGlobalMessageQueue(newConnectionCloseMessage(session, err))
 	session.Close()
 	session.(ISessionAbility).ClearAbility()
 	c.sessionMgr.RecycleIdleSession(session)
@@ -79,11 +79,11 @@ func (c *AppContext) Broadcast(msgId uint32, msg any) {
 }
 
 // message encoding
-func (c *AppContext) EncodeMessage(msg any) ([]byte, error) {
+func (c *AppContext) Marshal(msg any) ([]byte, error) {
 	return c.codec.Marshal(msg)
 }
-func (c *AppContext) DecodeMessage(msg any, data []byte) error {
-	return c.codec.Unmarshal(data, msg)
+func (c *AppContext) Unmarshal(data []byte, v any) error {
+	return c.codec.Unmarshal(data, v)
 }
 
 // network packet
@@ -91,12 +91,12 @@ func (c *AppContext) PackageMessage(messageId uint32, v any) ([]byte, error) {
 	return c.netPackageParser.Package(messageId, v)
 }
 
-func (c *AppContext) UnPackageMessage(data []byte) (IMessage, int, error) {
-	return c.netPackageParser.UnPackage(data)
+func (c *AppContext) UnPackageMessage(s ISession, data []byte) (IMessage, int, error) {
+	return c.netPackageParser.UnPackage(s, data)
 }
 
 // push the message to the routine pool
-func (c *AppContext) PushGlobalMessageQueue(s ISession, msg IMessage) {
+func (c *AppContext) PushGlobalMessageQueue(msg IMessage) {
 	// active defense to avoid too many message
-	c.workers.queue <- Event{Session: s, Message: msg}
+	c.workers.queue <- msg
 }
