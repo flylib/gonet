@@ -81,7 +81,7 @@ func (b *GoroutinePool) run() {
 
 			// message handling
 			for e := range b.queue {
-				b.Context.msgHook(e)
+				b.Context.messageHandler(e)
 			}
 		}()
 	}

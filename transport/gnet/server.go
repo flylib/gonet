@@ -14,7 +14,7 @@ type server struct {
 	ln gnet.Engine
 }
 
-func NewServer(ctx *gonet.Context) *server {
+func NewServer(ctx *gonet.Context) gonet.IServer {
 	s := &server{}
 	s.WithContext(ctx)
 	ctx.InitSessionMgr(reflect.TypeOf(session{}))

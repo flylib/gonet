@@ -1,10 +1,10 @@
 package main
 
 import (
+	"demo/proto"
 	"fmt"
 	"github.com/flylib/gonet"
 	"github.com/flylib/gonet/demo/handler"
-	"github.com/flylib/gonet/demo/handler/proto"
 	"github.com/flylib/gonet/transport/ws"
 	"log"
 	"time"

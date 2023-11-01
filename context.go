@@ -13,7 +13,7 @@ type Context struct {
 	routines *GoroutinePool
 
 	//Message callback processing
-	msgHook         MessageHandler
+	messageHandler  MessageHandler
 	maxSessionCount int
 	//routine pool config
 	poolCfg poolConfig

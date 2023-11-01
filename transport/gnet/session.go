@@ -43,6 +43,7 @@ func (s *session) Send(msgID uint32, msg any) error {
 	_, err = s.conn.Write(buf)
 	return err
 }
+
 func (s *session) Close() error {
 	return s.conn.Close()
 }

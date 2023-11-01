@@ -4,9 +4,9 @@ package gonet
 type (
 	//server
 	IServer interface {
-		Addr() string
 		Listen(addr string) error
 		Stop() error
+		Addr() string
 	}
 	//client
 	IClient interface {

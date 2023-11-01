@@ -10,7 +10,7 @@ type Option func(o *Context)
 // Default:0 means is no limit
 func WithMessageHandler(handler MessageHandler) Option {
 	return func(o *Context) {
-		o.msgHook = handler
+		o.messageHandler = handler
 	}
 }
 
