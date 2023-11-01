@@ -19,23 +19,23 @@ type ISession interface {
 	Store(value any)
 	//load the data
 	Load() (value any)
-	//get the working Contentx
-	Context() *AppContext
+	//get the working Context
+	GetContext() *Context
 }
 
 type ISessionIdentify interface {
 	ID() uint64
 	SetID(id uint64)
 	UpdateID(id uint64)
-	WithContext(c *AppContext)
+	WithContext(c *Context)
 	//get the working Contentx
-	Context() *AppContext
+	Context() *Context
 	ClearIdentify()
 }
 
 // 核心会话标志
 type SessionIdentify struct {
-	*AppContext
+	*Context
 	id uint64
 }
 
@@ -48,24 +48,24 @@ func (s *SessionIdentify) SetID(id uint64) {
 }
 
 func (s *SessionIdentify) UpdateID(id uint64) {
-	value, ok := s.AppContext.sessionMgr.alive.Load(s.id)
+	value, ok := s.Context.sessionMgr.alive.Load(s.id)
 	if ok {
-		s.AppContext.sessionMgr.alive.Delete(s.id)
+		s.Context.sessionMgr.alive.Delete(s.id)
 		s.id = id
-		s.AppContext.sessionMgr.alive.Store(s.id, value)
+		s.Context.sessionMgr.alive.Store(s.id, value)
 	}
 }
 
-func (s *SessionIdentify) WithContext(c *AppContext) {
-	s.AppContext = c
+func (s *SessionIdentify) WithContext(c *Context) {
+	s.Context = c
 }
 
-func (s *SessionIdentify) Context() *AppContext {
-	return s.AppContext
+func (s *SessionIdentify) GetContext() *Context {
+	return s.Context
 }
 
 func (s *SessionIdentify) ClearIdentify() {
-	s.AppContext = nil
+	s.Context = nil
 	s.id = 0
 }
 

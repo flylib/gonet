@@ -28,7 +28,7 @@ func MessageHandler(msg gonet.IMessage) {
 		}
 	case 102:
 		pb := proto.Say{}
-		err := msg.UnmarshalTo(&pb)
+		err := msg.UnmarshalTo(pb)
 		if err != nil {
 			panic(err)
 		}

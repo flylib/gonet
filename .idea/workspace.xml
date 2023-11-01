@@ -5,18 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="up">
+      <change afterPath="$PROJECT_DIR$/architecture.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/demo/handler/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interface.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/log.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/msg.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/netpackage.go" beforeDir="false" afterPath="$PROJECT_DIR$/netpackage.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/netpackage.go" beforeDir="false" afterPath="$PROJECT_DIR$/netpackager.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peer.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/session_mgr.go" beforeDir="false" afterPath="$PROJECT_DIR$/session_mgr.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/example/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/example/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/example/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/example/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/gnet/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/gnet/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/kcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/kcp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/udp/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/ws/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/ws/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/session.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
@@ -65,13 +78,18 @@
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/go/otherproject/grpc-example",
+    "last_opened_file_path": "D:/go/myproject/gonet",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "watcher.settings"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\go\myproject\gonet" />
+    </key>
+  </component>
   <component name="RunManager" selected="Go Build.go build github.com/flylib/gonet/transport/ws/example/client">
     <configuration name="go build github.com/flylib/gonet/transport/ws/example" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="gonet" />
@@ -144,21 +162,5 @@
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/context.go</url>
-          <line>77</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/handler/server.go</url>
-          <line>19</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

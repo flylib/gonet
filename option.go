@@ -1,37 +1,29 @@
 package gonet
 
-type Option func(o *option)
+import (
+	"github.com/flylib/interface/codec"
+	ilog "github.com/flylib/interface/log"
+)
 
-type option struct {
-	//Message callback processing
-	msgHook         MessageHandler
-	maxSessionCount int
-	//routine pool config
-	poolCfg poolConfig
-	//message codec
-	codec ICodec
-	log   ILogger
-	//net package parser
-	netPackageParser INetPackageParser
-}
+type Option func(o *Context)
 
 // Default:0 means is no limit
 func WithMessageHandler(handler MessageHandler) Option {
-	return func(o *option) {
+	return func(o *Context) {
 		o.msgHook = handler
 	}
 }
 
 // Default:0 means is no limit
 func WithMaxSessions(max int) Option {
-	return func(o *option) {
+	return func(o *Context) {
 		o.maxSessionCount = max
 	}
 }
 
 // Default is runtime.NumCPU(), means no goroutines will be dynamically scaled
 func WithPoolMaxRoutines(num int32) Option {
-	return func(o *option) {
+	return func(o *Context) {
 
 		o.poolCfg.maxNum = num
 	}
@@ -39,35 +31,35 @@ func WithPoolMaxRoutines(num int32) Option {
 
 // allow max idle routines
 func WithPoolMaxIdleRoutines(num int32) Option {
-	return func(o *option) {
+	return func(o *Context) {
 		o.poolCfg.maxIdleNum = num
 	}
 }
 
 // Default 512,global queue size
 func WithGQSize(size int32) Option {
-	return func(o *option) {
+	return func(o *Context) {
 		o.poolCfg.queueSize = size
 	}
 }
 
+// network package paser
+func WithNetPackager(packager INetPackager) Option {
+	return func(o *Context) {
+		o.INetPackager = packager
+	}
+}
+
 // Default json codec, message codec
-func WithMessageCodec(codec ICodec) Option {
-	return func(o *option) {
-		o.codec = codec
+func MustWithCodec(codec codec.ICodec) Option {
+	return func(o *Context) {
+		o.ICodec = codec
 	}
 }
 
 // set logger
-func WithLogger(l ILogger) Option {
-	return func(o *option) {
-		o.log = l
-	}
-}
-
-// network package paser
-func WithNetPackageParser(parser INetPackageParser) Option {
-	return func(o *option) {
-		o.netPackageParser = parser
+func MustWithLogger(l ilog.ILogger) Option {
+	return func(o *Context) {
+		o.ILogger = l
 	}
 }

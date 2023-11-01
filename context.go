@@ -1,50 +1,52 @@
 package gonet
 
 import (
-	"github.com/flylib/goutils/codec/json"
-	"github.com/flylib/goutils/logger/log"
+	"github.com/flylib/interface/codec"
+	ilog "github.com/flylib/interface/log"
 	"reflect"
 )
 
-type AppContext struct {
-	opt option
+type Context struct {
 	//session manager
 	sessionMgr *SessionManager
 	//go routine pool
 	routines *GoroutinePool
-	ILogger
+
+	//Message callback processing
+	msgHook         MessageHandler
+	maxSessionCount int
+	//routine pool config
+	poolCfg poolConfig
+	//message codec
+	codec.ICodec
+	ilog.ILogger
+	//net package parser
+	INetPackager
 }
 
-func NewContext(options ...Option) *AppContext {
-	ctx := &AppContext{
-		ILogger: log.NewLogger(),
-		opt: option{
-			codec:            new(json.Codec),
-			netPackageParser: new(DefaultNetPackageParser),
-		},
+func NewContext(options ...Option) *Context {
+	ctx := &Context{
+		INetPackager: &DefaultNetPackager{},
 	}
 
 	for _, f := range options {
-		f(&ctx.opt)
+		f(ctx)
 	}
 
-	if ctx.opt.log != nil {
-		ctx.ILogger = ctx.opt.log
-	}
 	ctx.routines = newGoroutinePool(ctx)
 	return ctx
 }
 
 // 会话管理
-func (c *AppContext) GetSession(id uint64) (ISession, bool) {
+func (c *Context) GetSession(id uint64) (ISession, bool) {
 	return c.sessionMgr.GetAliveSession(id)
 }
 
-func (c *AppContext) InitSessionMgr(sessionType reflect.Type) {
+func (c *Context) InitSessionMgr(sessionType reflect.Type) {
 	c.sessionMgr = NewSessionManager(sessionType)
 }
 
-func (c *AppContext) CreateSession() ISession {
+func (c *Context) CreateSession() ISession {
 	idleSession := c.sessionMgr.GetIdleSession()
 	idleSession.(ISessionIdentify).ClearIdentify()
 	session := idleSession.(ISession)
@@ -53,17 +55,18 @@ func (c *AppContext) CreateSession() ISession {
 	return session
 }
 
-func (c *AppContext) RecycleSession(session ISession, err error) {
+func (c *Context) RecycleSession(session ISession, err error) {
 	c.PushGlobalMessageQueue(newConnectionCloseMessage(session, err))
 	session.Close()
 	session.(ISessionAbility).ClearAbility()
 	c.sessionMgr.RecycleIdleSession(session)
 }
 
-func (c *AppContext) SessionCount() int32 {
+func (c *Context) SessionCount() int32 {
 	return c.sessionMgr.CountAliveSession()
 }
-func (c *AppContext) Broadcast(msgId uint32, msg any) {
+
+func (c *Context) Broadcast(msgId uint32, msg any) {
 	c.sessionMgr.alive.Range(func(_, item interface{}) bool {
 		session, ok := item.(ISession)
 		if ok {
@@ -73,25 +76,8 @@ func (c *AppContext) Broadcast(msgId uint32, msg any) {
 	})
 }
 
-// message encoding
-func (c *AppContext) Marshal(msg any) ([]byte, error) {
-	return c.opt.codec.Marshal(msg)
-}
-func (c *AppContext) Unmarshal(data []byte, v any) error {
-	return c.opt.codec.Unmarshal(data, v)
-}
-
-// network packet
-func (c *AppContext) PackageMessage(s ISession, messageId uint32, v any) ([]byte, error) {
-	return c.opt.netPackageParser.Package(s, messageId, v)
-}
-
-func (c *AppContext) UnPackageMessage(s ISession, data []byte) (IMessage, int, error) {
-	return c.opt.netPackageParser.UnPackage(s, data)
-}
-
 // push the message to the routine pool
-func (c *AppContext) PushGlobalMessageQueue(msg IMessage) {
+func (c *Context) PushGlobalMessageQueue(msg IMessage) {
 	// active defense to avoid too many message
 	c.routines.queue <- msg
 }

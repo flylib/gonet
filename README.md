@@ -8,22 +8,12 @@
 
 ## 主要技术理念
 - Session pool 会话池
-- Bee worker  消息处理协程池
+- Goroutine pool  消息处理协程池
 - Message cache layer 消息缓存层
-- Message ID route 依据消息ID进行路由
+- Message sequence 消息排序
 
 ## 架构图
-```go
-/*
-+---------------------------------------------------+
-+	server	       |	client	            +
-+---------------------------------------------------+
-+	    bee worker、Session pool、codec	    +
-+---------------------------------------------------+
-+	   transport(udp、tcp、ws、quic、kcp)	            +
-+---------------------------------------------------+
-*/
-```
+![architecture](./architecture.png)
 
 
 ## 主要特性及追求目标
@@ -43,17 +33,13 @@
 - [x] WEBSOCKET
 - [x] QUIC
 - [x] KCP
-- [ ] HTTP
-- [ ] RPC
+
 ## 数据编码格式支持
 - [x] json
 - [x] xml
 - [x] binary
 - [x] protobuf
 
-## 关键技术
-- [x] 会话池(session pool）
-- [x] 协程池(goroutine pool)
 
 ## 安装教程
 ### **1.** git clone到 GOPATH/src目录下

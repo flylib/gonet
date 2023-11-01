@@ -1,12 +1,26 @@
 package gonet
 
+// Transport layer related
+type (
+	//server
+	IServer interface {
+		Addr() string
+		Listen(addr string) error
+		Stop() error
+	}
+	//client
+	IClient interface {
+		Dial(addr string) (ISession, error)
+	}
+)
+
 type IPeerIdentify interface {
 	Addr() string
 	SetAddr(addr string)
-	WithContext(c *AppContext)
+	WithContext(c *Context)
 }
 type PeerIdentify struct {
-	*AppContext
+	*Context
 	uuid string
 	addr string
 }
@@ -19,6 +33,6 @@ func (s *PeerIdentify) SetAddr(addr string) {
 	s.addr = addr
 }
 
-func (s *PeerIdentify) WithContext(c *AppContext) {
-	s.AppContext = c
+func (s *PeerIdentify) WithContext(c *Context) {
+	s.Context = c
 }

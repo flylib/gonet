@@ -17,26 +17,26 @@ type poolConfig struct {
 // Lightweight goroutine pool
 type GoroutinePool struct {
 	cfg poolConfig
-	*AppContext
+	*Context
 	curWorkingNum     int32
 	cacheQueueSize    int
 	queue             chan IMessage
 	addRoutineChannel chan bool
 }
 
-func newGoroutinePool(ctx *AppContext) *GoroutinePool {
-	if ctx.opt.poolCfg.maxIdleNum == 0 {
-		ctx.opt.poolCfg.maxIdleNum = int32(runtime.NumCPU())
+func newGoroutinePool(ctx *Context) *GoroutinePool {
+	if ctx.poolCfg.maxIdleNum == 0 {
+		ctx.poolCfg.maxIdleNum = int32(runtime.NumCPU())
 	}
-	if ctx.opt.poolCfg.queueSize == 0 {
-		ctx.opt.poolCfg.queueSize = 64
+	if ctx.poolCfg.queueSize == 0 {
+		ctx.poolCfg.queueSize = 64
 	}
 
 	pool := &GoroutinePool{
-		AppContext:        ctx,
-		cfg:               ctx.opt.poolCfg,
+		Context:           ctx,
+		cfg:               ctx.poolCfg,
 		addRoutineChannel: make(chan bool),
-		queue:             make(chan IMessage, ctx.opt.poolCfg.queueSize),
+		queue:             make(chan IMessage, ctx.poolCfg.queueSize),
 	}
 
 	go pool.run()
@@ -74,14 +74,14 @@ func (b *GoroutinePool) run() {
 			defer func() {
 				atomic.AddInt32(&b.curWorkingNum, -1)
 				if err := recover(); err != nil {
-					b.Errorf("panic error:%s\n%s", err, debug.Stack())
+					b.ILogger.Errorf("panic error:%s\n%s", err, debug.Stack())
 					b.ascRoutine(1)
 				}
 			}()
 
 			// message handling
 			for e := range b.queue {
-				b.AppContext.opt.msgHook(e)
+				b.Context.msgHook(e)
 			}
 		}()
 	}

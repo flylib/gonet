@@ -15,33 +15,27 @@ const (
 	HeaderOffset  = MsgIDOffset + MsgIDOffset //包头部分
 )
 
-// message Codec
-type ICodec interface {
-	Marshal(v any) (data []byte, err error)
-	Unmarshal(data []byte, v any) error
-}
-
 // 网络包解析器(network package)
-type INetPackageParser interface {
+type INetPackager interface {
 	Package(s ISession, msgID uint32, v any) ([]byte, error)
 	UnPackage(s ISession, data []byte) (IMessage, int, error)
 }
 
-type DefaultNetPackageParser struct {
+type DefaultNetPackager struct {
 }
 
-func (d *DefaultNetPackageParser) Package(s ISession, msgID uint32, v any) ([]byte, error) {
-	body, err := s.Context().Marshal(v)
+func (d *DefaultNetPackager) Package(s ISession, msgID uint32, v any) ([]byte, error) {
+	body, err := s.GetContext().Marshal(v)
 	if err != nil {
 		return nil, err
 	}
 	content := make([]byte, MsgIDOffset, MsgIDOffset+len(body))
 	binary.LittleEndian.PutUint32(content, msgID)
-	content = append(content, body...)
+	copy(content[MsgIDOffset:], body)
 	return content, nil
 }
 
-func (d *DefaultNetPackageParser) UnPackage(s ISession, data []byte) (IMessage, int, error) {
+func (d *DefaultNetPackager) UnPackage(s ISession, data []byte) (IMessage, int, error) {
 	msgID := binary.LittleEndian.Uint32(data[:MsgIDOffset])
 	return &message{id: msgID, body: data[MsgIDOffset:], session: s}, 0, nil
 }

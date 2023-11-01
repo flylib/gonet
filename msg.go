@@ -59,5 +59,5 @@ func (m *message) Session() ISession {
 }
 
 func (m *message) UnmarshalTo(v any) error {
-	return m.session.Context().Unmarshal(m.Body(), v)
+	return m.session.GetContext().Unmarshal(m.Body(), v)
 }

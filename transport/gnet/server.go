@@ -2,11 +2,11 @@ package gnet
 
 import (
 	"context"
+	"github.com/flylib/gonet"
+	"github.com/panjf2000/gnet/v2"
 	"log"
 	"reflect"
 )
-
-var _ gonet.IServer = new(server)
 
 type server struct {
 	gnet.EventHandler
@@ -14,9 +14,10 @@ type server struct {
 	ln gnet.Engine
 }
 
-func NewServer(addr string) *server {
+func NewServer(ctx *gonet.Context) *server {
 	s := &server{}
-	s.SetAddr(addr)
+	s.WithContext(ctx)
+	ctx.InitSessionMgr(reflect.TypeOf(session{}))
 	return s
 }
 
@@ -26,14 +27,16 @@ func (s *server) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	s.ln = eng
 	return
 }
+
 func (s *server) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
-	newSession(s.AppContext, c)
+	newSession(s.Context, c)
 	return nil, gnet.None
 }
+
 func (s *server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
-	is, ok := s.AppContext.GetSession(uint64(c.Fd()))
+	is, ok := s.Context.GetSession(uint64(c.Fd()))
 	if ok {
-		s.AppContext.RecycleSession(is, err)
+		s.Context.RecycleSession(is, err)
 	}
 	return gnet.None
 }
@@ -43,25 +46,24 @@ func (s *server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	if err != nil {
 		return gnet.Close
 	}
-	message, _, err := s.AppContext.UnPackage(buf)
+	is, ok := s.Context.GetSession(uint64(c.Fd()))
+	if !ok {
+		return gnet.Close
+	}
+	message, _, err := s.Context.UnPackage(is, buf)
 	if err != nil {
 		log.Printf("session_%v msg parser error,reason is %v \n", c.Fd(), err)
 		return gnet.None
 	}
-	is, ok := s.AppContext.GetSession(uint64(c.Fd()))
-	if ok {
-		s.AppContext.PushGlobalMessageQueue(is, message)
-	}
+	s.Context.PushGlobalMessageQueue(message)
 	return gnet.None
 }
 
-func (s *server) Listen() error {
-	return gnet.Run(s, s.Addr(), gnet.WithMulticore(true))
-}
-func (s *server) Stop() error {
-	return s.ln.Stop(context.Background())
+func (s *server) Listen(addr string) error {
+	s.SetAddr(addr)
+	return gnet.Run(s, addr, gnet.WithMulticore(true))
 }
 
-func (s *server) SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
+func (s *server) Stop() error {
+	return s.ln.Stop(context.Background())
 }

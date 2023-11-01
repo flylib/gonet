@@ -16,7 +16,7 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *gonet.AppContext, conn *websocket.Conn) *session {
+func newSession(c *gonet.Context, conn *websocket.Conn) *session {
 	is := c.CreateSession()
 	s := is.(*session)
 	s.conn = conn
@@ -34,7 +34,7 @@ func (s *session) Close() error {
 
 // websocket does not support sending messages concurrently
 func (s *session) Send(msgID uint32, msg any) (err error) {
-	buf, err := s.AppContext.PackageMessage(s, msgID, msg)
+	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -49,14 +49,14 @@ func (s *session) ReadLoop() {
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {
-			s.AppContext.RecycleSession(s, err)
+			s.Context.RecycleSession(s, err)
 			return
 		}
-		msg, _, err := s.AppContext.UnPackageMessage(s, buf)
+		msg, _, err := s.Context.UnPackage(s, buf)
 		if err != nil {
 			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
 			continue
 		}
-		s.AppContext.PushGlobalMessageQueue(msg)
+		s.Context.PushGlobalMessageQueue(msg)
 	}
 }

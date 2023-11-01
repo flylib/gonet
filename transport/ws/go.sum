@@ -3,8 +3,10 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/flylib/goutils/codec/json v0.0.0-20231012070911-2cf6c2bcb71d h1:D2jpMW7LlY2/60ORJ177+m02RR4cbrCW53d7pHkF0s0=
 github.com/flylib/goutils/codec/json v0.0.0-20231012070911-2cf6c2bcb71d/go.mod h1:Wj1xXeavXwTDMZVrzQ386Cieqk2fQLa08hb5SEqacq0=
-github.com/flylib/goutils/logger/log v0.0.0-20231010072000-719eaf1057f5 h1:krs0MzSePUq/D7314E2OJrsm5xXwAJpdVDRPyApceIQ=
-github.com/flylib/goutils/logger/log v0.0.0-20231010072000-719eaf1057f5/go.mod h1:SO31BOi9uMnhv5C84rUcwpi7QM466A93C6SMU+8VWG0=
+github.com/flylib/goutils/logger v0.0.0-20231023014531-4f50a5871c60 h1:pPAkud8T8E2fdzalXYzcpoXDgsv1ZKsDKLZEUBxtMp0=
+github.com/flylib/goutils/logger v0.0.0-20231023014531-4f50a5871c60/go.mod h1:Z7T6mRRPzV+3E3v4mUki0yuerngrr6nktf7RU749Vvs=
+github.com/flylib/goutils/logger/log v0.0.0-20231023014531-4f50a5871c60 h1:WjQIwDreqqJOALAk9Phh279QkVYYF0/pNUINh2MJKtQ=
+github.com/flylib/goutils/logger/log v0.0.0-20231023014531-4f50a5871c60/go.mod h1:iq0vQFdHXNWZRgbwa8SEvqSBEnH7mfCvsuw6Hj0v7+s=
 github.com/flylib/goutils/sync/spinlock v0.0.0-20231019075452-c7b2623472a2 h1:YObGJCl68rKYCizLReivUm+lV/rtHLiYsAkml5g/qDo=
 github.com/flylib/goutils/sync/spinlock v0.0.0-20231019075452-c7b2623472a2/go.mod h1:NBOxCoj1hfvXEtSDbB1yQG2avab26Mj9/ru09oCjoYI=
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
@@ -23,5 +25,7 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1 h1:bBRl1b0OH9s/DuPhuXpNl+VtCaJXFZ5/uEFST95x9zc=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1/go.mod h1:YD8tP3GAjkrDg1eZH7EGmyESg/lsYskCTPBJVb9jqSc=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=

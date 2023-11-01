@@ -21,7 +21,7 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *AppContext, conn *kcp.UDPSession) *session {
+func newSession(c *Context, conn *kcp.UDPSession) *session {
 	is := c.CreateSession()
 	s := is.(*session)
 	s.conn = conn
@@ -34,7 +34,7 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msg interface{}) error {
-	data, err := s.AppContext.Package(msg)
+	data, err := s.Context.Package(msg)
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (s *session) recvLoop() {
 		var buf = make([]byte, MTU)
 		n, err := s.conn.Read(buf)
 		if err != nil {
-			s.AppContext.RecycleSession(s, err)
+			s.Context.RecycleSession(s, err)
 			return
 		}
 		if n == 0 {
@@ -63,6 +63,6 @@ func (s *session) recvLoop() {
 			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
 			continue
 		}
-		s.AppContext.PushGlobalMessageQueue(s, msg)
+		s.Context.PushGlobalMessageQueue(s, msg)
 	}
 }
