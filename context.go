@@ -33,6 +33,14 @@ func NewContext(options ...Option) *Context {
 		f(ctx)
 	}
 
+	if ctx.ICodec == nil {
+		panic("nil ICodec")
+	}
+
+	if ctx.ILogger == nil {
+		panic("nil ILogger")
+	}
+
 	ctx.routines = newGoroutinePool(ctx)
 	return ctx
 }

@@ -1,18 +1,18 @@
 package gnet
 
 import (
-	. "github.com/flylib/gonet"
+	"github.com/flylib/gonet"
 	"github.com/panjf2000/gnet/v2"
 	"net"
 )
 
 // Socket会话
 type session struct {
-	*Context
+	*gonet.Context
 	//核心会话标志
-	SessionIdentify
+	gonet.SessionIdentify
 	//存储功能
-	SessionAbility
+	gonet.SessionAbility
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -22,7 +22,7 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *Context, conn gnet.Conn) *session {
+func newSession(c *gonet.Context, conn gnet.Conn) *session {
 	is := c.CreateSession()
 	s := is.(*session)
 	s.conn = conn

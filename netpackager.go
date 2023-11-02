@@ -29,7 +29,7 @@ func (d *DefaultNetPackager) Package(s ISession, msgID uint32, v any) ([]byte, e
 	if err != nil {
 		return nil, err
 	}
-	content := make([]byte, MsgIDOffset, MsgIDOffset+len(body))
+	content := make([]byte, MsgIDOffset+len(body))
 	binary.LittleEndian.PutUint32(content, msgID)
 	copy(content[MsgIDOffset:], body)
 	return content, nil

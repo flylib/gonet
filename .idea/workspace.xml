@@ -4,19 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="up">
+    <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="up gnet">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.en.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/handler/proto/test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/proto/test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/option.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/peer.go" beforeDir="false" afterPath="$PROJECT_DIR$/peer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/gnet/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/gnet/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/example/client/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/example/client/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/worker.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +69,7 @@
       <recent name="D:\go\myproject\gonet\demo" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build github.com/flylib/gonet/transport/ws/example/client">
+  <component name="RunManager" selected="Go Test.TestWebsocketClient in demo">
     <configuration name="go build github.com/flylib/gonet/transport/ws/example" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="gonet" />
       <working_directory value="$PROJECT_DIR$/transport/ws" />
@@ -109,23 +99,35 @@
       <pattern value="^\QTestClient\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestServer in github.com/flylib/gonet/transport/ws" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestWebsocketClient in demo" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="gonet" />
-      <working_directory value="$PROJECT_DIR$/transport/ws" />
+      <working_directory value="$PROJECT_DIR$/demo" />
       <kind value="PACKAGE" />
-      <package value="github.com/flylib/gonet/transport/ws" />
+      <package value="demo" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestServer\E$" />
+      <pattern value="^\QTestWebsocketClient\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestWebsocketServer in demo" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="gonet" />
+      <working_directory value="$PROJECT_DIR$/demo" />
+      <kind value="PACKAGE" />
+      <package value="demo" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestWebsocketServer\E$" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestWebsocketClient in demo" />
+        <item itemvalue="Go Test.TestWebsocketServer in demo" />
         <item itemvalue="Go Build.go build github.com/flylib/gonet/transport/ws/example/client" />
         <item itemvalue="Go Build.go build github.com/flylib/gonet/transport/ws/example" />
         <item itemvalue="Go Test.TestClient in github.com/flylib/gonet/transport/ws" />
-        <item itemvalue="Go Test.TestServer in github.com/flylib/gonet/transport/ws" />
       </list>
     </recent_temporary>
   </component>
@@ -147,10 +149,47 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update" />
     <MESSAGE value="up" />
-    <option name="LAST_COMMIT_MESSAGE" value="up" />
+    <MESSAGE value="up gnet" />
+    <option name="LAST_COMMIT_MESSAGE" value="up gnet" />
   </component>
   <component name="VgoProject">
     <auto-vendoring-mode>false</auto-vendoring-mode>
     <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/transport/ws/session.go</url>
+          <line>36</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/handler/server.go</url>
+          <line>20</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/demo/handler/server.go</url>
+          <line>19</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/netpackager.go</url>
+          <line>34</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/netpackager.go</url>
+          <line>33</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/netpackager.go</url>
+          <line>38</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

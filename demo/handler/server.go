@@ -1,9 +1,9 @@
 package handler
 
 import (
+	"demo/proto"
 	"fmt"
 	"github.com/flylib/gonet"
-	"github.com/flylib/gonet/demo/handler/proto"
 	"log"
 )
 
@@ -28,7 +28,7 @@ func MessageHandler(msg gonet.IMessage) {
 		}
 	case 102:
 		pb := proto.Say{}
-		err := msg.UnmarshalTo(pb)
+		err := msg.UnmarshalTo(&pb)
 		if err != nil {
 			panic(err)
 		}

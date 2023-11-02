@@ -29,7 +29,7 @@ type ISessionIdentify interface {
 	UpdateID(id uint64)
 	WithContext(c *Context)
 	//get the working Contentx
-	Context() *Context
+	GetContext() *Context
 	ClearIdentify()
 }
 

@@ -11,11 +11,18 @@ import (
 type server struct {
 	gnet.EventHandler
 	gonet.PeerIdentify
-	ln gnet.Engine
+	ln  gnet.Engine
+	opt option
 }
 
-func NewServer(ctx *gonet.Context) gonet.IServer {
-	s := &server{}
+func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+	var opt option
+	for _, f := range options {
+		f(&opt)
+	}
+	opt.Logger = ctx.ILogger
+
+	s := &server{opt: opt}
 	s.WithContext(ctx)
 	ctx.InitSessionMgr(reflect.TypeOf(session{}))
 	return s
@@ -61,7 +68,7 @@ func (s *server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 
 func (s *server) Listen(addr string) error {
 	s.SetAddr(addr)
-	return gnet.Run(s, addr, gnet.WithMulticore(true))
+	return gnet.Run(s, addr, gnet.WithOptions(s.opt.Options))
 }
 
 func (s *server) Stop() error {
