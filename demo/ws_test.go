@@ -35,7 +35,7 @@ func TestWebsocketClient(t *testing.T) {
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
-	session, err := transport.NewClient(ctx, transport.HandshakeTimeout(5*time.Second)).Dial("ws://localhost:8088/center/ws")
+	session, err := transport.NewClient(ctx, transport.WithHandshakeTimeout(5*time.Second)).Dial("ws://localhost:8088/center/ws")
 	if err != nil {
 		log.Fatal(err)
 	}

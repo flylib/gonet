@@ -9,7 +9,7 @@ type option struct {
 	HandshakeTimeout time.Duration
 }
 
-func HandshakeTimeout(t time.Duration) Option {
+func WithHandshakeTimeout(t time.Duration) Option {
 	return func(option *option) {
 		option.HandshakeTimeout = t
 	}

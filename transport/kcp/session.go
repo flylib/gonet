@@ -1,19 +1,17 @@
 package kcp
 
 import (
-	. "github.com/flylib/gonet"
-	"log"
+	"github.com/flylib/gonet"
+	"github.com/xtaci/kcp-go"
 	"net"
 )
 
-var _ ISession = new(session)
-
 // Socket会话
-type session struct {
+type Session struct {
 	//核心会话标志
-	SessionIdentify
+	gonet.SessionIdentify
 	//存储功能
-	SessionAbility
+	gonet.SessionAbility
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -21,48 +19,45 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *Context, conn *kcp.UDPSession) *session {
+func newSession(c *gonet.Context, conn *kcp.UDPSession) *Session {
 	is := c.CreateSession()
-	s := is.(*session)
+	s := is.(*Session)
 	s.conn = conn
 	s.WithContext(c)
 	return s
 }
 
-func (s *session) RemoteAddr() net.Addr {
+func (s *Session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *session) Send(msg interface{}) error {
-	data, err := s.Context.Package(msg)
+func (s *Session) Send(msgID uint32, msg any) error {
+	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
-	_, err = s.conn.Write(data)
+	_, err = s.conn.Write(buf)
 	return err
 }
 
-func (s *session) Close() error {
+func (s *Session) Close() error {
 	return s.conn.Close()
 }
 
 // 接收循环
-func (s *session) recvLoop() {
+func (s *Session) recvLoop() {
+	var buf = make([]byte, gonet.MTU)
 	for {
-		var buf = make([]byte, MTU)
 		n, err := s.conn.Read(buf)
 		if err != nil {
 			s.Context.RecycleSession(s, err)
 			return
 		}
-		if n == 0 {
-			continue
-		}
-		msg, _, err := s.UnPackage(buf[:n])
+		msg, _, err := s.Context.UnPackage(s, buf[:n])
 		if err != nil {
-			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
+			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(s, msg)
+		s.Context.PushGlobalMessageQueue(msg)
 	}
 }
