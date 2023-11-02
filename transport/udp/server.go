@@ -53,6 +53,6 @@ func (s *server) Listen(addr string) error {
 	}
 	return nil
 }
-func (s *server) Stop() error {
+func (s *server) Close() error {
 	return s.ln.Close()
 }

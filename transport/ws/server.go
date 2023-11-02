@@ -38,7 +38,7 @@ func (s *server) Listen(addr string) error {
 	return http.ListenAndServe(url.Host, mux)
 }
 
-func (s *server) Stop() error {
+func (s *server) Close() error {
 	s.upGrader.HandshakeTimeout = time.Nanosecond
 	return nil
 }

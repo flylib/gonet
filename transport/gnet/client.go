@@ -84,3 +84,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 	}
 	return newSession(c.Context, conn), nil
 }
+
+func (c *client) Close() error {
+	return c.cli.Stop()
+}

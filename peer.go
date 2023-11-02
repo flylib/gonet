@@ -5,12 +5,13 @@ type (
 	//server
 	IServer interface {
 		Listen(addr string) error
-		Stop() error
+		Close() error
 		Addr() string
 	}
 	//client
 	IClient interface {
 		Dial(addr string) (ISession, error)
+		Close() error
 	}
 )
 

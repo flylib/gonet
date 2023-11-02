@@ -11,8 +11,8 @@ import (
 type server struct {
 	gnet.EventHandler
 	gonet.PeerIdentify
-	ln  gnet.Engine
-	opt option
+	engine gnet.Engine
+	opt    option
 }
 
 func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
@@ -31,7 +31,7 @@ func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
 // OnBoot fires when the engine is ready for accepting connections.
 // The parameter engine has information and various utilities.
 func (s *server) OnBoot(eng gnet.Engine) (action gnet.Action) {
-	s.ln = eng
+	s.engine = eng
 	return
 }
 
@@ -71,6 +71,6 @@ func (s *server) Listen(addr string) error {
 	return gnet.Run(s, addr, gnet.WithOptions(s.opt.Options))
 }
 
-func (s *server) Stop() error {
-	return s.ln.Stop(context.Background())
+func (s *server) Close() error {
+	return s.engine.Stop(context.Background())
 }
