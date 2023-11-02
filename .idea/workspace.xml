@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="up tcp">
+    <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="up kcp">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/kcp/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/kcp/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/kcp/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/transport/kcp/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/kcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/kcp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/kcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/kcp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/tcp/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/option.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/option.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +55,7 @@
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/go/myproject/gonet/transport/tcp",
+    "last_opened_file_path": "D:/go/myproject/gonet/transport/quic",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -68,6 +64,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\go\myproject\gonet\transport\quic" />
       <recent name="D:\go\myproject\gonet\transport\tcp" />
       <recent name="D:\go\myproject\gonet" />
     </key>
@@ -161,7 +158,8 @@
     <MESSAGE value="up peer" />
     <MESSAGE value="up" />
     <MESSAGE value="up tcp" />
-    <option name="LAST_COMMIT_MESSAGE" value="up tcp" />
+    <MESSAGE value="up kcp" />
+    <option name="LAST_COMMIT_MESSAGE" value="up kcp" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

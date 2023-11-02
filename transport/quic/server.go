@@ -7,6 +7,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/pem"
+	"github.com/flylib/gonet"
 	"github.com/quic-go/quic-go"
 	"math/big"
 	"reflect"
@@ -14,32 +15,34 @@ import (
 
 // 接收端
 type server struct {
-	PeerIdentify
+	gonet.PeerIdentify
 	ln *quic.Listener
 }
 
-func NewServer(addr string) *server {
+func NewServer(ctx *gonet.Context) gonet.IServer {
 	s := &server{}
-	s.SetAddr(addr)
+	s.WithContext(ctx)
 	return s
 }
 
-func (s *server) Listen() (err error) {
-	s.ln, err = quic.ListenAddr(s.Addr(), s.generateTLSConfig(), nil)
+func (s *server) Listen(url string) (err error) {
+	s.ln, err = quic.ListenAddr(url, s.generateTLSConfig(), nil)
 	if err != nil {
 		return err
 	}
+	s.SetAddr(url)
+
 	for {
 		conn, err := s.ln.Accept(context.Background())
 		if err != nil {
 			continue
 		}
-		s := newSession(s.AppContext, conn)
-		go s.recvLoop()
+		ses := newSession(s.Context, conn)
+		go ses.acceptStreamLoop()
 	}
 }
 
-func (s *server) Stop() error {
+func (s *server) Close() error {
 	return s.ln.Close()
 }
 

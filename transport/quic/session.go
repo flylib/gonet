@@ -2,20 +2,21 @@ package quic
 
 import (
 	"context"
-	"log"
+	"github.com/flylib/gonet"
+	"github.com/quic-go/quic-go"
 	"net"
 )
 
 // conn
 type session struct {
-	SessionIdentify
-	SessionAbility
+	gonet.SessionIdentify
+	gonet.SessionAbility
 	conn   quic.Connection
 	stream quic.Stream
 }
 
 // 新会话
-func newSession(c *AppContext, conn quic.Connection) *session {
+func newSession(c *gonet.Context, conn quic.Connection) *session {
 	ses := c.CreateSession()
 	s, _ := ses.(*session)
 	s.conn = conn
@@ -27,49 +28,48 @@ func (s *session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *session) Send(msg any) error {
-	data, err := s.AppContext.Package(msg)
+func (s *session) Send(msgID uint32, msg any) error {
+	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
-	_, err = s.stream.Write(data)
+	_, err = s.stream.Write(buf)
 	return err
 }
 
 func (s *session) Close() error {
-	err := s.conn.CloseWithError(0, "EOF")
-	s.conn = nil
-	return err
+	return s.conn.CloseWithError(0, "EOF")
+}
+
+func (s *session) acceptStreamLoop() {
+	for {
+		channel, err := s.conn.AcceptStream(context.Background())
+		if err != nil {
+			s.Warnf("session_%v AcceptStream error,reason is %v", s.ID(), err)
+			s.Context.RecycleSession(s, err)
+			return
+		}
+		s.stream = channel
+		go s.recvLoop(channel)
+	}
+
 }
 
 // 循环读取消息
-func (s *session) recvLoop() {
-	var err error
-	s.stream, err = s.conn.AcceptStream(context.Background())
-	if err != nil {
-		log.Printf("session_%v AcceptStream error,reason is %v \n", s.ID(), err)
-		s.AppContext.RecycleSession(s, err)
-		return
-	}
-
+func (s *session) recvLoop(channel quic.Stream) {
+	defer channel.Close()
+	var buf = make([]byte, gonet.MTU)
 	for {
-		var n int
-		buf := make([]byte, 1024)
-		n, err = s.stream.Read(buf)
+		n, err := channel.Read(buf)
 		if err != nil {
-			log.Printf("session_%v reading error,reason is %v \n", s.ID(), err)
-			err = s.stream.Close()
-			if err != nil {
-				log.Printf("session_%v close error,reason is %v \n", s.ID(), err)
-			}
-			s.AppContext.RecycleSession(s, err)
+			s.ILogger.Warnf("session_%v_%d steam read error - %v ", s.ID(), channel.StreamID(), err)
 			return
 		}
-		msg, _, err := s.AppContext.UnPackage(buf[:n])
+		msg, _, err := s.Context.UnPackage(s, buf[:n])
 		if err != nil {
-			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
+			s.ILogger.Warnf("session_%v_%d msg parser error,reason is %v ", s.ID(), channel.StreamID(), err)
 			continue
 		}
-		s.AppContext.PushGlobalMessageQueue(s, msg)
+		s.Context.PushGlobalMessageQueue(msg)
 	}
 }
