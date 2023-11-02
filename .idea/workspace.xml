@@ -6,15 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="up">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/gnet_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/gnet_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/handler/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/handler/handle.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/ali_pay.JPG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/logo.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/wx_pay.JPG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/gnet/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/tcp/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/tcp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/tcp/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +54,7 @@
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/go/myproject/gonet",
+    "last_opened_file_path": "D:/go/myproject/gonet/transport/tcp",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -71,6 +63,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\go\myproject\gonet\transport\tcp" />
       <recent name="D:\go\myproject\gonet" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
