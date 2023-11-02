@@ -21,8 +21,8 @@ func TestGNETServer(t *testing.T) {
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
-	fmt.Println("server listen on ws://localhost:8088/center/ws")
-	if err := transport.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
+	t.Log("server listen on localhost:8088")
+	if err := transport.NewServer(ctx).Listen("localhost:8088"); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -30,15 +30,17 @@ func TestGNETServer(t *testing.T) {
 func TestGNETClient(t *testing.T) {
 	ctx := gonet.NewContext(
 		gonet.WithMessageHandler(handler.MessageHandler),
+
+		gonet.MustWithSessionType(transport.Session{}),
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
-	session, err := transport.NewClient(ctx).Dial("ws://localhost:8088/center/ws")
+	session, err := transport.NewClient(ctx).Dial("localhost:8088")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("connect success")
+	t.Log("connect success")
 
 	tick := time.Tick(time.Second * 1)
 	var i int

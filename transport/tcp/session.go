@@ -6,8 +6,6 @@ import (
 	"net"
 )
 
-var _ ISession = new(session)
-
 // Socket会话
 type session struct {
 	//核心会话标志

@@ -8,7 +8,6 @@ import (
 
 // Socket会话
 type Session struct {
-	*gonet.Context
 	//核心会话标志
 	gonet.SessionIdentify
 	//存储功能
@@ -22,11 +21,11 @@ type Session struct {
 }
 
 // 新会话
-func newSession(c *gonet.Context, conn gnet.Conn) *Session {
-	is := c.CreateSession()
+func newSession(ctx *gonet.Context, conn gnet.Conn) *Session {
+	is := ctx.CreateSession()
 	s := is.(*Session)
 	s.conn = conn
-	s.WithContext(c)
+	s.WithContext(ctx)
 	s.UpdateID(uint64(conn.Fd()))
 	return s
 }

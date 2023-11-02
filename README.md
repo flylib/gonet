@@ -1,5 +1,4 @@
 
-![gonetlogo](docs/logo.jpg)
 ## version
  `v3.1.0`
  

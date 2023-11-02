@@ -1,0 +1,4 @@
+github.com/flylib/goutils/sync/spinlock v0.0.0-20231019075452-c7b2623472a2 h1:YObGJCl68rKYCizLReivUm+lV/rtHLiYsAkml5g/qDo=
+github.com/flylib/goutils/sync/spinlock v0.0.0-20231019075452-c7b2623472a2/go.mod h1:NBOxCoj1hfvXEtSDbB1yQG2avab26Mj9/ru09oCjoYI=
+github.com/flylib/interface v0.0.0-20231101042444-4c3b4b8d0e0d h1:oGTwL0nFV/UfBdBLosODT0szr7L/aPmW8G/I8MdNm5w=
+github.com/flylib/interface v0.0.0-20231101042444-4c3b4b8d0e0d/go.mod h1:NgCt9XMId9KtHj9LeXkpE9ZEuW/5H69KixYv8aq9O64=
