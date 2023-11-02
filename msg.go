@@ -14,7 +14,7 @@ type (
 type IMessage interface {
 	ID() uint32
 	Body() []byte
-	Session() ISession
+	From() ISession
 	UnmarshalTo(v any) error
 }
 
@@ -54,7 +54,7 @@ func (m *message) Body() []byte {
 	return m.body
 }
 
-func (m *message) Session() ISession {
+func (m *message) From() ISession {
 	return m.session
 }
 

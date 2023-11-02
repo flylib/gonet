@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/flylib/gonet"
 	transport "github.com/flylib/gonet/transport/gnet"
-	"github.com/flylib/gonet/transport/ws"
 	"github.com/flylib/goutils/codec/json"
 	"github.com/flylib/pkg/log/builtinlog"
 	"log"
@@ -17,6 +16,8 @@ import (
 func TestGNETServer(t *testing.T) {
 	ctx := gonet.NewContext(
 		gonet.WithMessageHandler(handler.MessageHandler),
+
+		gonet.MustWithSessionType(transport.Session{}),
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
@@ -32,7 +33,7 @@ func TestGNETClient(t *testing.T) {
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
-	session, err := transport.NewClient(ctx, ws.HandshakeTimeout(5*time.Second)).Dial("ws://localhost:8088/center/ws")
+	session, err := transport.NewClient(ctx).Dial("ws://localhost:8088/center/ws")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -4,12 +4,12 @@ import (
 	"github.com/flylib/gonet"
 	"github.com/gorilla/websocket"
 	"net/http"
-	"reflect"
 )
 
 type client struct {
 	gonet.PeerIdentify
 	option
+	conn websocket.Conn
 }
 
 func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
@@ -18,7 +18,6 @@ func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
 		f(&c.option)
 	}
 	c.WithContext(ctx)
-	ctx.InitSessionMgr(reflect.TypeOf(session{}))
 	return c
 }
 
@@ -35,4 +34,8 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 	s := newSession(c.Context, conn)
 	go s.ReadLoop()
 	return s, nil
+}
+
+func (c *client) Close() error {
+	return nil
 }

@@ -8,7 +8,7 @@ import (
 
 type Context struct {
 	//session manager
-	sessionMgr *SessionManager
+	sessionMgr *sessionManager
 	//go routine pool
 	routines *GoroutinePool
 
@@ -22,6 +22,8 @@ type Context struct {
 	ilog.ILogger
 	//net package parser
 	INetPackager
+
+	sessionType reflect.Type
 }
 
 func NewContext(options ...Option) *Context {
@@ -41,37 +43,36 @@ func NewContext(options ...Option) *Context {
 		panic("nil ILogger")
 	}
 
+	if ctx.sessionType == nil {
+		panic("nil sessionType")
+	}
+
 	ctx.routines = newGoroutinePool(ctx)
+	ctx.sessionMgr = newSessionManager(ctx.sessionType)
 	return ctx
 }
 
 // 会话管理
 func (c *Context) GetSession(id uint64) (ISession, bool) {
-	return c.sessionMgr.GetAliveSession(id)
+	return c.sessionMgr.getAliveSession(id)
 }
-
-func (c *Context) InitSessionMgr(sessionType reflect.Type) {
-	c.sessionMgr = NewSessionManager(sessionType)
-}
-
 func (c *Context) CreateSession() ISession {
-	idleSession := c.sessionMgr.GetIdleSession()
+	idleSession := c.sessionMgr.getIdleSession()
 	idleSession.(ISessionIdentify).ClearIdentify()
 	session := idleSession.(ISession)
-	c.sessionMgr.AddAliveSession(idleSession)
+	c.sessionMgr.addAliveSession(idleSession)
 	c.PushGlobalMessageQueue(newConnectionConnectMessage(session))
 	return session
 }
-
 func (c *Context) RecycleSession(session ISession, err error) {
 	c.PushGlobalMessageQueue(newConnectionCloseMessage(session, err))
 	session.Close()
 	session.(ISessionAbility).ClearAbility()
-	c.sessionMgr.RecycleIdleSession(session)
+	c.sessionMgr.recycleIdleSession(session)
 }
 
 func (c *Context) SessionCount() int32 {
-	return c.sessionMgr.CountAliveSession()
+	return c.sessionMgr.countAliveSession()
 }
 
 func (c *Context) Broadcast(msgId uint32, msg any) {

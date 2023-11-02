@@ -7,7 +7,7 @@ import (
 )
 
 // Socket会话
-type session struct {
+type Session struct {
 	*gonet.Context
 	//核心会话标志
 	gonet.SessionIdentify
@@ -22,20 +22,20 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *gonet.Context, conn gnet.Conn) *session {
+func newSession(c *gonet.Context, conn gnet.Conn) *Session {
 	is := c.CreateSession()
-	s := is.(*session)
+	s := is.(*Session)
 	s.conn = conn
 	s.WithContext(c)
 	s.UpdateID(uint64(conn.Fd()))
 	return s
 }
 
-func (s *session) RemoteAddr() net.Addr {
+func (s *Session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *session) Send(msgID uint32, msg any) error {
+func (s *Session) Send(msgID uint32, msg any) error {
 	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
@@ -44,6 +44,6 @@ func (s *session) Send(msgID uint32, msg any) error {
 	return err
 }
 
-func (s *session) Close() error {
+func (s *Session) Close() error {
 	return s.conn.Close()
 }

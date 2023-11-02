@@ -9,7 +9,7 @@ import (
 
 // 消息路由
 func MessageHandler(msg gonet.IMessage) {
-	s := msg.Session()
+	s := msg.From()
 	switch msg.ID() {
 	case gonet.MessageID_Connection_Connect:
 		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())

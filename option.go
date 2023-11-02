@@ -3,6 +3,7 @@ package gonet
 import (
 	"github.com/flylib/interface/codec"
 	ilog "github.com/flylib/interface/log"
+	"reflect"
 )
 
 type Option func(o *Context)
@@ -61,5 +62,12 @@ func MustWithCodec(codec codec.ICodec) Option {
 func MustWithLogger(l ilog.ILogger) Option {
 	return func(o *Context) {
 		o.ILogger = l
+	}
+}
+
+// set logger
+func MustWithSessionType(t any) Option {
+	return func(o *Context) {
+		o.sessionType = reflect.TypeOf(t)
 	}
 }

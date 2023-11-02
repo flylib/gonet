@@ -5,7 +5,6 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"net/url"
-	"reflect"
 	"time"
 )
 
@@ -23,7 +22,6 @@ type server struct {
 func NewServer(ctx *gonet.Context) gonet.IServer {
 	s := &server{}
 	s.WithContext(ctx)
-	ctx.InitSessionMgr(reflect.TypeOf(session{}))
 	return s
 }
 

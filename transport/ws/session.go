@@ -6,34 +6,34 @@ import (
 	"net"
 )
 
-var _ gonet.ISession = new(session)
+var _ gonet.ISession = new(Session)
 
 // webSocket conn
-type session struct {
+type Session struct {
 	gonet.SessionIdentify
 	gonet.SessionAbility
 	conn *websocket.Conn
 }
 
 // 新会话
-func newSession(c *gonet.Context, conn *websocket.Conn) *session {
+func newSession(c *gonet.Context, conn *websocket.Conn) *Session {
 	is := c.CreateSession()
-	s := is.(*session)
+	s := is.(*Session)
 	s.conn = conn
 	s.WithContext(c)
 	return s
 }
 
-func (s *session) RemoteAddr() net.Addr {
+func (s *Session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *session) Close() error {
+func (s *Session) Close() error {
 	return s.conn.Close()
 }
 
 // websocket does not support sending messages concurrently
-func (s *session) Send(msgID uint32, msg any) (err error) {
+func (s *Session) Send(msgID uint32, msg any) (err error) {
 	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func (s *session) Send(msgID uint32, msg any) (err error) {
 }
 
 // Loop to read messages
-func (s *session) ReadLoop() {
+func (s *Session) ReadLoop() {
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {

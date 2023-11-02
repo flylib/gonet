@@ -4,7 +4,6 @@ import (
 	"github.com/flylib/gonet"
 	"github.com/panjf2000/gnet/v2"
 	"log"
-	"reflect"
 	"time"
 )
 
@@ -29,7 +28,6 @@ func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
 	c.cli = cli
 
 	c.WithContext(ctx)
-	ctx.InitSessionMgr(reflect.TypeOf(session{}))
 	return c
 }
 
@@ -39,7 +37,6 @@ func (c *client) OnBoot(eng gnet.Engine) (action gnet.Action) {
 }
 
 func (c *client) OnShutdown(eng gnet.Engine) {
-
 }
 
 func (c *client) OnOpen(conn gnet.Conn) (out []byte, action gnet.Action) {

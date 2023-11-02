@@ -5,7 +5,7 @@ import (
 	"demo/proto"
 	"fmt"
 	"github.com/flylib/gonet"
-	"github.com/flylib/gonet/transport/ws"
+	transport "github.com/flylib/gonet/transport/ws"
 	"github.com/flylib/goutils/codec/json"
 	"github.com/flylib/pkg/log/builtinlog"
 	"log"
@@ -16,11 +16,13 @@ import (
 func TestWebsocketServer(t *testing.T) {
 	ctx := gonet.NewContext(
 		gonet.WithMessageHandler(handler.MessageHandler),
+
+		gonet.MustWithSessionType(transport.Session{}),
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
 	fmt.Println("server listen on ws://localhost:8088/center/ws")
-	if err := ws.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
+	if err := transport.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -28,10 +30,12 @@ func TestWebsocketServer(t *testing.T) {
 func TestWebsocketClient(t *testing.T) {
 	ctx := gonet.NewContext(
 		gonet.WithMessageHandler(handler.MessageHandler),
+
+		gonet.MustWithSessionType(transport.Session{}),
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
-	session, err := ws.NewClient(ctx, ws.HandshakeTimeout(5*time.Second)).Dial("ws://localhost:8088/center/ws")
+	session, err := transport.NewClient(ctx, transport.HandshakeTimeout(5*time.Second)).Dial("ws://localhost:8088/center/ws")
 	if err != nil {
 		log.Fatal(err)
 	}

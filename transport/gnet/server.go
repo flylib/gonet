@@ -5,7 +5,6 @@ import (
 	"github.com/flylib/gonet"
 	"github.com/panjf2000/gnet/v2"
 	"log"
-	"reflect"
 )
 
 type server struct {
@@ -24,7 +23,6 @@ func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
 
 	s := &server{opt: opt}
 	s.WithContext(ctx)
-	ctx.InitSessionMgr(reflect.TypeOf(session{}))
 	return s
 }
 
