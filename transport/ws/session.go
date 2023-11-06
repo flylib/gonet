@@ -4,36 +4,38 @@ import (
 	"github.com/flylib/gonet"
 	"github.com/gorilla/websocket"
 	"net"
+	"reflect"
 )
 
-var _ gonet.ISession = new(Session)
+var _ gonet.ISession = new(session)
 
 // webSocket conn
-type Session struct {
+type session struct {
 	gonet.SessionIdentify
 	gonet.SessionAbility
 	conn *websocket.Conn
+	option
 }
 
 // 新会话
-func newSession(c *gonet.Context, conn *websocket.Conn) *Session {
+func newSession(c *gonet.Context, conn *websocket.Conn) *session {
 	is := c.CreateSession()
-	s := is.(*Session)
+	s := is.(*session)
 	s.conn = conn
 	s.WithContext(c)
 	return s
 }
 
-func (s *Session) RemoteAddr() net.Addr {
+func (s *session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *Session) Close() error {
+func (s *session) Close() error {
 	return s.conn.Close()
 }
 
 // websocket does not support sending messages concurrently
-func (s *Session) Send(msgID uint32, msg any) (err error) {
+func (s *session) Send(msgID uint32, msg any) (err error) {
 	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
@@ -45,7 +47,7 @@ func (s *Session) Send(msgID uint32, msg any) (err error) {
 }
 
 // Loop to read messages
-func (s *Session) ReadLoop() {
+func (s *session) ReadLoop() {
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {
@@ -59,4 +61,8 @@ func (s *Session) ReadLoop() {
 		}
 		s.Context.PushGlobalMessageQueue(msg)
 	}
+}
+
+func SessionType() reflect.Type {
+	return reflect.TypeOf(session{})
 }

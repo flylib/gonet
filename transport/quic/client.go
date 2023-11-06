@@ -1,15 +1,15 @@
 package quic
 
 import (
+	"context"
 	"github.com/flylib/gonet"
 	"github.com/quic-go/quic-go"
-	"net"
 )
 
 type client struct {
 	gonet.PeerIdentify
 	option
-	conn net.Conn
+	conn quic.Connection
 }
 
 func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
@@ -22,9 +22,16 @@ func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
 }
 
 func (c *client) Dial(addr string) (gonet.ISession, error) {
-	quic.DialAddr()
+	connection, err := quic.DialAddr(context.Background(), addr, generateTLSConfig(), nil)
+	if err != nil {
+		return nil, err
+	}
+	c.conn = connection
+	s := newSession(c.Context, connection)
+	go s.acceptStream()
+	return s, nil
 }
 
 func (c *client) Close() error {
-	return c.conn.Close()
+	return c.conn.CloseWithError(0, "EOF")
 }

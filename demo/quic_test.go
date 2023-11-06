@@ -5,7 +5,7 @@ import (
 	"demo/proto"
 	"fmt"
 	"github.com/flylib/gonet"
-	transport "github.com/flylib/gonet/transport/gnet"
+	transport "github.com/flylib/gonet/transport/quic"
 	"github.com/flylib/goutils/codec/json"
 	"github.com/flylib/pkg/log/builtinlog"
 	"log"
@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func TestGNETServer(t *testing.T) {
+func TestQuicServer(t *testing.T) {
 	ctx := gonet.NewContext(
 		gonet.WithMessageHandler(handler.MessageHandler),
 
@@ -27,7 +27,7 @@ func TestGNETServer(t *testing.T) {
 	}
 }
 
-func TestGNETClient(t *testing.T) {
+func TestQuicClient(t *testing.T) {
 	ctx := gonet.NewContext(
 		gonet.WithMessageHandler(handler.MessageHandler),
 

@@ -22,7 +22,6 @@ type IPeerIdentify interface {
 }
 type PeerIdentify struct {
 	*Context
-	uuid string
 	addr string
 }
 

@@ -4,10 +4,11 @@ import (
 	"github.com/flylib/gonet"
 	"github.com/panjf2000/gnet/v2"
 	"net"
+	"reflect"
 )
 
 // Socket会话
-type Session struct {
+type session struct {
 	//核心会话标志
 	gonet.SessionIdentify
 	//存储功能
@@ -21,20 +22,20 @@ type Session struct {
 }
 
 // 新会话
-func newSession(ctx *gonet.Context, conn gnet.Conn) *Session {
+func newSession(ctx *gonet.Context, conn gnet.Conn) *session {
 	is := ctx.CreateSession()
-	s := is.(*Session)
+	s := is.(*session)
 	s.conn = conn
 	s.WithContext(ctx)
 	s.UpdateID(uint64(conn.Fd()))
 	return s
 }
 
-func (s *Session) RemoteAddr() net.Addr {
+func (s *session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *Session) Send(msgID uint32, msg any) error {
+func (s *session) Send(msgID uint32, msg any) error {
 	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
@@ -43,6 +44,10 @@ func (s *Session) Send(msgID uint32, msg any) error {
 	return err
 }
 
-func (s *Session) Close() error {
+func (s *session) Close() error {
 	return s.conn.Close()
+}
+
+func SessionType() reflect.Type {
+	return reflect.TypeOf(session{})
 }
