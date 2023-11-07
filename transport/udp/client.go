@@ -1,35 +1,48 @@
 package udp
 
 import (
-	. "github.com/flylib/gonet"
+	"github.com/flylib/gonet"
 	"net"
-	"reflect"
 )
 
+var _ gonet.IClient = new(client)
+
 type client struct {
-	PeerIdentify
+	gonet.PeerIdentify
+	conn *net.UDPConn
+	option
 }
 
-func NewClient(ctx *Context) IClient {
-	c := &client{}
+func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
+	c := &client{
+		option: option{
+			mtu: gonet.MTU,
+		},
+	}
+	for _, f := range options {
+		f(&c.option)
+	}
 	c.WithContext(ctx)
-	ctx.InitSessionMgr(reflect.TypeOf(session{}))
 	return c
 }
 
-func (c *client) Dial(addr string) (ISession, error) {
+func (c *client) Dial(addr string) (gonet.ISession, error) {
+	udpAddr, err := net.ResolveUDPAddr(string(gonet.UDP), addr)
+	if err != nil {
+		return nil, err
+	}
+	conn, err := net.DialUDP(string(gonet.UDP), nil, udpAddr)
+	if err != nil {
+		return nil, err
+	}
 	c.SetAddr(addr)
 
-	conn, err := net.Dial("udp", "127.0.0.1:9001")
-	if err != nil {
-		return nil, err
-	}
-
-	udpAddr, err := net.ResolveUDPAddr(string(UDP), c.Addr())
-	if err != nil {
-		return nil, err
-	}
 	s := newSession(c.Context, conn, udpAddr)
-	go s.()
+	s.remoteConn = conn
+	go s.recvLoop()
 	return s, nil
+}
+
+func (c *client) Close() error {
+	return c.conn.Close()
 }

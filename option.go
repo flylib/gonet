@@ -66,8 +66,8 @@ func MustWithLogger(l ilog.ILogger) Option {
 }
 
 // set logger
-func MustWithSessionType(t any) Option {
+func MustWithSessionType(t reflect.Type) Option {
 	return func(o *Context) {
-		o.sessionType = reflect.TypeOf(t)
+		o.sessionType = t
 	}
 }

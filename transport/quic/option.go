@@ -18,6 +18,7 @@ type option struct {
 
 	//Channel id modulo
 	modulo uint32
+	mtu    int
 }
 
 func WithHandshakeTimeout(t time.Duration) Option {
@@ -33,6 +34,13 @@ func WithChannelIdModulo(mod uint32) Option {
 			return
 		}
 		option.modulo = mod
+	}
+}
+
+// set maximum transmission unit
+func WithMaximumTransmissionUnit(unit int) Option {
+	return func(o *option) {
+		o.mtu = unit
 	}
 }
 
