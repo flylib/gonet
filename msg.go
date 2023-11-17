@@ -5,6 +5,7 @@ const (
 	MessageID_Invalid uint32 = iota
 	MessageID_Connection_Connect
 	MessageID_Connection_Close
+	MessageID_Ping_Pong //ping pong
 )
 
 type (

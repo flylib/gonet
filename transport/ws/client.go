@@ -22,7 +22,6 @@ func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
 }
 
 func (c *client) Dial(addr string) (gonet.ISession, error) {
-	c.SetAddr(addr)
 	dialer := websocket.Dialer{
 		Proxy:            http.ProxyFromEnvironment,
 		HandshakeTimeout: c.option.HandshakeTimeout,
@@ -31,6 +30,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 	if err != nil {
 		return nil, err
 	}
+	c.SetAddr(addr)
 	s := newSession(c.Context, conn)
 	go s.ReadLoop()
 	return s, nil

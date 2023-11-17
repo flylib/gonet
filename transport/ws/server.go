@@ -2,7 +2,6 @@ package ws
 
 import (
 	"github.com/flylib/gonet"
-	"github.com/gorilla/websocket"
 	"net/http"
 	"net/url"
 	"time"
@@ -13,31 +12,31 @@ var _ gonet.IServer = new(server)
 // 接收端
 type server struct {
 	gonet.PeerIdentify
-	//指定将HTTP连接升级到WebSocket连接的参数。
-	upGrader websocket.Upgrader
-	//响应头
-	//respHeader http.Header
+	option
 }
 
-func NewServer(ctx *gonet.Context) gonet.IServer {
+func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
 	s := &server{}
+	for _, f := range options {
+		f(&s.option)
+	}
 	s.WithContext(ctx)
 	return s
 }
 
 func (s *server) Listen(addr string) error {
-	s.SetAddr(addr)
-	url, err := url.Parse(s.Addr())
+	_url, err := url.Parse(s.Addr())
 	if err != nil {
 		return err
 	}
+	s.SetAddr(addr)
 	mux := http.NewServeMux()
-	mux.HandleFunc(url.Path, s.newConn)
-	return http.ListenAndServe(url.Host, mux)
+	mux.HandleFunc(_url.Path, s.newConn)
+	return http.ListenAndServe(_url.Host, mux)
 }
 
 func (s *server) Close() error {
-	s.upGrader.HandshakeTimeout = time.Nanosecond
+	s.option.Upgrader.HandshakeTimeout = time.Nanosecond
 	return nil
 }
 
@@ -45,7 +44,7 @@ func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	r.Header.Add("Connection", "upgrade") //升级
 	r.Header.Add("Upgrade", "websocket")  //websocket
 
-	conn, err := s.upGrader.Upgrade(w, r, nil)
+	conn, err := s.option.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}

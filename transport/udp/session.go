@@ -4,30 +4,27 @@ import (
 	"github.com/flylib/gonet"
 	"net"
 	"reflect"
+	"time"
 )
-
-//addr:sessionID
-var remotes = map[string]uint64{}
 
 // Socket会话
 type session struct {
 	gonet.SessionIdentify
 	gonet.SessionAbility
-	remoteAddr       *net.UDPAddr
-	conn, remoteConn *net.UDPConn
-	data             interface{}
-	buf              []byte
+	remoteAddr             *net.UDPAddr
+	serverConn, remoteConn *net.UDPConn
+	uuid                   string
+	heartbeatTime          time.Time //最近心跳时间点
+	nexCheckTime           time.Time //下次检查时间点
 }
 
 // 新会话
 func newSession(c *gonet.Context, conn *net.UDPConn, remote *net.UDPAddr) *session {
 	is := c.CreateSession()
 	s := is.(*session)
-	s.conn = conn
+	s.serverConn = conn
 	s.remoteAddr = remote
-	s.buf = make([]byte, gonet.MTU)
 	s.WithContext(c)
-	remotes[remote.String()] = s.ID()
 	return s
 }
 
@@ -44,21 +41,21 @@ func (s *session) Send(msgID uint32, msg any) error {
 	if s.remoteConn != nil {
 		_, err = s.remoteConn.Write(data)
 	} else {
-		_, err = s.conn.WriteToUDP(data, s.remoteAddr)
+		_, err = s.serverConn.WriteToUDP(data, s.remoteAddr)
 	}
 
 	return err
 }
 
 func (s *session) Close() error {
-	return s.conn.Close()
+	return s.serverConn.Close()
 }
 
 // Loop to read messages
 func (s *session) recvLoop() {
 	var buf = make([]byte, 1024)
 	for {
-		n, err := s.conn.Read(buf)
+		n, err := s.serverConn.Read(buf)
 		if err != nil {
 			s.Context.RecycleSession(s, err)
 			return
