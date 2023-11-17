@@ -60,41 +60,52 @@ import (
 )
 
 func main() {
+	//server run context
 	ctx := gonet.NewContext(
-		gonet.WorkerPoolMaxSize(20),
-		handler.InitServerRouter,
+		gonet.WithMessageHandler(MessageHandler),
+		gonet.MustWithSessionType(transport.SessionType()),
+		gonet.MustWithCodec(&json.Codec{}),
+		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
-
-	if err := ws.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
+	fmt.Println("server listen on ws://localhost:8088/center/ws")
+	//server listen
+	if err := transport.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
 		log.Fatal(err)
 	}
 }
 
-// handler.go package
-// 消息路由
-func InitServerRouter(ctx *gonet.Context) error {
-	ctx.Route(gonet.SessionConnect, nil, serverHandler)
-	ctx.Route(gonet.SessionClose, nil, serverHandler)
-	ctx.Route(101, proto.Say{}, serverHandler)
-	return nil
-}
 
-func serverHandler(s gonet.ISession, msg gonet.IMessage) {
+// 消息路由
+func MessageHandler(msg gonet.IMessage) {
+	s := msg.From()
 	switch msg.ID() {
-	case gonet.SessionConnect:
+	case gonet.MessageID_Connection_Connect:
 		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())
-	case gonet.SessionClose:
+	case gonet.MessageID_Connection_Close:
 		log.Println("connected session_id:", s.ID(), " error:", msg.Body())
 	case 101:
-		fmt.Println("session_id:", s.ID(), " say ", msg.Body().(*proto.Say).Content)
-		err := s.Send(proto.Say{Content: "hell client"})
+		pb := proto.Say{}
+		err := msg.UnmarshalTo(&pb)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("session_id:", s.ID(), " say ", pb.Content)
+		err = s.Send(102, proto.Say{Content: "hell client"})
 		if err != nil {
 			log.Fatal(err)
 		}
+	case 102:
+		pb := proto.Say{}
+		err := msg.UnmarshalTo(&pb)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("session_id:", s.ID(), " say ", pb.Content)
 	default:
 		log.Println("unknown message id:", msg.ID())
 	}
 }
+
 ```
 
 

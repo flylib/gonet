@@ -5,17 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="up udp">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/msg.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/session.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/option.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/ws/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
