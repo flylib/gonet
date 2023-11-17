@@ -1,15 +1,15 @@
-package ws
+package quic
 
 import (
+	"context"
 	"github.com/flylib/gonet"
-	"github.com/gorilla/websocket"
-	"net/http"
+	"github.com/quic-go/quic-go"
 )
 
 type client struct {
 	gonet.PeerIdentify
 	option
-	conn websocket.Conn
+	conn quic.Connection
 }
 
 func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
@@ -22,20 +22,16 @@ func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
 }
 
 func (c *client) Dial(addr string) (gonet.ISession, error) {
-	dialer := websocket.Dialer{
-		Proxy:            http.ProxyFromEnvironment,
-		HandshakeTimeout: c.option.HandshakeTimeout,
-	}
-	conn, _, err := dialer.Dial(c.Addr(), nil)
+	connection, err := quic.DialAddr(context.Background(), addr, generateTLSConfig(), nil)
 	if err != nil {
 		return nil, err
 	}
-	c.SetAddr(addr)
-	s := newSession(c.Context, conn)
-	go s.ReadLoop()
+	c.conn = connection
+	s := newSession(c.Context, connection)
+	go s.acceptStream()
 	return s, nil
 }
 
 func (c *client) Close() error {
-	return nil
+	return c.conn.CloseWithError(0, "EOF")
 }

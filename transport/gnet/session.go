@@ -1,20 +1,18 @@
 package gnet
 
 import (
+	"github.com/flylib/gonet"
 	"github.com/panjf2000/gnet/v2"
-	. "github.com/zjllib/gonet/v3"
 	"net"
+	"reflect"
 )
-
-var _ ISession = new(session)
 
 // Socket会话
 type session struct {
-	*Context
 	//核心会话标志
-	SessionIdentify
+	gonet.SessionIdentify
 	//存储功能
-	SessionStore
+	gonet.SessionAbility
 	//累计收消息总数
 	recvCount uint64
 	//raw conn
@@ -24,11 +22,11 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *Context, conn gnet.Conn) *session {
-	is := c.CreateSession()
+func newSession(ctx *gonet.Context, conn gnet.Conn) *session {
+	is := ctx.CreateSession()
 	s := is.(*session)
 	s.conn = conn
-	s.WithContext(c)
+	s.WithContext(ctx)
 	s.UpdateID(uint64(conn.Fd()))
 	return s
 }
@@ -37,15 +35,19 @@ func (s *session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *session) Send(msg interface{}) error {
-	bytes, err := s.Context.Package(msg)
+func (s *session) Send(msgID uint32, msg any) error {
+	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
-	_, err = s.conn.Write(bytes)
+	_, err = s.conn.Write(buf)
 	return err
 }
 
 func (s *session) Close() error {
 	return s.conn.Close()
+}
+
+func SessionType() reflect.Type {
+	return reflect.TypeOf(session{})
 }

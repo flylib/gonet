@@ -1,92 +1,55 @@
 package gonet
 
 import (
-	"github.com/zjllib/gonet/v3/codec"
-	"github.com/zjllib/gonet/v3/codec/binary"
-	"github.com/zjllib/gonet/v3/codec/json"
-	"github.com/zjllib/gonet/v3/codec/protobuf"
-	"github.com/zjllib/gonet/v3/codec/xml"
+	"github.com/flylib/interface/codec"
+	ilog "github.com/flylib/interface/log"
 	"reflect"
-	"sync"
 )
 
 type Context struct {
-	//会话管理
-	sessionMgr *SessionManager
-	//message types
-	mMsgTypes map[MessageID]reflect.Type
-	//message ids
-	mMsgIDs map[reflect.Type]MessageID
-	//server types
+	//session manager
+	sessionMgr *sessionManager
+	//go routine pool
+	routines *GoroutinePool
+
+	//Message callback processing
+	messageHandler  MessageHandler
+	maxSessionCount int
+	//routine pool config
+	poolCfg poolConfig
+	//message codec
+	codec.ICodec
+	ilog.ILogger
+	//net package parser
+	INetPackager
+
 	sessionType reflect.Type
-	//消息编码器
-	defaultCodec codec.Codec
-	//传输端
-	server IServer
-	client IClient
-	//bee worker pool
-	workers BeeWorkerPool
-	//消息钩子
-	mMsgHooks map[MessageID]MessageHandler
-
-	name string
-
-	globalLock sync.Mutex
-
-	//包解析器
-	IPackageParser
 }
 
-func NewContext(opts ...options) *Context {
-	option := Option{}
-	for _, f := range opts {
-		f(&option)
+func NewContext(options ...Option) *Context {
+	ctx := &Context{
+		INetPackager: &DefaultNetPackager{},
 	}
-	c := &Context{
-		sessionMgr: newSessionManager(option.server.SessionType()),
-		mMsgTypes:  map[MessageID]reflect.Type{},
-		mMsgIDs:    map[reflect.Type]MessageID{},
-		mMsgHooks:  map[MessageID]MessageHandler{},
-	}
-	//传输协议
-	c.server = option.server
-	c.server.(interface{ setContext(c *Context) }).setContext(c)
-	c.sessionType = option.server.SessionType()
-	if option.serviceName == "" {
-		option.serviceName = "gonet"
-	}
-	c.name = option.serviceName
 
-	//编码格式
-	switch option.contentType {
-	case codec.Binary:
-		c.defaultCodec = binary.BinaryCodec{}
-	case codec.Xml:
-		c.defaultCodec = xml.XmlCodec{}
-	case codec.Protobuf:
-		c.defaultCodec = protobuf.ProtobufCodec{}
-	default:
-		c.defaultCodec = json.JsonCodec{}
+	for _, f := range options {
+		f(ctx)
 	}
-	cache := option.msgCache
-	if cache == nil {
-		cache = &MessageList{}
+
+	if ctx.ICodec == nil {
+		panic("nil ICodec")
 	}
-	c.workers = createBeeWorkerPool(c, option.workerPoolSize, cache)
-	c.IPackageParser = &defaultPackageParser{c}
-	return c
-}
 
-func (c *Context) Name() string {
-	return c.name
-}
+	if ctx.ILogger == nil {
+		panic("nil ILogger")
+	}
 
-// peer
-func (c *Context) Server() IServer {
-	return c.server
-}
-func (c *Context) Client() IClient {
-	return c.client
+	if ctx.sessionType == nil {
+		panic("nil sessionType")
+	}
+
+	ctx.routines = newGoroutinePool(ctx)
+	ctx.sessionMgr = newSessionManager(ctx.sessionType)
+	return ctx
 }
 
 // 会话管理
@@ -95,67 +58,35 @@ func (c *Context) GetSession(id uint64) (ISession, bool) {
 }
 func (c *Context) CreateSession() ISession {
 	idleSession := c.sessionMgr.getIdleSession()
+	idleSession.(ISessionIdentify).ClearIdentify()
 	session := idleSession.(ISession)
 	c.sessionMgr.addAliveSession(idleSession)
-	c.PushGlobalMessageQueue(session, NewSessionMessage)
+	c.PushGlobalMessageQueue(newConnectionConnectMessage(session))
 	return session
 }
 func (c *Context) RecycleSession(session ISession, err error) {
-	c.PushGlobalMessageQueue(session, &Message{
-		id:   SessionClose,
-		body: err,
-	})
+	c.PushGlobalMessageQueue(newConnectionCloseMessage(session, err))
+	session.Close()
+	session.(ISessionAbility).ClearAbility()
 	c.sessionMgr.recycleIdleSession(session)
 }
-func (c *Context) SessionCount() int {
-	return c.sessionMgr.CountAliveSession()
+
+func (c *Context) SessionCount() int32 {
+	return c.sessionMgr.countAliveSession()
 }
-func (c *Context) Broadcast(msg interface{}) {
+
+func (c *Context) Broadcast(msgId uint32, msg any) {
 	c.sessionMgr.alive.Range(func(_, item interface{}) bool {
 		session, ok := item.(ISession)
 		if ok {
-			session.Send(msg)
+			session.Send(msgId, msg)
 		}
 		return true
 	})
 }
 
-// 消息管理
-func (c *Context) Route(msgID MessageID, msg any, callback MessageHandler) {
-	c.globalLock.Lock()
-	defer c.globalLock.Unlock()
-	msgType := reflect.TypeOf(msg)
-	if _, ok := c.mMsgTypes[msgID]; ok {
-		panic("error:Duplicate message id")
-	}
-	if msgType != nil {
-		c.mMsgIDs[msgType] = msgID
-		c.mMsgTypes[msgID] = msgType
-	}
-	if callback != nil {
-		c.mMsgHooks[msgID] = callback
-	}
-}
-func (c *Context) GetMsgID(msg interface{}) (MessageID, bool) {
-	msgID, ok := c.mMsgIDs[reflect.TypeOf(msg)]
-	return msgID, ok
-}
-func (c *Context) CreateMsg(msgID MessageID) interface{} {
-	if msg, ok := c.mMsgTypes[msgID]; ok {
-		return reflect.New(msg).Interface()
-	}
-	return nil
-}
-
-// 消息编码
-func (c *Context) EncodeMessage(msg any) ([]byte, error) {
-	return c.defaultCodec.Encode(msg)
-}
-func (c *Context) DecodeMessage(msg any, data []byte) error {
-	return c.defaultCodec.Decode(data, msg)
-}
-
-// 缓存消息
-func (c *Context) PushGlobalMessageQueue(session ISession, msg IMessage) {
-	c.workers.rcvMsgCh <- event{session: session, message: msg}
+// push the message to the routine pool
+func (c *Context) PushGlobalMessageQueue(msg IMessage) {
+	// active defense to avoid too many message
+	c.routines.queue <- msg
 }

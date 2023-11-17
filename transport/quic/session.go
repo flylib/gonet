@@ -2,22 +2,24 @@ package quic
 
 import (
 	"context"
+	"fmt"
+	"github.com/flylib/gonet"
 	"github.com/quic-go/quic-go"
-	. "github.com/zjllib/gonet/v3"
-	"log"
 	"net"
+	"reflect"
 )
 
 // conn
 type session struct {
-	SessionIdentify
-	SessionStore
-	conn   quic.Connection
-	stream quic.Stream
+	gonet.SessionIdentify
+	gonet.SessionAbility
+	conn     quic.Connection
+	channels []quic.Stream
+	mod      uint32
 }
 
 // 新会话
-func newSession(c *Context, conn quic.Connection) *session {
+func newSession(c *gonet.Context, conn quic.Connection) *session {
 	ses := c.CreateSession()
 	s, _ := ses.(*session)
 	s.conn = conn
@@ -29,49 +31,64 @@ func (s *session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *session) Send(msg any) error {
-	data, err := s.Context.Package(msg)
+func (s *session) Send(msgID uint32, msg any) error {
+	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
-	_, err = s.stream.Write(data)
-	return err
+	//2*1000000+101 = 2000000101
+	channelId := msgID / s.mod
+	msgID = msgID - channelId*s.mod
+	if s.channels[channelId] != nil {
+		_, err = s.channels[channelId].Write(buf)
+		if err != nil {
+			return err
+		}
+	}
+
+	return fmt.Errorf("not found the channel-%d", channelId)
 }
 
 func (s *session) Close() error {
-	err := s.conn.CloseWithError(0, "EOF")
-	s.conn = nil
-	return err
+	return s.conn.CloseWithError(0, "EOF")
 }
 
-// 循环读取消息
-func (s *session) recvLoop() {
-	var err error
-	s.stream, err = s.conn.AcceptStream(context.Background())
-	if err != nil {
-		log.Printf("session_%v AcceptStream error,reason is %v \n", s.ID(), err)
-		s.Context.RecycleSession(s, err)
-		return
-	}
-
+func (s *session) acceptStream() {
 	for {
-		var n int
-		buf := make([]byte, 1024)
-		n, err = s.stream.Read(buf)
+		ch, err := s.conn.AcceptStream(context.Background())
 		if err != nil {
-			log.Printf("session_%v reading error,reason is %v \n", s.ID(), err)
-			err = s.stream.Close()
-			if err != nil {
-				log.Printf("session_%v close error,reason is %v \n", s.ID(), err)
-			}
+			s.Warnf("session_%v AcceptStream error,reason is %v", s.ID(), err)
 			s.Context.RecycleSession(s, err)
 			return
 		}
-		msg, _, err := s.Context.UnPackage(buf[:n])
+		s.channels = append(s.channels, ch)
+		go s.recvLoop(ch)
+	}
+
+}
+
+// 循环读取消息
+func (s *session) recvLoop(channel quic.Stream) {
+	defer channel.Close()
+	var buf = make([]byte, gonet.MTU)
+	for {
+		n, err := channel.Read(buf)
 		if err != nil {
-			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
+			s.ILogger.Warnf("session_%v_%d steam read error - %v ", s.ID(), channel.StreamID(), err)
+			channel.Close()
+			return
+		}
+		msg, _, err := s.Context.UnPackage(s, buf[:n])
+		if err != nil {
+			s.ILogger.Warnf("session_%v_%d msg parser error,reason is %v ", s.ID(), channel.StreamID(), err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(s, msg)
+		msg.ID()
+
+		s.Context.PushGlobalMessageQueue(msg)
 	}
+}
+
+func SessionType() reflect.Type {
+	return reflect.TypeOf(session{})
 }

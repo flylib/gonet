@@ -1,56 +1,53 @@
 package ws
 
 import (
-	"github.com/gorilla/websocket"
-	"github.com/zjllib/gonet/v3"
+	"github.com/flylib/gonet"
 	"net/http"
 	"net/url"
-	"reflect"
+	"time"
 )
 
 var _ gonet.IServer = new(server)
 
 // 接收端
 type server struct {
-	gonet.ServerIdentify
-	//指定将HTTP连接升级到WebSocket连接的参数。
-	upGrader websocket.Upgrader
-	//响应头
-	//respHeader http.Header
+	gonet.PeerIdentify
+	option
 }
 
-func NewServer(addr string) *server {
-	t := &server{}
-	t.SetAddr(addr)
-	return t
+func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+	s := &server{}
+	for _, f := range options {
+		f(&s.option)
+	}
+	s.WithContext(ctx)
+	return s
 }
 
-func (s *server) Listen() error {
-	url, err := url.Parse(s.Addr())
+func (s *server) Listen(addr string) error {
+	_url, err := url.Parse(s.Addr())
 	if err != nil {
 		return err
 	}
+	s.SetAddr(addr)
 	mux := http.NewServeMux()
-	mux.HandleFunc(url.Path, s.newConn)
-	return http.ListenAndServe(url.Host, mux)
+	mux.HandleFunc(_url.Path, s.newConn)
+	return http.ListenAndServe(_url.Host, mux)
 }
 
-func (s *server) Stop() error {
-	// TODO 关闭处理
+func (s *server) Close() error {
+	s.option.Upgrader.HandshakeTimeout = time.Nanosecond
 	return nil
-}
-
-func (s *server) SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
 }
 
 func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	r.Header.Add("Connection", "upgrade") //升级
 	r.Header.Add("Upgrade", "websocket")  //websocket
 
-	conn, err := s.upGrader.Upgrade(w, r, nil)
+	conn, err := s.option.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}
-	go newSession(s.Context, conn).recvLoop()
+	ns := newSession(s.Context, conn)
+	go ns.ReadLoop()
 }

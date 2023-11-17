@@ -1,61 +1,70 @@
 package udp
 
 import (
-	. "github.com/zjllib/gonet/v3"
-	"log"
+	"github.com/flylib/gonet"
 	"net"
-	"reflect"
+	"sync"
 )
 
-var _ IServer = new(server)
-
 type server struct {
-	ServerIdentify
+	gonet.PeerIdentify
 	ln *net.UDPConn
+	option
+	sync.RWMutex
+	remotes map[string]uint64
 }
 
-func NewServer(addr string) *server {
-	s := &server{}
-	s.SetAddr(addr)
+func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+	s := &server{
+		option: option{
+			mtu: gonet.MTU,
+		},
+		remotes: map[string]uint64{},
+	}
+	for _, f := range options {
+		f(&s.option)
+	}
+	s.WithContext(ctx)
 	return s
 }
 
-func (s *server) Listen() error {
-	addr, err := net.ResolveUDPAddr(string(UDP), s.Addr())
+func (s *server) Listen(addr string) error {
+	udpAddr, err := net.ResolveUDPAddr(string(gonet.UDP), addr)
 	if err != nil {
 		return err
 	}
-	s.ln, err = net.ListenUDP("udp", addr)
+	s.ln, err = net.ListenUDP(string(gonet.UDP), udpAddr)
 	if err != nil {
 		return err
 	}
+	s.SetAddr(addr)
+
+	var buf = make([]byte, s.option.mtu)
 	for {
-		var buf = make([]byte, MTU)
-		n, remote, err := s.ln.ReadFromUDP(buf)
+		n, remoteAddr, err := s.ln.ReadFromUDP(buf)
 		if err != nil {
-			log.Printf("#udp.read failed(%v) %v \n", s.ln.RemoteAddr(), err.Error())
+			s.ILogger.Errorf("#udp.read failed(%v) %v \n", s.ln.RemoteAddr(), err.Error())
 			return err
 		}
+
 		var ses *session
-		if sid, exit := remotes[remote.String()]; exit {
-			s, _ := s.Context.GetSession(sid)
-			ses, _ = s.(*session)
+		if sid, exit := s.remotes[remoteAddr.String()]; exit {
+			is, _ := s.Context.GetSession(sid)
+			ses, _ = is.(*session)
 		} else {
-			ses = newSession(s.Context, s.ln, remote)
+			ses = newSession(s.Context, s.ln, remoteAddr)
+			s.remotes[remoteAddr.String()] = ses.ID()
 		}
-		msg, _, err := s.Context.UnPackage(buf[:n])
+		msg, _, err := s.Context.UnPackage(ses, buf[:n])
 		if err != nil {
-			log.Printf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
+			s.ILogger.Errorf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(ses, msg)
+		s.Context.PushGlobalMessageQueue(msg)
 	}
 	return nil
 }
-func (s *server) Stop() error {
-	return s.ln.Close()
-}
 
-func (s *server) SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
+func (s *server) Close() error {
+	return s.ln.Close()
 }

@@ -1,80 +1,73 @@
 package gonet
 
 import (
-	"time"
+	"github.com/flylib/interface/codec"
+	ilog "github.com/flylib/interface/log"
+	"reflect"
 )
 
-///////////////////////////////
-/////    Option Func   ////////
-//////////////////////////////
+type Option func(o *Context)
 
-// options
-type Option struct {
-	//SERVER
-	server IServer
-	//CLIENT
-	client IClient
-	//读写超时
-	readDeadline, writeDeadline time.Duration
-	//0意味着无限制
-	maxSessionCount int
-	//最小限制是1
-	maxWorkerPoolSize int32
-	//contentType support json/xml/binary/protobuf
-	contentType string
-	//worker pool size
-	workerPoolSize int32
-	//cache for messages
-	msgCache IEventCache
-	//service name
-	serviceName string
-}
-
-type options func(o *Option)
-
-// server
-func Server(s IServer) options {
-	return func(o *Option) {
-		o.server = s
+// Default:0 means is no limit
+func WithMessageHandler(handler MessageHandler) Option {
+	return func(o *Context) {
+		o.messageHandler = handler
 	}
 }
 
-// client
-func Client(c IClient) options {
-	return func(o *Option) {
-		o.client = c
-	}
-}
-
-func MaxSessions(max int) options {
-	return func(o *Option) {
+// Default:0 means is no limit
+func WithMaxSessions(max int) Option {
+	return func(o *Context) {
 		o.maxSessionCount = max
 	}
 }
 
-func MaxWorkerPoolSize(max int32) options {
-	return func(o *Option) {
-		o.maxWorkerPoolSize = max
+// Default is runtime.NumCPU(), means no goroutines will be dynamically scaled
+func WithPoolMaxRoutines(num int32) Option {
+	return func(o *Context) {
+
+		o.poolCfg.maxNum = num
 	}
 }
 
-// Default content type of the client
-func ContentType(ct string) options {
-	return func(o *Option) {
-		o.contentType = ct
+// allow max idle routines
+func WithPoolMaxIdleRoutines(num int32) Option {
+	return func(o *Context) {
+		o.poolCfg.maxIdleNum = num
 	}
 }
 
-// cache for messages
-func WithMessageCache(cache IEventCache) options {
-	return func(o *Option) {
-		o.msgCache = cache
+// Default 512,global queue size
+func WithGQSize(size int32) Option {
+	return func(o *Context) {
+		o.poolCfg.queueSize = size
 	}
 }
 
-// cache for messages
-func ServiceName(name string) options {
-	return func(o *Option) {
-		o.serviceName = name
+// network package paser
+func WithNetPackager(packager INetPackager) Option {
+	return func(o *Context) {
+		o.INetPackager = packager
+	}
+}
+
+// Default json codec, message codec
+func MustWithCodec(codec codec.ICodec) Option {
+	return func(o *Context) {
+		o.ICodec = codec
+	}
+}
+
+// set logger
+func MustWithLogger(l ilog.ILogger) Option {
+	return func(o *Context) {
+		o.ILogger = l
+	}
+}
+
+// set logger
+func MustWithSessionType(t reflect.Type) Option {
+	return func(o *Context) {
+		o.sessionType = t
 	}
 }

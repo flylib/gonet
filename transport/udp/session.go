@@ -1,53 +1,75 @@
 package udp
 
 import (
-	. "github.com/zjllib/gonet/v3"
+	"github.com/flylib/gonet"
 	"net"
+	"reflect"
+	"time"
 )
-
-var _ ISession = new(session)
-
-//addr:sessionID
-var remotes = map[string]uint64{}
 
 // Socket会话
 type session struct {
-	SessionIdentify
-	SessionStore
-	remoteAddr *net.UDPAddr
-	conn       *net.UDPConn
-	data       interface{}
-	buf        []byte
+	gonet.SessionIdentify
+	gonet.SessionAbility
+	remoteAddr             *net.UDPAddr
+	serverConn, remoteConn *net.UDPConn
+	uuid                   string
+	heartbeatTime          time.Time //最近心跳时间点
+	nexCheckTime           time.Time //下次检查时间点
 }
 
 // 新会话
-func newSession(c *Context, conn *net.UDPConn, remote *net.UDPAddr) *session {
+func newSession(c *gonet.Context, conn *net.UDPConn, remote *net.UDPAddr) *session {
 	is := c.CreateSession()
 	s := is.(*session)
-	s.conn = conn
+	s.serverConn = conn
 	s.remoteAddr = remote
-	s.buf = make([]byte, MTU)
 	s.WithContext(c)
-	remotes[remote.String()] = s.ID()
 	return s
 }
 
 func (s *session) RemoteAddr() net.Addr {
-	return s.conn.RemoteAddr()
+	return s.remoteAddr
 }
 
 // 发送封包
-func (s *session) Send(msg interface{}) error {
-	data, err := s.Context.Package(msg)
+func (s *session) Send(msgID uint32, msg any) error {
+	data, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
-	_, err = s.conn.WriteToUDP(data, s.remoteAddr)
+	if s.remoteConn != nil {
+		_, err = s.remoteConn.Write(data)
+	} else {
+		_, err = s.serverConn.WriteToUDP(data, s.remoteAddr)
+	}
+
 	return err
 }
 
 func (s *session) Close() error {
-	return s.conn.Close()
+	return s.serverConn.Close()
 }
 
-//todo 心跳检测
+// Loop to read messages
+func (s *session) recvLoop() {
+	var buf = make([]byte, 1024)
+	for {
+		n, err := s.serverConn.Read(buf)
+		if err != nil {
+			s.Context.RecycleSession(s, err)
+			return
+		}
+		msg, _, err := s.Context.UnPackage(s, buf[:n])
+		if err != nil {
+			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
+			continue
+		}
+		s.Context.PushGlobalMessageQueue(msg)
+	}
+}
+
+// todo 心跳检测
+func SessionType() reflect.Type {
+	return reflect.TypeOf(session{})
+}

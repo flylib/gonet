@@ -1,43 +1,38 @@
 package tcp
 
 import (
-	"github.com/zjllib/gonet/v3"
+	"github.com/flylib/gonet"
 	"net"
-	"reflect"
 )
 
-var _ gonet.IServer = new(server)
-
 type server struct {
-	gonet.ServerIdentify
-	gonet.SessionStore
+	gonet.PeerIdentify
+	gonet.SessionAbility
 	ln net.Listener
 }
 
-func NewServer(addr string) *server {
+func NewServer(ctx *gonet.Context) gonet.IServer {
 	s := &server{}
-	s.SetAddr(addr)
+	s.WithContext(ctx)
 	return s
 }
 
-func (s *server) Listen() error {
-	ln, err := net.Listen(string(gonet.TCP), s.Addr())
+func (s *server) Listen(addr string) error {
+	ln, err := net.Listen(string(gonet.TCP), addr)
 	if err != nil {
 		return err
 	}
 	s.ln = ln
+	s.SetAddr(addr)
+
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			continue
+			return err
 		}
 		go newSession(s.Context, conn).recvLoop()
 	}
 }
-func (s *server) Stop() error {
+func (s *server) Close() error {
 	return s.ln.Close()
-}
-
-func (s *server) SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
 }

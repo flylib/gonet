@@ -1,24 +1,24 @@
 package ws
 
 import (
+	"github.com/flylib/gonet"
 	"github.com/gorilla/websocket"
-	. "github.com/zjllib/gonet/v3"
-	"log"
 	"net"
+	"reflect"
 )
 
-var _ ISession = new(session)
+var _ gonet.ISession = new(session)
 
 // webSocket conn
 type session struct {
-	SessionAbility
-	SessionIdentify
-	SessionStore
+	gonet.SessionIdentify
+	gonet.SessionAbility
 	conn *websocket.Conn
+	option
 }
 
 // 新会话
-func newSession(c *Context, conn *websocket.Conn) *session {
+func newSession(c *gonet.Context, conn *websocket.Conn) *session {
 	is := c.CreateSession()
 	s := is.(*session)
 	s.conn = conn
@@ -31,32 +31,38 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Close() error {
-	s.Context = nil
 	return s.conn.Close()
 }
 
 // websocket does not support sending messages concurrently
-func (s *session) Send(msg any) error {
-	data, err := s.Context.Package(msg)
+func (s *session) Send(msgID uint32, msg any) (err error) {
+	buf, err := s.Context.Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
-	return s.conn.WriteMessage(websocket.BinaryMessage, data)
+	s.Lock()
+	defer s.Unlock()
+	err = s.conn.WriteMessage(websocket.BinaryMessage, buf)
+	return
 }
 
-// 循环读取消息
-func (s *session) recvLoop() {
+// Loop to read messages
+func (s *session) ReadLoop() {
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {
 			s.Context.RecycleSession(s, err)
 			return
 		}
-		msg, _, err := s.Context.UnPackage(buf)
+		msg, _, err := s.Context.UnPackage(s, buf)
 		if err != nil {
-			log.Printf("session_%v msg parser error,reason is %v \n", s.ID(), err)
+			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(s, msg)
+		s.Context.PushGlobalMessageQueue(msg)
 	}
+}
+
+func SessionType() reflect.Type {
+	return reflect.TypeOf(session{})
 }

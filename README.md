@@ -1,5 +1,4 @@
 
-![gonetlogo](docs/logo.jpg)
 ## version
  `v3.1.0`
  
@@ -8,24 +7,12 @@
 
 ## 主要技术理念
 - Session pool 会话池
-- Bee worker  消息处理协程池
+- Goroutine pool  消息处理协程池
 - Message cache layer 消息缓存层
-- Message ID route 依据消息ID进行路由
+- Message sequence 消息排序
 
 ## 架构图
-```go
-/*
-+---------------------------------------------------+
-+	            service		            +
-+---------------------------------------------------+
-+	server	       |	client	            +
-+---------------------------------------------------+
-+	    bee worker、Session pool、codec	    +
-+---------------------------------------------------+
-+	   transport(udp、tcp、ws、quic、kcp)	    +
-+---------------------------------------------------+
-*/
-```
+![architecture](./architecture.png)
 
 
 ## 主要特性及追求目标
@@ -43,72 +30,81 @@
 - [x] TCP
 - [x] UDP
 - [x] WEBSOCKET
-- [ ] QUIC
-- [ ] KCP
-- [ ] HTTP
-- [ ] RPC
+- [x] QUIC
+- [x] KCP
+
 ## 数据编码格式支持
 - [x] json
 - [x] xml
 - [x] binary
 - [x] protobuf
 
-## 关键技术
-- [x] 会话池(session pool）
-- [x] 协程池(goroutine pool)
 
 ## 安装教程
 ### **1.** git clone到 GOPATH/src目录下
 
 ```
-git clone https://github.com/zjllib/gonet.git
+git clone https://github.com/flylib/gonet.git
 ```
 
 ## 使用样例参考
 ```go
-     package main
+//main.go
+package main
 
 import (
-	"fmt"
-	"github.com/zjllib/gonet/v3"
-	"github.com/zjllib/gonet/v3/demo/proto"
-	"github.com/zjllib/gonet/v3/transport/ws" //协议
+	"github.com/flylib/gonet"
+	"github.com/flylib/gonet/demo/handler"
+	"github.com/flylib/gonet/transport/ws" //协议
 	"log"
 )
 
-func init() {
-	//消息路由
-	gonet.Route(gonet.SessionConnect, nil, Handler)
-	gonet.Route(gonet.SessionClose, nil, Handler)
-	gonet.Route(101, proto.Say{}, Handler)
-}
-
 func main() {
-	transport := ws.NewTransport("ws://localhost:8088/center/ws")
-
-	service := gonet.NewService(
-		gonet.WithTransport(transport),
-		gonet.MaxWorkerPoolSize(20))
-	println("server listen on:", transport.Addr())
-	if err := service.Start(); err != nil {
+	//server run context
+	ctx := gonet.NewContext(
+		gonet.WithMessageHandler(MessageHandler),
+		gonet.MustWithSessionType(transport.SessionType()),
+		gonet.MustWithCodec(&json.Codec{}),
+		gonet.MustWithLogger(builtinlog.NewLogger()),
+	)
+	fmt.Println("server listen on ws://localhost:8088/center/ws")
+	//server listen
+	if err := transport.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func Handler(msg *gonet.Message) {
-	switch msg.ID {
-	case gonet.SessionConnect:
-		log.Println("connected session_id:", msg.Session.ID(), " ip:", msg.Session.RemoteAddr().String())
-	case gonet.SessionClose:
-		log.Println("connected session_id:", msg.Session.ID(), " error:", msg.Body)
+
+// 消息路由
+func MessageHandler(msg gonet.IMessage) {
+	s := msg.From()
+	switch msg.ID() {
+	case gonet.MessageID_Connection_Connect:
+		log.Println("connected session_id:", s.ID(), " ip:", s.RemoteAddr().String())
+	case gonet.MessageID_Connection_Close:
+		log.Println("connected session_id:", s.ID(), " error:", msg.Body())
 	case 101:
-		fmt.Println("session_id:", msg.Session.ID(), " say ", msg.Body.(*proto.Say).Content)
-		//fmt.Println(reflect.TypeOf(msg.Body))
+		pb := proto.Say{}
+		err := msg.UnmarshalTo(&pb)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("session_id:", s.ID(), " say ", pb.Content)
+		err = s.Send(102, proto.Say{Content: "hell client"})
+		if err != nil {
+			log.Fatal(err)
+		}
+	case 102:
+		pb := proto.Say{}
+		err := msg.UnmarshalTo(&pb)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("session_id:", s.ID(), " say ", pb.Content)
 	default:
-		log.Println("unknown message id:", msg.ID)
+		log.Println("unknown message id:", msg.ID())
 	}
 }
-
 
 ```
 
