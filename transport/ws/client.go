@@ -7,7 +7,7 @@ import (
 )
 
 type client struct {
-	gonet.PeerIdentify
+	gonet.PeerCommon
 	option
 	conn websocket.Conn
 }
@@ -26,7 +26,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 		Proxy:            http.ProxyFromEnvironment,
 		HandshakeTimeout: c.option.HandshakeTimeout,
 	}
-	conn, _, err := dialer.Dial(c.Addr(), nil)
+	conn, _, err := dialer.Dial(addr, nil)
 	if err != nil {
 		return nil, err
 	}

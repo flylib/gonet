@@ -1,11 +1,9 @@
 package gonet
 
 import (
-	"math"
 	"runtime"
 	"runtime/debug"
 	"sync/atomic"
-	"time"
 )
 
 type poolConfig struct {
@@ -84,26 +82,5 @@ func (b *GoroutinePool) run() {
 				b.Context.messageHandler(e)
 			}
 		}()
-	}
-}
-
-func (b *GoroutinePool) monitor() {
-	if b.cfg.maxNum == 0 {
-		return
-	}
-	tick := time.Tick(time.Second * 30)
-	var preCount int
-	for range tick {
-		curCount := len(b.queue)
-		between := curCount - preCount
-		if between > 0 {
-			count := math.Abs(float64(between) / float64(b.cacheQueueSize) * float64(b.cfg.maxNum))
-			b.ascRoutine(int32(count))
-		} else if preCount > 0 && curCount == 0 {
-			curWorkingNum := atomic.LoadInt32(&b.curWorkingNum)
-			if curWorkingNum > b.cfg.maxIdleNum {
-				b.descRoutine(1)
-			}
-		}
 	}
 }

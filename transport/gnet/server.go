@@ -9,7 +9,7 @@ import (
 
 type server struct {
 	gnet.EventHandler
-	gonet.PeerIdentify
+	gonet.PeerCommon
 	engine gnet.Engine
 	opt    option
 }

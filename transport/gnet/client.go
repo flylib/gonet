@@ -8,7 +8,7 @@ import (
 )
 
 type client struct {
-	gonet.PeerIdentify
+	gonet.PeerCommon
 	eng gnet.Engine
 	cli *gnet.Client
 }

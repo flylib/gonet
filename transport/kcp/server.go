@@ -9,8 +9,8 @@ import (
 )
 
 type server struct {
-	gonet.PeerIdentify
-	gonet.SessionAbility
+	gonet.PeerCommon
+
 	ln *kcp.Listener
 	option
 }

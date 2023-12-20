@@ -6,8 +6,8 @@ import (
 )
 
 type server struct {
-	gonet.PeerIdentify
-	gonet.SessionAbility
+	gonet.PeerCommon
+
 	ln net.Listener
 }
 

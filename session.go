@@ -23,31 +23,23 @@ type ISession interface {
 	GetContext() *Context
 }
 
-type ISessionIdentify interface {
-	ID() uint64
-	SetID(id uint64)
-	UpdateID(id uint64)
-	WithContext(c *Context)
-	//get the working Contentx
-	GetContext() *Context
-	ClearIdentify()
-}
-
 // 核心会话标志
-type SessionIdentify struct {
+type SessionCommon struct {
 	*Context
+	atomic.Value
+	spinlock.Locker
 	id uint64
 }
 
-func (s *SessionIdentify) ID() uint64 {
+func (s *SessionCommon) ID() uint64 {
 	return s.id
 }
 
-func (s *SessionIdentify) SetID(id uint64) {
+func (s *SessionCommon) SetID(id uint64) {
 	s.id = id
 }
 
-func (s *SessionIdentify) UpdateID(id uint64) {
+func (s *SessionCommon) UpdateID(id uint64) {
 	value, ok := s.Context.sessionMgr.alive.Load(s.id)
 	if ok {
 		s.Context.sessionMgr.alive.Delete(s.id)
@@ -56,34 +48,16 @@ func (s *SessionIdentify) UpdateID(id uint64) {
 	}
 }
 
-func (s *SessionIdentify) WithContext(c *Context) {
+func (s *SessionCommon) WithContext(c *Context) {
 	s.Context = c
 }
 
-func (s *SessionIdentify) GetContext() *Context {
+func (s *SessionCommon) GetContext() *Context {
 	return s.Context
 }
 
-func (s *SessionIdentify) ClearIdentify() {
+func (s *SessionCommon) Clear() {
 	s.Context = nil
 	s.id = 0
-}
-
-type ISessionAbility interface {
-	ClearAbility()
-}
-
-// common ability
-type SessionAbility struct {
-	atomic.Value
-	spinlock.Locker
-}
-
-type invalidData struct {
-}
-
-var zeroData = invalidData{}
-
-func (s *SessionAbility) ClearAbility() {
 	s.Store(&zeroData)
 }

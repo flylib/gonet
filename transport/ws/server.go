@@ -11,7 +11,7 @@ var _ gonet.IServer = new(server)
 
 // 接收端
 type server struct {
-	gonet.PeerIdentify
+	gonet.PeerCommon
 	option
 }
 
@@ -25,14 +25,14 @@ func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
 }
 
 func (s *server) Listen(addr string) error {
-	_url, err := url.Parse(s.Addr())
+	u, err := url.Parse(addr)
 	if err != nil {
 		return err
 	}
 	s.SetAddr(addr)
 	mux := http.NewServeMux()
-	mux.HandleFunc(_url.Path, s.newConn)
-	return http.ListenAndServe(_url.Host, mux)
+	mux.HandleFunc(u.Path, s.newConn)
+	return http.ListenAndServe(u.Host, mux)
 }
 
 func (s *server) Close() error {

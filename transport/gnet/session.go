@@ -10,9 +10,9 @@ import (
 // Socket会话
 type session struct {
 	//核心会话标志
-	gonet.SessionIdentify
+	gonet.SessionCommon
 	//存储功能
-	gonet.SessionAbility
+
 	//累计收消息总数
 	recvCount uint64
 	//raw conn

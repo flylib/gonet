@@ -8,7 +8,7 @@ import (
 var _ gonet.IClient = new(client)
 
 type client struct {
-	gonet.PeerIdentify
+	gonet.PeerCommon
 	conn *net.UDPConn
 	option
 }

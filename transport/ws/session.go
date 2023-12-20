@@ -11,8 +11,8 @@ var _ gonet.ISession = new(session)
 
 // webSocket conn
 type session struct {
-	gonet.SessionIdentify
-	gonet.SessionAbility
+	gonet.SessionCommon
+
 	conn *websocket.Conn
 	option
 }

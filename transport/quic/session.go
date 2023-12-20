@@ -11,8 +11,8 @@ import (
 
 // conn
 type session struct {
-	gonet.SessionIdentify
-	gonet.SessionAbility
+	gonet.SessionCommon
+
 	conn     quic.Connection
 	channels []quic.Stream
 	mod      uint32

@@ -7,7 +7,7 @@ import (
 )
 
 type client struct {
-	gonet.PeerIdentify
+	gonet.PeerCommon
 	option
 	conn quic.Connection
 }
