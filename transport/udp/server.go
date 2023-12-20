@@ -7,7 +7,7 @@ import (
 )
 
 type server struct {
-	gonet.PeerIdentify
+	gonet.PeerCommon
 	ln *net.UDPConn
 	option
 	sync.RWMutex

@@ -6,7 +6,7 @@ import (
 )
 
 type client struct {
-	gonet.PeerIdentify
+	gonet.PeerCommon
 	option
 	conn net.Conn
 }

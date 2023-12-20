@@ -9,8 +9,8 @@ import (
 
 // Socket会话
 type session struct {
-	gonet.SessionIdentify
-	gonet.SessionAbility
+	gonet.SessionCommon
+
 	remoteAddr             *net.UDPAddr
 	serverConn, remoteConn *net.UDPConn
 	uuid                   string

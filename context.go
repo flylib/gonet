@@ -6,6 +6,23 @@ import (
 	"reflect"
 )
 
+type TransportProtocol string
+
+const (
+	TCP  TransportProtocol = "tcp"
+	KCP  TransportProtocol = "kcp"
+	UDP  TransportProtocol = "udp"
+	WS   TransportProtocol = "websocket"
+	HTTP TransportProtocol = "http"
+	QUIC TransportProtocol = "quic"
+	RPC  TransportProtocol = "rpc"
+)
+
+type invalidData struct {
+}
+
+var zeroData = invalidData{}
+
 type Context struct {
 	//session manager
 	sessionMgr *sessionManager
@@ -58,7 +75,7 @@ func (c *Context) GetSession(id uint64) (ISession, bool) {
 }
 func (c *Context) CreateSession() ISession {
 	idleSession := c.sessionMgr.getIdleSession()
-	idleSession.(ISessionIdentify).ClearIdentify()
+	idleSession.(interface{ Clear() }).Clear()
 	session := idleSession.(ISession)
 	c.sessionMgr.addAliveSession(idleSession)
 	c.PushGlobalMessageQueue(newConnectionConnectMessage(session))
@@ -67,7 +84,7 @@ func (c *Context) CreateSession() ISession {
 func (c *Context) RecycleSession(session ISession, err error) {
 	c.PushGlobalMessageQueue(newConnectionCloseMessage(session, err))
 	session.Close()
-	session.(ISessionAbility).ClearAbility()
+	session.(interface{ Clear() }).Clear()
 	c.sessionMgr.recycleIdleSession(session)
 }
 

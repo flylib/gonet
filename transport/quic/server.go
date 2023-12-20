@@ -8,18 +8,18 @@ import (
 
 // 接收端
 type server struct {
-	gonet.PeerIdentify
+	gonet.PeerCommon
 	ln *quic.Listener
 	option
 }
 
 func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
-	s := server{}
-	s.WithContext(ctx)
+	s := &server{}
 	for _, f := range options {
 		f(&s.option)
 	}
-	return &s
+	s.WithContext(ctx)
+	return s
 }
 
 func (s *server) Listen(url string) (err error) {
