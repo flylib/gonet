@@ -9,9 +9,9 @@ import (
 type Option func(o *Context)
 
 // Default:0 means is no limit
-func WithMessageHandler(handler MessageHandler) Option {
+func WithEventHandler(handler IEventHandler) Option {
 	return func(o *Context) {
-		o.messageHandler = handler
+		o.eventHandler = handler
 	}
 }
 

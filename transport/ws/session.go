@@ -19,11 +19,12 @@ type session struct {
 
 // 新会话
 func newSession(c *gonet.Context, conn *websocket.Conn) *session {
-	is := c.CreateSession()
-	s := is.(*session)
-	s.conn = conn
-	s.WithContext(c)
-	return s
+	is := c.GetIdleSession()
+	ns := is.(*session)
+	ns.conn = conn
+	ns.WithContext(c)
+	c.GetEventHandler().OnConnect(ns)
+	return ns
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -36,7 +37,7 @@ func (s *session) Close() error {
 
 // websocket does not support sending messages concurrently
 func (s *session) Send(msgID uint32, msg any) (err error) {
-	buf, err := s.Context.Package(s, msgID, msg)
+	buf, err := s.GetContext().Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -51,15 +52,16 @@ func (s *session) ReadLoop() {
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {
-			s.Context.RecycleSession(s, err)
+			s.GetContext().GetEventHandler().OnClose(s, err)
+			s.GetContext().RecycleSession(s)
 			return
 		}
-		msg, _, err := s.Context.UnPackage(s, buf)
+		msg, _, err := s.GetContext().UnPackage(s, buf)
 		if err != nil {
-			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
+			s.GetContext().GetEventHandler().OnError(s, err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(msg)
+		s.GetContext().PushGlobalMessageQueue(msg)
 	}
 }
 

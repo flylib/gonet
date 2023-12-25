@@ -20,7 +20,7 @@ type session struct {
 
 // 新会话
 func newSession(c *gonet.Context, conn *net.UDPConn, remote *net.UDPAddr) *session {
-	is := c.CreateSession()
+	is := c.GetIdleSession()
 	s := is.(*session)
 	s.serverConn = conn
 	s.remoteAddr = remote
@@ -34,7 +34,7 @@ func (s *session) RemoteAddr() net.Addr {
 
 // 发送封包
 func (s *session) Send(msgID uint32, msg any) error {
-	data, err := s.Context.Package(s, msgID, msg)
+	data, err := s.GetContext().Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -57,15 +57,15 @@ func (s *session) recvLoop() {
 	for {
 		n, err := s.serverConn.Read(buf)
 		if err != nil {
-			s.Context.RecycleSession(s, err)
+			s.GetContext().RecycleSession(s)
 			return
 		}
-		msg, _, err := s.Context.UnPackage(s, buf[:n])
+		msg, _, err := s.GetContext().UnPackage(s, buf[:n])
 		if err != nil {
-			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
+			s.GetContext().GetEventHandler().OnError(s, err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(msg)
+		s.GetContext().PushGlobalMessageQueue(msg)
 	}
 }
 

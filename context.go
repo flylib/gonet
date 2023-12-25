@@ -25,12 +25,12 @@ var zeroData = invalidData{}
 
 type Context struct {
 	//session manager
-	sessionMgr *sessionManager
+	sessions *sessionManager
 	//go routine pool
 	routines *GoroutinePool
 
 	//Message callback processing
-	messageHandler  MessageHandler
+	eventHandler    IEventHandler
 	maxSessionCount int
 	//routine pool config
 	poolCfg poolConfig
@@ -65,41 +65,39 @@ func NewContext(options ...Option) *Context {
 	}
 
 	ctx.routines = newGoroutinePool(ctx)
-	ctx.sessionMgr = newSessionManager(ctx.sessionType)
+	ctx.sessions = newSessionManager(ctx.sessionType)
 	return ctx
 }
 
 // 会话管理
 func (c *Context) GetSession(id uint64) (ISession, bool) {
-	return c.sessionMgr.getAliveSession(id)
+	return c.sessions.getAliveSession(id)
 }
-func (c *Context) CreateSession() ISession {
-	idleSession := c.sessionMgr.getIdleSession()
+func (c *Context) GetIdleSession() ISession {
+	idleSession := c.sessions.getIdleSession()
 	idleSession.(interface{ Clear() }).Clear()
-	session := idleSession.(ISession)
-	c.sessionMgr.addAliveSession(idleSession)
-	c.PushGlobalMessageQueue(newConnectionConnectMessage(session))
-	return session
+	c.sessions.addAliveSession(idleSession)
+	return idleSession.(ISession)
 }
-func (c *Context) RecycleSession(session ISession, err error) {
-	c.PushGlobalMessageQueue(newConnectionCloseMessage(session, err))
+func (c *Context) RecycleSession(session ISession) {
 	session.Close()
 	session.(interface{ Clear() }).Clear()
-	c.sessionMgr.recycleIdleSession(session)
+	c.sessions.recycleIdleSession(session)
 }
-
 func (c *Context) SessionCount() int32 {
-	return c.sessionMgr.countAliveSession()
+	return c.sessions.countAliveSession()
 }
-
 func (c *Context) Broadcast(msgId uint32, msg any) {
-	c.sessionMgr.alive.Range(func(_, item interface{}) bool {
+	c.sessions.alive.Range(func(_, item interface{}) bool {
 		session, ok := item.(ISession)
 		if ok {
 			session.Send(msgId, msg)
 		}
 		return true
 	})
+}
+func (c *Context) GetEventHandler() IEventHandler {
+	return c.eventHandler
 }
 
 // push the message to the routine pool

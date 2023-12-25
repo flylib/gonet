@@ -41,7 +41,7 @@ func (s *server) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 func (s *server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	is, ok := s.Context.GetSession(uint64(c.Fd()))
 	if ok {
-		s.Context.RecycleSession(is, err)
+		s.Context.RecycleSession(is)
 	}
 	return gnet.None
 }
