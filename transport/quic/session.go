@@ -20,11 +20,12 @@ type session struct {
 
 // 新会话
 func newSession(c *gonet.Context, conn quic.Connection) *session {
-	ses := c.CreateSession()
-	s, _ := ses.(*session)
-	s.conn = conn
-	s.WithContext(c)
-	return s
+	ses := c.GetIdleSession()
+	ns, _ := ses.(*session)
+	ns.conn = conn
+	ns.WithContext(c)
+	c.GetEventHandler().OnConnect(ns)
+	return ns
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -32,7 +33,7 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msgID uint32, msg any) error {
-	buf, err := s.Context.Package(s, msgID, msg)
+	buf, err := s.GetContext().Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -57,8 +58,8 @@ func (s *session) acceptStream() {
 	for {
 		ch, err := s.conn.AcceptStream(context.Background())
 		if err != nil {
-			s.Warnf("session_%v AcceptStream error,reason is %v", s.ID(), err)
-			s.Context.RecycleSession(s, err)
+			s.GetContext().GetEventHandler().OnClose(s, err)
+			s.GetContext().RecycleSession(s)
 			return
 		}
 		s.channels = append(s.channels, ch)
@@ -74,18 +75,18 @@ func (s *session) recvLoop(channel quic.Stream) {
 	for {
 		n, err := channel.Read(buf)
 		if err != nil {
-			s.ILogger.Warnf("session_%v_%d steam read error - %v ", s.ID(), channel.StreamID(), err)
+			s.GetContext().GetEventHandler().OnError(s, err)
 			channel.Close()
 			return
 		}
-		msg, _, err := s.Context.UnPackage(s, buf[:n])
+		msg, _, err := s.GetContext().UnPackage(s, buf[:n])
 		if err != nil {
-			s.ILogger.Warnf("session_%v_%d msg parser error,reason is %v ", s.ID(), channel.StreamID(), err)
+			s.GetContext().GetEventHandler().OnError(s, err)
 			continue
 		}
 		msg.ID()
 
-		s.Context.PushGlobalMessageQueue(msg)
+		s.GetContext().PushGlobalMessageQueue(msg)
 	}
 }
 

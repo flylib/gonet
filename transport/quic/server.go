@@ -22,12 +22,12 @@ func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
 	return s
 }
 
-func (s *server) Listen(url string) (err error) {
-	s.ln, err = quic.ListenAddr(url, generateTLSConfig(), nil)
+func (s *server) Listen(addr string) (err error) {
+	s.ln, err = quic.ListenAddr(addr, generateTLSConfig(), nil)
 	if err != nil {
 		return err
 	}
-	s.SetAddr(url)
+	s.SetAddr(addr)
 
 	for {
 		conn, err := s.ln.Accept(context.Background())

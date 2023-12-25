@@ -22,13 +22,14 @@ type session struct {
 }
 
 // 新会话
-func newSession(ctx *gonet.Context, conn gnet.Conn) *session {
-	is := ctx.CreateSession()
-	s := is.(*session)
-	s.conn = conn
-	s.WithContext(ctx)
-	s.UpdateID(uint64(conn.Fd()))
-	return s
+func newSession(c *gonet.Context, conn gnet.Conn) *session {
+	is := c.GetIdleSession()
+	ns := is.(*session)
+	ns.conn = conn
+	ns.WithContext(c)
+	ns.UpdateID(uint64(conn.Fd()))
+	c.GetEventHandler().OnConnect(ns)
+	return ns
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -36,7 +37,7 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msgID uint32, msg any) error {
-	buf, err := s.Context.Package(s, msgID, msg)
+	buf, err := s.GetContext().Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}

@@ -20,11 +20,12 @@ type Session struct {
 
 // 新会话
 func newSession(c *gonet.Context, conn *kcp.UDPSession) *Session {
-	is := c.CreateSession()
-	s := is.(*Session)
-	s.conn = conn
-	s.WithContext(c)
-	return s
+	is := c.GetIdleSession()
+	ns := is.(*Session)
+	ns.conn = conn
+	ns.WithContext(c)
+	c.GetEventHandler().OnConnect(ns)
+	return ns
 }
 
 func (s *Session) RemoteAddr() net.Addr {
@@ -32,7 +33,7 @@ func (s *Session) RemoteAddr() net.Addr {
 }
 
 func (s *Session) Send(msgID uint32, msg any) error {
-	buf, err := s.Context.Package(s, msgID, msg)
+	buf, err := s.GetContext().Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -50,14 +51,15 @@ func (s *Session) recvLoop() {
 	for {
 		n, err := s.conn.Read(buf)
 		if err != nil {
-			s.Context.RecycleSession(s, err)
+			s.GetContext().GetEventHandler().OnClose(s, err)
+			s.GetContext().RecycleSession(s)
 			return
 		}
-		msg, _, err := s.Context.UnPackage(s, buf[:n])
+		msg, _, err := s.GetContext().UnPackage(s, buf[:n])
 		if err != nil {
-			s.ILogger.Warnf("session_%v msg parser error,reason is %v ", s.ID(), err)
+			s.GetContext().GetEventHandler().OnError(s, err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(msg)
+		s.GetContext().PushGlobalMessageQueue(msg)
 	}
 }

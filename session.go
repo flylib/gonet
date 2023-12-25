@@ -25,7 +25,7 @@ type ISession interface {
 
 // 核心会话标志
 type SessionCommon struct {
-	*Context
+	ctx *Context
 	atomic.Value
 	spinlock.Locker
 	id uint64
@@ -40,24 +40,24 @@ func (s *SessionCommon) SetID(id uint64) {
 }
 
 func (s *SessionCommon) UpdateID(id uint64) {
-	value, ok := s.Context.sessionMgr.alive.Load(s.id)
+	value, ok := s.ctx.sessions.alive.Load(s.id)
 	if ok {
-		s.Context.sessionMgr.alive.Delete(s.id)
+		s.ctx.sessions.alive.Delete(s.id)
 		s.id = id
-		s.Context.sessionMgr.alive.Store(s.id, value)
+		s.ctx.sessions.alive.Store(s.id, value)
 	}
 }
 
 func (s *SessionCommon) WithContext(c *Context) {
-	s.Context = c
+	s.ctx = c
 }
 
 func (s *SessionCommon) GetContext() *Context {
-	return s.Context
+	return s.ctx
 }
 
 func (s *SessionCommon) Clear() {
-	s.Context = nil
+	s.ctx = nil
 	s.id = 0
 	s.Store(&zeroData)
 }

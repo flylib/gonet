@@ -15,7 +15,7 @@ import (
 
 func TestQuicServer(t *testing.T) {
 	ctx := gonet.NewContext(
-		gonet.WithMessageHandler(handler.MessageHandler),
+		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
 		gonet.MustWithCodec(&json.Codec{}),
@@ -29,7 +29,7 @@ func TestQuicServer(t *testing.T) {
 
 func TestQuicClient(t *testing.T) {
 	ctx := gonet.NewContext(
-		gonet.WithMessageHandler(handler.MessageHandler),
+		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
 		gonet.MustWithCodec(&json.Codec{}),
