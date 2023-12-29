@@ -19,5 +19,5 @@ func (m *Message) From() ISession {
 }
 
 func (m *Message) UnmarshalTo(v any) error {
-	return m.session.GetContext().Unmarshal(m.Body(), v)
+	return defaultCtx.Unmarshal(m.Body(), v)
 }

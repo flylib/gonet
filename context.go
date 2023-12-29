@@ -7,12 +7,12 @@ import (
 )
 
 var (
-	defaultCtx Context
+	defaultCtx *Context
 )
 
 type Context struct {
 	//session manager
-	sessions *SessionManager
+	sessionManager *SessionManager
 	//asyncRuntime
 	asyncRuntime *AsyncRuntime
 
@@ -25,14 +25,14 @@ type Context struct {
 	codec.ICodec
 	ilog.ILogger
 	//net package parser
-	INetPackager
+	netPackager INetPackager
 
 	sessionType reflect.Type
 }
 
 func SetContext(options ...Option) *Context {
 	ctx := &Context{
-		INetPackager: &DefaultNetPackager{},
+		netPackager: &DefaultNetPackager{},
 	}
 
 	for _, f := range options {
@@ -52,43 +52,30 @@ func SetContext(options ...Option) *Context {
 	}
 
 	ctx.asyncRuntime = newAsyncRuntime(ctx)
-	ctx.sessions = newSessionManager(ctx.sessionType)
+	ctx.sessionManager = NewSessionManager(ctx.sessionType)
 	return ctx
 }
 
-// 会话管理
-func (c *Context) GetSession(id uint64) (ISession, bool) {
-	return c.sessions.getAliveSession(id)
+func DefaultContext() *Context {
+	return defaultCtx
 }
-func (c *Context) GetIdleSession() ISession {
-	idleSession := c.sessions.getIdleSession()
-	idleSession.(interface{ Clear() }).Clear()
-	c.sessions.addAliveSession(idleSession)
-	return idleSession.(ISession)
+
+// session manager
+func (c *Context) GetSessionManager() *SessionManager {
+	return c.sessionManager
 }
-func (c *Context) RecycleSession(session ISession) {
-	session.Close()
-	session.(interface{ Clear() }).Clear()
-	c.sessions.recycleIdleSession(session)
-}
-func (c *Context) SessionCount() int32 {
-	return c.sessions.countAliveSession()
-}
-func (c *Context) Broadcast(msgId uint32, msg any) {
-	c.sessions.alive.Range(func(_, item interface{}) bool {
-		session, ok := item.(ISession)
-		if ok {
-			session.Send(msgId, msg)
-		}
-		return true
-	})
-}
+
+// event handler
 func (c *Context) GetEventHandler() IEventHandler {
 	return c.eventHandler
 }
 
-// push the message to the routine pool
-func (c *Context) PushGlobalMessageQueue(msg Message) {
-	// active defense to avoid too many message
-	c.asyncRuntime.queue <- msg
+// net packager
+func (c *Context) GetNetPackager() INetPackager {
+	return c.netPackager
+}
+
+// async runtime
+func (c *Context) GetAsyncRuntime() *AsyncRuntime {
+	return c.asyncRuntime
 }

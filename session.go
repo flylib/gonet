@@ -19,13 +19,10 @@ type ISession interface {
 	Store(value any)
 	//load the data
 	Load() (value any)
-	//get the working Context
-	GetContext() *Context
 }
 
 // 核心会话标志
 type SessionCommon struct {
-	ctx *Context
 	atomic.Value
 	spinlock.Locker
 	id uint64
@@ -40,24 +37,14 @@ func (s *SessionCommon) SetID(id uint64) {
 }
 
 func (s *SessionCommon) UpdateID(id uint64) {
-	value, ok := s.ctx.sessions.alive.Load(s.id)
+	value, ok := defaultCtx.sessionManager.alive.Load(s.id)
 	if ok {
-		s.ctx.sessions.alive.Delete(s.id)
+		defaultCtx.sessionManager.alive.Delete(s.id)
 		s.id = id
-		s.ctx.sessions.alive.Store(s.id, value)
+		defaultCtx.sessionManager.alive.Store(s.id, value)
 	}
 }
-
-func (s *SessionCommon) WithContext(c *Context) {
-	s.ctx = c
-}
-
-func (s *SessionCommon) GetContext() *Context {
-	return s.ctx
-}
-
 func (s *SessionCommon) Clear() {
-	s.ctx = nil
 	s.id = 0
-	s.Store(&zeroData)
+	s.Value = atomic.Value{}
 }
