@@ -38,7 +38,7 @@ func (s *session) Close() error {
 
 // websocket does not support sending messages concurrently
 func (s *session) Send(msgID uint32, msg any) (err error) {
-	buf, err := gonet.DefaultContext().Package(msgID, msg)
+	buf, err := gonet.DefaultContext().GetNetPackager().Package(msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -58,12 +58,12 @@ func (s *session) ReadLoop() {
 			c.GetSessionManager().RecycleIdleSession(s)
 			return
 		}
-		msg, _, err := c.GetNetPackager().UnPackage(buf)
+		msg, _, err := c.GetNetPackager().UnPackage(s, buf)
 		if err != nil {
 			c.GetEventHandler().OnError(s, err)
 			continue
 		}
-		c.PushGlobalMessageQueue(msg)
+		c.GetAsyncRuntime().PushMessage(msg)
 	}
 }
 

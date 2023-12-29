@@ -16,7 +16,6 @@ type (
 )
 
 type PeerCommon struct {
-	*Context
 	addr string
 }
 
@@ -26,8 +25,4 @@ func (s *PeerCommon) Addr() string {
 
 func (s *PeerCommon) SetAddr(addr string) {
 	s.addr = addr
-}
-
-func (s *PeerCommon) WithContext(c *Context) {
-	s.Context = c
 }

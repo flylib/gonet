@@ -47,14 +47,14 @@ func WithGQSize(size int32) Option {
 // network package paser
 func WithNetPackager(packager INetPackager) Option {
 	return func(o *Context) {
-		o.INetPackager = packager
+		o.netPackager = packager
 	}
 }
 
 // Default json codec, message codec
 func MustWithCodec(codec codec.ICodec) Option {
 	return func(o *Context) {
-		o.ICodec = codec
+		o.codec = codec
 	}
 }
 

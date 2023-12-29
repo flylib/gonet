@@ -22,7 +22,7 @@ type Context struct {
 	//routine pool config
 	poolCfg RuntimeConfig
 	//message codec
-	codec.ICodec
+	codec codec.ICodec
 	ilog.ILogger
 	//net package parser
 	netPackager INetPackager
@@ -39,7 +39,7 @@ func SetContext(options ...Option) *Context {
 		f(ctx)
 	}
 
-	if ctx.ICodec == nil {
+	if ctx.codec == nil {
 		panic("nil ICodec")
 	}
 
@@ -73,6 +73,11 @@ func (c *Context) GetEventHandler() IEventHandler {
 // net packager
 func (c *Context) GetNetPackager() INetPackager {
 	return c.netPackager
+}
+
+// net packager
+func (c *Context) GetCodec() codec.ICodec {
+	return c.codec
 }
 
 // async runtime

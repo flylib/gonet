@@ -18,7 +18,7 @@ type AsyncRuntime struct {
 	cfg               RuntimeConfig
 	curWorkingNum     int32
 	cacheQueueSize    int
-	queue             chan Message
+	queue             chan *Message
 	addRoutineChannel chan bool
 }
 
@@ -34,7 +34,7 @@ func newAsyncRuntime(ctx *Context) *AsyncRuntime {
 		Context:           ctx,
 		cfg:               ctx.poolCfg,
 		addRoutineChannel: make(chan bool),
-		queue:             make(chan Message, ctx.poolCfg.queueSize),
+		queue:             make(chan *Message, ctx.poolCfg.queueSize),
 	}
 
 	go pool.run()
@@ -83,4 +83,8 @@ func (b *AsyncRuntime) run() {
 			}
 		}()
 	}
+}
+
+func (b *AsyncRuntime) PushMessage(msg *Message) {
+	b.queue <- msg
 }

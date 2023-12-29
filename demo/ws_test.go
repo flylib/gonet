@@ -14,7 +14,7 @@ import (
 )
 
 func TestWebsocketServer(t *testing.T) {
-	ctx := gonet.SetContext(
+	gonet.SetContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
@@ -22,19 +22,19 @@ func TestWebsocketServer(t *testing.T) {
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
 	fmt.Println("server listen on ws://localhost:8088/center/ws")
-	if err := transport.NewServer(ctx).Listen("ws://localhost:8088/center/ws"); err != nil {
+	if err := transport.NewServer().Listen("ws://localhost:8088/center/ws"); err != nil {
 		log.Fatal(err)
 	}
 }
 
 func TestWebsocketClient(t *testing.T) {
-	ctx := gonet.SetContext(
+	gonet.SetContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 		gonet.MustWithSessionType(transport.SessionType()),
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
-	session, err := transport.NewClient(ctx, transport.WithHandshakeTimeout(5*time.Second)).Dial("ws://localhost:8088/center/ws")
+	session, err := transport.NewClient(transport.WithHandshakeTimeout(5 * time.Second)).Dial("ws://localhost:8088/center/ws")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -21,7 +21,7 @@ func (e EventHandler) OnClose(session gonet.ISession, err error) {
 	fmt.Println(fmt.Sprintf("session close-%d", session.ID()))
 }
 
-func (e EventHandler) OnMessage(message gonet.IMsg) {
+func (e EventHandler) OnMessage(message *gonet.Message) {
 	//TODO implement me
 	switch message.ID() {
 	case 101:

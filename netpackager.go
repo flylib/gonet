@@ -18,14 +18,14 @@ const (
 // 网络包解析器(network package)
 type INetPackager interface {
 	Package(msgID uint32, v any) ([]byte, error)
-	UnPackage(data []byte) (*Message, int, error)
+	UnPackage(s ISession, data []byte) (*Message, int, error)
 }
 
 type DefaultNetPackager struct {
 }
 
 func (d *DefaultNetPackager) Package(msgID uint32, v any) ([]byte, error) {
-	body, err := defaultCtx.ICodec.Marshal(v)
+	body, err := defaultCtx.codec.Marshal(v)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (d *DefaultNetPackager) Package(msgID uint32, v any) ([]byte, error) {
 	return content, nil
 }
 
-func (d *DefaultNetPackager) UnPackage(data []byte) (*Message, int, error) {
+func (d *DefaultNetPackager) UnPackage(s ISession, data []byte) (*Message, int, error) {
 	msgID := binary.LittleEndian.Uint32(data[:MsgIDOffset])
 	return &Message{id: msgID, body: data[MsgIDOffset:], session: s}, 0, nil
 }

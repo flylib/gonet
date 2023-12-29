@@ -15,12 +15,11 @@ type server struct {
 	option
 }
 
-func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+func NewServer(options ...Option) gonet.IServer {
 	s := &server{}
 	for _, f := range options {
 		f(&s.option)
 	}
-	s.WithContext(ctx)
 	return s
 }
 
@@ -48,6 +47,6 @@ func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	ns := newSession(s.Context, conn)
+	ns := newSession(conn)
 	go ns.ReadLoop()
 }
