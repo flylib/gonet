@@ -14,7 +14,7 @@ import (
 )
 
 func TestGNETServer(t *testing.T) {
-	ctx := gonet.NewContext(
+	ctx := gonet.SetContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
@@ -28,7 +28,7 @@ func TestGNETServer(t *testing.T) {
 }
 
 func TestGNETClient(t *testing.T) {
-	ctx := gonet.NewContext(
+	ctx := gonet.SetContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),

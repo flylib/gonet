@@ -6,34 +6,21 @@ import (
 	"reflect"
 )
 
-type TransportProtocol string
-
-const (
-	TCP  TransportProtocol = "tcp"
-	KCP  TransportProtocol = "kcp"
-	UDP  TransportProtocol = "udp"
-	WS   TransportProtocol = "websocket"
-	HTTP TransportProtocol = "http"
-	QUIC TransportProtocol = "quic"
-	RPC  TransportProtocol = "rpc"
+var (
+	defaultCtx Context
 )
-
-type invalidData struct {
-}
-
-var zeroData = invalidData{}
 
 type Context struct {
 	//session manager
-	sessions *sessionManager
-	//go routine pool
-	routines *GoroutinePool
+	sessions *SessionManager
+	//asyncRuntime
+	asyncRuntime *AsyncRuntime
 
 	//Message callback processing
 	eventHandler    IEventHandler
 	maxSessionCount int
 	//routine pool config
-	poolCfg poolConfig
+	poolCfg RuntimeConfig
 	//message codec
 	codec.ICodec
 	ilog.ILogger
@@ -43,7 +30,7 @@ type Context struct {
 	sessionType reflect.Type
 }
 
-func NewContext(options ...Option) *Context {
+func SetContext(options ...Option) *Context {
 	ctx := &Context{
 		INetPackager: &DefaultNetPackager{},
 	}
@@ -64,7 +51,7 @@ func NewContext(options ...Option) *Context {
 		panic("nil sessionType")
 	}
 
-	ctx.routines = newGoroutinePool(ctx)
+	ctx.asyncRuntime = newAsyncRuntime(ctx)
 	ctx.sessions = newSessionManager(ctx.sessionType)
 	return ctx
 }
@@ -101,7 +88,7 @@ func (c *Context) GetEventHandler() IEventHandler {
 }
 
 // push the message to the routine pool
-func (c *Context) PushGlobalMessageQueue(msg IMessage) {
+func (c *Context) PushGlobalMessageQueue(msg Message) {
 	// active defense to avoid too many message
-	c.routines.queue <- msg
+	c.asyncRuntime.queue <- msg
 }

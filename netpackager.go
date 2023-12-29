@@ -18,7 +18,7 @@ const (
 // 网络包解析器(network package)
 type INetPackager interface {
 	Package(s ISession, msgID uint32, v any) ([]byte, error)
-	UnPackage(s ISession, data []byte) (IMessage, int, error)
+	UnPackage(s ISession, data []byte) (Message, int, error)
 }
 
 type DefaultNetPackager struct {
@@ -35,7 +35,7 @@ func (d *DefaultNetPackager) Package(s ISession, msgID uint32, v any) ([]byte, e
 	return content, nil
 }
 
-func (d *DefaultNetPackager) UnPackage(s ISession, data []byte) (IMessage, int, error) {
+func (d *DefaultNetPackager) UnPackage(s ISession, data []byte) (*Message, int, error) {
 	msgID := binary.LittleEndian.Uint32(data[:MsgIDOffset])
-	return &message{id: msgID, body: data[MsgIDOffset:], session: s}, 0, nil
+	return &Message{id: msgID, body: data[MsgIDOffset:], session: s}, 0, nil
 }

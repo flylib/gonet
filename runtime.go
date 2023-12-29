@@ -6,23 +6,23 @@ import (
 	"sync/atomic"
 )
 
-type poolConfig struct {
+type RuntimeConfig struct {
 	queueSize  int32
 	maxNum     int32
 	maxIdleNum int32
 }
 
 // Lightweight goroutine pool
-type GoroutinePool struct {
-	cfg poolConfig
+type AsyncRuntime struct {
 	*Context
+	cfg               RuntimeConfig
 	curWorkingNum     int32
 	cacheQueueSize    int
-	queue             chan IMessage
+	queue             chan Message
 	addRoutineChannel chan bool
 }
 
-func newGoroutinePool(ctx *Context) *GoroutinePool {
+func newAsyncRuntime(ctx *Context) *AsyncRuntime {
 	if ctx.poolCfg.maxIdleNum == 0 {
 		ctx.poolCfg.maxIdleNum = int32(runtime.NumCPU())
 	}
@@ -30,11 +30,11 @@ func newGoroutinePool(ctx *Context) *GoroutinePool {
 		ctx.poolCfg.queueSize = 64
 	}
 
-	pool := &GoroutinePool{
+	pool := &AsyncRuntime{
 		Context:           ctx,
 		cfg:               ctx.poolCfg,
 		addRoutineChannel: make(chan bool),
-		queue:             make(chan IMessage, ctx.poolCfg.queueSize),
+		queue:             make(chan Message, ctx.poolCfg.queueSize),
 	}
 
 	go pool.run()
@@ -42,7 +42,7 @@ func newGoroutinePool(ctx *Context) *GoroutinePool {
 	return pool
 }
 
-func (b *GoroutinePool) ascRoutine(count int32) {
+func (b *AsyncRuntime) ascRoutine(count int32) {
 	if count <= 0 {
 		count = 1
 	}
@@ -51,7 +51,7 @@ func (b *GoroutinePool) ascRoutine(count int32) {
 	}
 }
 
-func (b *GoroutinePool) descRoutine(count int32) {
+func (b *AsyncRuntime) descRoutine(count int32) {
 	if count <= 0 {
 		count = 1
 	}
@@ -60,7 +60,7 @@ func (b *GoroutinePool) descRoutine(count int32) {
 	}
 }
 
-func (b *GoroutinePool) run() {
+func (b *AsyncRuntime) run() {
 	for range b.addRoutineChannel {
 		if b.cfg.maxNum != 0 &&
 			b.curWorkingNum >= b.cfg.maxNum {

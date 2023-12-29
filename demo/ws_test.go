@@ -14,7 +14,7 @@ import (
 )
 
 func TestWebsocketServer(t *testing.T) {
-	ctx := gonet.NewContext(
+	ctx := gonet.SetContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
@@ -28,7 +28,7 @@ func TestWebsocketServer(t *testing.T) {
 }
 
 func TestWebsocketClient(t *testing.T) {
-	ctx := gonet.NewContext(
+	ctx := gonet.SetContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 		gonet.MustWithSessionType(transport.SessionType()),
 		gonet.MustWithCodec(&json.Codec{}),

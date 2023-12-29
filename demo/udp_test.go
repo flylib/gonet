@@ -14,7 +14,7 @@ import (
 )
 
 func TestUDPServer(t *testing.T) {
-	ctx := gonet.NewContext(
+	ctx := gonet.SetContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
@@ -28,7 +28,7 @@ func TestUDPServer(t *testing.T) {
 }
 
 func TestUDPClient(t *testing.T) {
-	ctx := gonet.NewContext(
+	ctx := gonet.SetContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
