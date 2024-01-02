@@ -34,7 +34,7 @@ func (s *server) Listen(addr string) error {
 		if err != nil {
 			return err
 		}
-		go newSession(conn).recvLoop()
+		go newSession(conn).readLoop()
 	}
 }
 func (s *server) Close() error {

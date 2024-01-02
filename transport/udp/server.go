@@ -14,7 +14,7 @@ type server struct {
 	remotes map[string]uint64
 }
 
-func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+func NewServer(options ...Option) gonet.IServer {
 	s := &server{
 		option: option{
 			mtu: gonet.MTU,
@@ -24,16 +24,15 @@ func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
 	for _, f := range options {
 		f(&s.option)
 	}
-	s.WithContext(ctx)
 	return s
 }
 
 func (s *server) Listen(addr string) error {
-	udpAddr, err := net.ResolveUDPAddr(string(gonet.UDP), addr)
+	udpAddr, err := net.ResolveUDPAddr("udp", addr)
 	if err != nil {
 		return err
 	}
-	s.ln, err = net.ListenUDP(string(gonet.UDP), udpAddr)
+	s.ln, err = net.ListenUDP("udp", udpAddr)
 	if err != nil {
 		return err
 	}
@@ -43,7 +42,6 @@ func (s *server) Listen(addr string) error {
 	for {
 		n, remoteAddr, err := s.ln.ReadFromUDP(buf)
 		if err != nil {
-			s.ILogger.Errorf("#udp.read failed(%v) %v \n", s.ln.RemoteAddr(), err.Error())
 			return err
 		}
 

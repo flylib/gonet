@@ -19,12 +19,11 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *gonet.Context, conn *net.UDPConn, remote *net.UDPAddr) *session {
-	is := c.GetIdleSession()
+func newSession(conn *net.UDPConn, remote *net.UDPAddr) *session {
+	is := gonet.GetSessionManager().GetIdleSession()
 	s := is.(*session)
 	s.serverConn = conn
 	s.remoteAddr = remote
-	s.WithContext(c)
 	return s
 }
 
@@ -34,7 +33,7 @@ func (s *session) RemoteAddr() net.Addr {
 
 // 发送封包
 func (s *session) Send(msgID uint32, msg any) error {
-	data, err := s.GetContext().Package(s, msgID, msg)
+	data, err := gonet.GetNetPackager().Package(msgID, msg)
 	if err != nil {
 		return err
 	}

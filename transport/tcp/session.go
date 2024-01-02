@@ -1,12 +1,15 @@
 package tcp
 
 import (
+	"encoding/binary"
 	"github.com/flylib/gonet"
+	"io"
 	"net"
+	"reflect"
 )
 
 // Socket会话
-type Session struct {
+type session struct {
 	//核心会话标志
 	gonet.SessionCommon
 	//存储功能
@@ -15,25 +18,23 @@ type Session struct {
 	recvCount uint64
 	//raw conn
 	conn net.Conn
-	//缓存数据，用于解决粘包问题
-	cache []byte
 }
 
 // 新会话
-func newSession(conn net.Conn) *Session {
+func newSession(conn net.Conn) *session {
 	is := gonet.GetSessionManager().GetIdleSession()
-	ns := is.(*Session)
+	ns := is.(*session)
 	ns.conn = conn
 	gonet.GetSessionManager().AddSession(ns)
 	gonet.GetEventHandler().OnConnect(ns)
 	return ns
 }
 
-func (s *Session) RemoteAddr() net.Addr {
+func (s *session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *Session) Send(msgID uint32, msg any) error {
+func (s *session) Send(msgID uint32, msg any) error {
 	buf, err := gonet.GetNetPackager().Package(msgID, msg)
 	if err != nil {
 		return err
@@ -42,39 +43,46 @@ func (s *Session) Send(msgID uint32, msg any) error {
 	return err
 }
 
-func (s *Session) Close() error {
+func (s *session) Close() error {
 	return s.conn.Close()
 }
 
 // 接收循环
-func (s *Session) recvLoop() {
-	var buf = make([]byte, gonet.MTU)
+func (s *session) readLoop() {
 	for {
-		n, err := s.conn.Read(buf)
+		buf, err := s.read()
 		if err != nil {
 			gonet.GetEventHandler().OnClose(s, err)
 			gonet.GetSessionManager().RecycleSession(s)
 			return
 		}
-		if n == 0 {
-			continue
-		}
-		//如果有粘包未处理数据部分，放入本次进行处理
-		if len(s.cache) > 0 {
-			buf = append(s.cache, buf[:n]...)
-			n = len(buf)
-			s.cache = nil
-		}
-		msg, unUsedCount, err := gonet.GetNetPackager().UnPackage(s, buf[:n])
+		msg, err := gonet.GetNetPackager().UnPackage(s, buf)
 		if err != nil {
-			s.cache = nil
 			gonet.GetEventHandler().OnError(s, err)
 			continue
 		}
-		//存储未使用部分
-		if unUsedCount > 0 {
-			s.cache = append(s.cache, buf[n-unUsedCount-1:n]...)
-		}
 		gonet.GetAsyncRuntime().PushMessage(msg)
 	}
+}
+
+// 粘包处理
+func (s *session) read() ([]byte, error) {
+	header := make([]byte, gonet.PktSizeLen)
+	_, err := io.ReadFull(s.conn, header)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyLength := binary.LittleEndian.Uint16(header)
+	buf := make([]byte, bodyLength)
+	_, err = io.ReadFull(s.conn, buf)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func SessionType() reflect.Type {
+	return reflect.TypeOf(session{})
 }
