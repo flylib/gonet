@@ -19,12 +19,11 @@ type session struct {
 
 // 新会话
 func newSession(conn *websocket.Conn) *session {
-	c := gonet.DefaultContext()
-	is := c.GetSessionManager().GetIdleSession()
+	is := gonet.GetSessionManager().GetIdleSession()
 	ns := is.(*session)
 	ns.conn = conn
-	c.GetSessionManager().AddSession(ns)
-	c.GetEventHandler().OnConnect(ns)
+	gonet.GetSessionManager().AddSession(ns)
+	gonet.GetEventHandler().OnConnect(ns)
 	return ns
 }
 
@@ -38,7 +37,7 @@ func (s *session) Close() error {
 
 // websocket does not support sending messages concurrently
 func (s *session) Send(msgID uint32, msg any) (err error) {
-	buf, err := gonet.DefaultContext().GetNetPackager().Package(msgID, msg)
+	buf, err := gonet.GetNetPackager().Package(msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -50,20 +49,19 @@ func (s *session) Send(msgID uint32, msg any) (err error) {
 
 // Loop to read messages
 func (s *session) ReadLoop() {
-	c := gonet.DefaultContext()
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {
-			c.GetEventHandler().OnClose(s, err)
-			c.GetSessionManager().RecycleIdleSession(s)
+			gonet.GetEventHandler().OnClose(s, err)
+			gonet.GetSessionManager().RecycleSession(s)
 			return
 		}
-		msg, _, err := c.GetNetPackager().UnPackage(s, buf)
+		msg, _, err := gonet.GetNetPackager().UnPackage(s, buf)
 		if err != nil {
-			c.GetEventHandler().OnError(s, err)
+			gonet.GetEventHandler().OnError(s, err)
 			continue
 		}
-		c.GetAsyncRuntime().PushMessage(msg)
+		gonet.GetAsyncRuntime().PushMessage(msg)
 	}
 }
 

@@ -9,16 +9,20 @@ type server struct {
 	gonet.PeerCommon
 
 	ln net.Listener
+
+	option
 }
 
-func NewServer(ctx *gonet.Context) gonet.IServer {
+func NewServer(options ...Option) gonet.IServer {
 	s := &server{}
-	s.WithContext(ctx)
+	for _, f := range options {
+		f(&s.option)
+	}
 	return s
 }
 
 func (s *server) Listen(addr string) error {
-	ln, err := net.Listen(string(gonet.TCP), addr)
+	ln, err := net.Listen("tcp", addr)
 	if err != nil {
 		return err
 	}
@@ -30,7 +34,7 @@ func (s *server) Listen(addr string) error {
 		if err != nil {
 			return err
 		}
-		go newSession(s.Context, conn).recvLoop()
+		go newSession(conn).recvLoop()
 	}
 }
 func (s *server) Close() error {

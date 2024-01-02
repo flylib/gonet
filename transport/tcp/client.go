@@ -11,12 +11,11 @@ type client struct {
 	conn net.Conn
 }
 
-func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
+func NewClient(options ...Option) gonet.IClient {
 	c := &client{}
 	for _, f := range options {
 		f(&c.option)
 	}
-	c.WithContext(ctx)
 	return c
 }
 
@@ -34,7 +33,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 		}
 		c.conn = conn
 	}
-	s := newSession(c.Context, c.conn)
+	s := newSession(c.conn)
 	go s.recvLoop()
 	return s, nil
 }

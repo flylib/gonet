@@ -8,8 +8,8 @@ import (
 
 type client struct {
 	gonet.PeerCommon
-	option
 	conn websocket.Conn
+	option
 }
 
 func NewClient(options ...Option) gonet.IClient {

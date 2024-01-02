@@ -44,7 +44,7 @@ func (s *SessionManager) GetIdleSession() ISession {
 	return s.idle.Get().(ISession)
 }
 
-func (s *SessionManager) RecycleIdleSession(session ISession) {
+func (s *SessionManager) RecycleSession(session ISession) {
 	session.Close()
 	session.(interface{ Clear() }).Clear()
 	atomic.AddInt32(&s.aliveNum, -1)

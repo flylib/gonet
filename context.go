@@ -61,26 +61,26 @@ func DefaultContext() *Context {
 }
 
 // session manager
-func (c *Context) GetSessionManager() *SessionManager {
-	return c.sessionManager
+func GetSessionManager() *SessionManager {
+	return defaultCtx.sessionManager
 }
 
 // event handler
-func (c *Context) GetEventHandler() IEventHandler {
-	return c.eventHandler
+func GetEventHandler() IEventHandler {
+	return defaultCtx.eventHandler
 }
 
 // net packager
-func (c *Context) GetNetPackager() INetPackager {
-	return c.netPackager
+func GetNetPackager() INetPackager {
+	return defaultCtx.netPackager
 }
 
 // net packager
-func (c *Context) GetCodec() codec.ICodec {
-	return c.codec
+func GetCodec() codec.ICodec {
+	return defaultCtx.codec
 }
 
 // async runtime
-func (c *Context) GetAsyncRuntime() *AsyncRuntime {
-	return c.asyncRuntime
+func GetAsyncRuntime() *AsyncRuntime {
+	return defaultCtx.asyncRuntime
 }

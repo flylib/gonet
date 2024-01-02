@@ -20,12 +20,12 @@ type Session struct {
 }
 
 // 新会话
-func newSession(c *gonet.Context, conn net.Conn) *Session {
-	is := c.GetIdleSession()
+func newSession(conn net.Conn) *Session {
+	is := gonet.GetSessionManager().GetIdleSession()
 	ns := is.(*Session)
 	ns.conn = conn
-	ns.WithContext(c)
-	c.GetEventHandler().OnConnect(ns)
+	gonet.GetSessionManager().AddSession(ns)
+	gonet.GetEventHandler().OnConnect(ns)
 	return ns
 }
 
@@ -34,7 +34,7 @@ func (s *Session) RemoteAddr() net.Addr {
 }
 
 func (s *Session) Send(msgID uint32, msg any) error {
-	buf, err := s.GetContext().Package(s, msgID, msg)
+	buf, err := gonet.GetNetPackager().Package(msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -52,8 +52,8 @@ func (s *Session) recvLoop() {
 	for {
 		n, err := s.conn.Read(buf)
 		if err != nil {
-			s.GetContext().GetEventHandler().OnClose(s, err)
-			s.GetContext().RecycleSession(s)
+			gonet.GetEventHandler().OnClose(s, err)
+			gonet.GetSessionManager().RecycleSession(s)
 			return
 		}
 		if n == 0 {
@@ -65,16 +65,16 @@ func (s *Session) recvLoop() {
 			n = len(buf)
 			s.cache = nil
 		}
-		msg, unUsedCount, err := s.GetContext().UnPackage(s, buf[:n])
+		msg, unUsedCount, err := gonet.GetNetPackager().UnPackage(s, buf[:n])
 		if err != nil {
 			s.cache = nil
-			s.GetContext().GetEventHandler().OnError(s, err)
+			gonet.GetEventHandler().OnError(s, err)
 			continue
 		}
 		//存储未使用部分
 		if unUsedCount > 0 {
 			s.cache = append(s.cache, buf[n-unUsedCount-1:n]...)
 		}
-		s.GetContext().PushGlobalMessageQueue(msg)
+		gonet.GetAsyncRuntime().PushMessage(msg)
 	}
 }
