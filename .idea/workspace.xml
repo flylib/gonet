@@ -6,6 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="up">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" afterPath="$PROJECT_DIR$/context.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/gnet_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/gnet/gnet_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/demo/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/quic_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/quic/quic_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/tcp_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/tcp/tcp_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/udp_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/udp/udp_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws/ws_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/netpackager.go" beforeDir="false" afterPath="$PROJECT_DIR$/netpackager.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transport/tcp/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/tcp/session.go" afterDir="false" />
     </list>
@@ -74,31 +81,36 @@
       <recent name="D:\go\myproject\gonet" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\go\myproject\gonet\demo\handler" />
-      <recent name="D:\go\myproject\gonet\demo" />
+      <recent name="D:\go\myproject\gonet\demo\gnet" />
+      <recent name="D:\go\myproject\gonet\demo\udp" />
+      <recent name="D:\go\myproject\gonet\demo\quic" />
+      <recent name="D:\go\myproject\gonet\demo\ws" />
+      <recent name="D:\go\myproject\gonet\demo\tcp" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestWebsocketClient in demo (2)">
-    <configuration name="TestWebsocketClient in demo (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.TestTcpServer in demo/tcp">
+    <configuration name="TestTcpClient in demo/tcp" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="gonet" />
-      <working_directory value="$PROJECT_DIR$/demo" />
+      <working_directory value="$PROJECT_DIR$/demo/tcp" />
+      <root_directory value="$PROJECT_DIR$/demo" />
       <kind value="PACKAGE" />
-      <package value="demo" />
+      <package value="demo/tcp" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestWebsocketClient\E$" />
+      <pattern value="^\QTestTcpClient\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestWebsocketClient in demo (2)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestTcpServer in demo/tcp" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="gonet" />
-      <working_directory value="$PROJECT_DIR$/demo" />
+      <working_directory value="$PROJECT_DIR$/demo/tcp" />
+      <root_directory value="$PROJECT_DIR$/demo" />
       <kind value="PACKAGE" />
-      <package value="demo" />
+      <package value="demo/tcp" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestWebsocketClient\E$" />
+      <pattern value="^\QTestTcpServer\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestWebsocketServer in demo (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -136,11 +148,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestTcpServer in demo/tcp" />
+        <item itemvalue="Go Test.TestTcpClient in demo/tcp" />
         <item itemvalue="Go Test.TestWebsocketServer in demo (2)" />
         <item itemvalue="Go Test.TestWebsocketServer in demo (1)" />
         <item itemvalue="Go Test.TestWebsocketServer in demo" />
-        <item itemvalue="Go Test.TestWebsocketClient in demo (2)" />
-        <item itemvalue="Go Test.TestWebsocketClient in demo (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -180,12 +192,12 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/ws_test.go</url>
+          <url>file://$PROJECT_DIR$/demo/ws/ws_test.go</url>
           <line>15</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/ws_test.go</url>
+          <url>file://$PROJECT_DIR$/demo/ws/ws_test.go</url>
           <line>44</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
@@ -193,6 +205,11 @@
           <url>file://$PROJECT_DIR$/transport/gnet/client.go</url>
           <line>59</line>
           <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/session.go</url>
+          <line>14</line>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

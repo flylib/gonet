@@ -51,8 +51,8 @@ func (d TcpNetPackager) Package(msgID uint32, v any) ([]byte, error) {
 	bodySize := MsgIDLen + len(content)
 	buf := make([]byte, PktSizeLen+bodySize)
 	binary.LittleEndian.PutUint16(buf, uint16(bodySize))
-	binary.LittleEndian.PutUint32(buf, msgID)
-	copy(buf[MsgIDLen:], content)
+	binary.LittleEndian.PutUint32(buf[PktSizeLen:], msgID)
+	copy(buf[HeaderLen:], content)
 	return buf, nil
 }
 

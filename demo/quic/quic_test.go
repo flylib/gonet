@@ -1,11 +1,11 @@
-package demo
+package quic
 
 import (
 	"demo/handler"
 	"demo/proto"
 	"fmt"
 	"github.com/flylib/gonet"
-	transport "github.com/flylib/gonet/transport/tcp"
+	transport "github.com/flylib/gonet/transport/quic"
 	"github.com/flylib/goutils/codec/json"
 	"github.com/flylib/pkg/log/builtinlog"
 	"log"
@@ -13,36 +13,34 @@ import (
 	"time"
 )
 
-func TestTcpServer(t *testing.T) {
-	gonet.SetContext(
+func TestQuicServer(t *testing.T) {
+	ctx := gonet.SetupContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
-		gonet.WithNetPackager(gonet.TcpNetPackager{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
-	fmt.Println("server listen on ws://localhost:8088/center/ws")
-	if err := transport.NewServer().Listen("ws://localhost:8088/center/ws"); err != nil {
+	t.Log("server listen on localhost:8088")
+	if err := transport.NewServer(ctx).Listen("localhost:8088"); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func TestTcpClient(t *testing.T) {
-	gonet.SetContext(
+func TestQuicClient(t *testing.T) {
+	ctx := gonet.SetupContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
-		gonet.WithNetPackager(gonet.TcpNetPackager{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
-	session, err := transport.NewClient(transport.WithHandshakeTimeout(5 * time.Second)).Dial("ws://localhost:8088/center/ws")
+	session, err := transport.NewClient(ctx).Dial("localhost:8088")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("connect success")
+	t.Log("connect success")
 
 	tick := time.Tick(time.Second * 1)
 	var i int

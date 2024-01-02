@@ -1,11 +1,11 @@
-package demo
+package gnet
 
 import (
 	"demo/handler"
 	"demo/proto"
 	"fmt"
 	"github.com/flylib/gonet"
-	transport "github.com/flylib/gonet/transport/udp"
+	transport "github.com/flylib/gonet/transport/gnet"
 	"github.com/flylib/goutils/codec/json"
 	"github.com/flylib/pkg/log/builtinlog"
 	"log"
@@ -13,8 +13,8 @@ import (
 	"time"
 )
 
-func TestUDPServer(t *testing.T) {
-	ctx := gonet.SetContext(
+func TestGNETServer(t *testing.T) {
+	ctx := gonet.SetupContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),
@@ -27,8 +27,8 @@ func TestUDPServer(t *testing.T) {
 	}
 }
 
-func TestUDPClient(t *testing.T) {
-	ctx := gonet.SetContext(
+func TestGNETClient(t *testing.T) {
+	ctx := gonet.SetupContext(
 		gonet.WithEventHandler(handler.EventHandler{}),
 
 		gonet.MustWithSessionType(transport.SessionType()),

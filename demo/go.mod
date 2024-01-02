@@ -10,6 +10,7 @@ require (
 	github.com/flylib/gonet/transport/ws v0.0.0-20231101122252-5a97812fe37a
 	github.com/flylib/goutils/codec/json v0.0.0-20231026110424-19dfbb98ff56
 	github.com/flylib/pkg/log/builtinlog v0.0.0-20231031025337-eee45d016863
+	github.com/flylib/gonet/transport/tcp v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -44,6 +45,7 @@ replace (
 	github.com/flylib/gonet v1.1.4-0.20231101122252-5a97812fe37a => ../
 	github.com/flylib/gonet/transport/gnet v0.0.0-20231101122252-5a97812fe37a => ../transport/gnet
 	github.com/flylib/gonet/transport/quic => ../transport/quic
+	github.com/flylib/gonet/transport/tcp => ../transport/tcp
 	github.com/flylib/gonet/transport/udp => ../transport/udp
 	github.com/flylib/gonet/transport/ws => ../transport/ws
 )

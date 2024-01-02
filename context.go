@@ -30,7 +30,7 @@ type Context struct {
 	sessionType reflect.Type
 }
 
-func SetContext(options ...Option) *Context {
+func SetupContext(options ...Option) *Context {
 	ctx := &Context{
 		netPackager: &DefaultNetPackager{},
 	}
@@ -53,6 +53,7 @@ func SetContext(options ...Option) *Context {
 
 	ctx.asyncRuntime = newAsyncRuntime(ctx)
 	ctx.sessionManager = NewSessionManager(ctx.sessionType)
+	defaultCtx = ctx
 	return ctx
 }
 
