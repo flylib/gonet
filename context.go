@@ -32,7 +32,7 @@ type Context struct {
 
 func SetupContext(options ...Option) *Context {
 	ctx := &Context{
-		netPackager: &DefaultNetPackager{},
+		netPackager: DefaultNetPackager{},
 	}
 
 	for _, f := range options {

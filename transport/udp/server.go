@@ -50,7 +50,7 @@ func (s *server) Listen(addr string) error {
 			is, _ := s.Context.GetSession(sid)
 			ses, _ = is.(*session)
 		} else {
-			ses = newSession(s.Context, s.ln, remoteAddr)
+			ses = newSession(s.ln, remoteAddr)
 			s.remotes[remoteAddr.String()] = ses.ID()
 		}
 		msg, _, err := s.Context.UnPackage(ses, buf[:n])

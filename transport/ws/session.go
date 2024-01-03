@@ -56,7 +56,7 @@ func (s *session) ReadLoop() {
 			gonet.GetSessionManager().RecycleSession(s)
 			return
 		}
-		msg, _, err := gonet.GetNetPackager().UnPackage(s, buf)
+		msg, err := gonet.GetNetPackager().UnPackage(s, buf)
 		if err != nil {
 			gonet.GetEventHandler().OnError(s, err)
 			continue

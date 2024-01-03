@@ -13,7 +13,7 @@ type client struct {
 	option
 }
 
-func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
+func NewClient(options ...Option) gonet.IClient {
 	c := &client{
 		option: option{
 			mtu: gonet.MTU,
@@ -22,7 +22,6 @@ func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
 	for _, f := range options {
 		f(&c.option)
 	}
-	c.WithContext(ctx)
 	return c
 }
 
@@ -39,7 +38,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 
 	s := newSession(c.Context, conn, udpAddr)
 	s.remoteConn = conn
-	go s.recvLoop()
+	go s.readLoop()
 	return s, nil
 }
 

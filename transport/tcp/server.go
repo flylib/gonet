@@ -7,9 +7,7 @@ import (
 
 type server struct {
 	gonet.PeerCommon
-
 	ln net.Listener
-
 	option
 }
 

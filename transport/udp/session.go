@@ -21,10 +21,10 @@ type session struct {
 // 新会话
 func newSession(conn *net.UDPConn, remote *net.UDPAddr) *session {
 	is := gonet.GetSessionManager().GetIdleSession()
-	s := is.(*session)
-	s.serverConn = conn
-	s.remoteAddr = remote
-	return s
+	ns := is.(*session)
+	ns.serverConn = conn
+	ns.remoteAddr = remote
+	return ns
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -51,12 +51,12 @@ func (s *session) Close() error {
 }
 
 // Loop to read messages
-func (s *session) recvLoop() {
+func (s *session) readLoop() {
 	var buf = make([]byte, 1024)
 	for {
 		n, err := s.serverConn.Read(buf)
 		if err != nil {
-			s.GetContext().RecycleSession(s)
+			gonet.GetSessionManager().RecycleSession(s)
 			return
 		}
 		msg, _, err := s.GetContext().UnPackage(s, buf[:n])
