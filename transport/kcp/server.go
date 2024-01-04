@@ -15,12 +15,11 @@ type server struct {
 	option
 }
 
-func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+func NewServer(options ...Option) gonet.IServer {
 	s := &server{}
 	for _, f := range options {
 		f(&s.option)
 	}
-	s.WithContext(ctx)
 	return s
 }
 
@@ -40,7 +39,7 @@ func (s *server) Listen(url string) error {
 		if err != nil {
 			continue
 		}
-		go newSession(s.Context, conn).recvLoop()
+		go newSession(conn).recvLoop()
 	}
 }
 
@@ -49,5 +48,5 @@ func (s *server) Close() error {
 }
 
 func (s *server) SessionType() reflect.Type {
-	return reflect.TypeOf(Session{})
+	return reflect.TypeOf(session{})
 }

@@ -48,7 +48,7 @@ func (s *session) Send(msgID uint32, msg any) (err error) {
 }
 
 // Loop to read messages
-func (s *session) ReadLoop() {
+func (s *session) readLoop() {
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {

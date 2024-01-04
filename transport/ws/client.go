@@ -31,7 +31,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 	}
 	c.SetAddr(addr)
 	s := newSession(conn)
-	go s.ReadLoop()
+	go s.readLoop()
 	return s, nil
 }
 

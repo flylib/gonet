@@ -7,7 +7,7 @@ import (
 )
 
 // Socket会话
-type Session struct {
+type session struct {
 	//核心会话标志
 	gonet.SessionCommon
 	//存储功能
@@ -19,21 +19,21 @@ type Session struct {
 }
 
 // 新会话
-func newSession(c *gonet.Context, conn *kcp.UDPSession) *Session {
-	is := c.GetIdleSession()
-	ns := is.(*Session)
+func newSession(conn *kcp.UDPSession) *session {
+	is := gonet.GetSessionManager().GetIdleSession()
+	ns := is.(*session)
 	ns.conn = conn
-	ns.WithContext(c)
-	c.GetEventHandler().OnConnect(ns)
+	gonet.GetSessionManager().AddSession(ns)
+	gonet.GetEventHandler().OnConnect(ns)
 	return ns
 }
 
-func (s *Session) RemoteAddr() net.Addr {
+func (s *session) RemoteAddr() net.Addr {
 	return s.conn.RemoteAddr()
 }
 
-func (s *Session) Send(msgID uint32, msg any) error {
-	buf, err := s.GetContext().Package(s, msgID, msg)
+func (s *session) Send(msgID uint32, msg any) error {
+	buf, err := gonet.GetNetPackager().Package(msgID, msg)
 	if err != nil {
 		return err
 	}
@@ -41,25 +41,25 @@ func (s *Session) Send(msgID uint32, msg any) error {
 	return err
 }
 
-func (s *Session) Close() error {
+func (s *session) Close() error {
 	return s.conn.Close()
 }
 
 // 接收循环
-func (s *Session) recvLoop() {
+func (s *session) recvLoop() {
 	var buf = make([]byte, gonet.MTU)
 	for {
 		n, err := s.conn.Read(buf)
 		if err != nil {
-			s.GetContext().GetEventHandler().OnClose(s, err)
-			s.GetContext().RecycleSession(s)
+			gonet.GetEventHandler().OnClose(s, err)
+			gonet.GetSessionManager().RecycleSession(s)
 			return
 		}
-		msg, _, err := s.GetContext().UnPackage(s, buf[:n])
+		msg, err := gonet.GetNetPackager().UnPackage(s, buf[:n])
 		if err != nil {
-			s.GetContext().GetEventHandler().OnError(s, err)
+			gonet.GetEventHandler().OnError(s, err)
 			continue
 		}
-		s.GetContext().PushGlobalMessageQueue(msg)
+		gonet.GetAsyncRuntime().PushMessage(msg)
 	}
 }
