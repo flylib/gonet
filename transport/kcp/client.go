@@ -30,7 +30,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 	}
 	c.conn = conn
 	s := newSession(conn)
-	go s.recvLoop()
+	go s.readLoop()
 	return s, err
 }
 

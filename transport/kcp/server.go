@@ -39,7 +39,7 @@ func (s *server) Listen(url string) error {
 		if err != nil {
 			continue
 		}
-		go newSession(conn).recvLoop()
+		go newSession(conn).readLoop()
 	}
 }
 

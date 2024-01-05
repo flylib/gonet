@@ -27,7 +27,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 		return nil, err
 	}
 	c.conn = connection
-	s := newSession(c.Context, connection)
+	s := newSession(connection)
 	go s.acceptStream()
 	return s, nil
 }

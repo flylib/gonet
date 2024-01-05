@@ -19,7 +19,7 @@ type session struct {
 }
 
 // 新会话
-func newSession(c *gonet.Context, conn quic.Connection) *session {
+func newSession(conn quic.Connection) *session {
 	ses := c.GetIdleSession()
 	ns, _ := ses.(*session)
 	ns.conn = conn
@@ -33,7 +33,7 @@ func (s *session) RemoteAddr() net.Addr {
 }
 
 func (s *session) Send(msgID uint32, msg any) error {
-	buf, err := s.GetContext().Package(s, msgID, msg)
+	buf, err := gonet.GetNetPackager().Package(msgID, msg)
 	if err != nil {
 		return err
 	}

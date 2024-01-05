@@ -47,18 +47,18 @@ func (s *server) Listen(addr string) error {
 
 		var ses *session
 		if sid, exit := s.remotes[remoteAddr.String()]; exit {
-			is, _ := s.Context.GetSession(sid)
+			is, _ := gonet.GetSessionManager().GetSession(sid)
 			ses, _ = is.(*session)
 		} else {
 			ses = newSession(s.ln, remoteAddr)
 			s.remotes[remoteAddr.String()] = ses.ID()
 		}
-		msg, _, err := s.Context.UnPackage(ses, buf[:n])
+		msg, err := gonet.GetNetPackager().UnPackage(ses, buf[:n])
 		if err != nil {
-			s.ILogger.Errorf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
+			gonet.DefaultContext().Errorf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(msg)
+		gonet.GetAsyncRuntime().PushMessage(msg)
 	}
 	return nil
 }

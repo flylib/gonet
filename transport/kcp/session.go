@@ -46,7 +46,7 @@ func (s *session) Close() error {
 }
 
 // 接收循环
-func (s *session) recvLoop() {
+func (s *session) readLoop() {
 	var buf = make([]byte, gonet.MTU)
 	for {
 		n, err := s.conn.Read(buf)

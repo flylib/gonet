@@ -59,16 +59,15 @@ func (s *session) readLoop() {
 			gonet.GetSessionManager().RecycleSession(s)
 			return
 		}
-		msg, _, err := s.GetContext().UnPackage(s, buf[:n])
+		msg, err := gonet.GetNetPackager().UnPackage(s, buf[:n])
 		if err != nil {
-			s.GetContext().GetEventHandler().OnError(s, err)
+			gonet.GetEventHandler().OnError(s, err)
 			continue
 		}
-		s.GetContext().PushGlobalMessageQueue(msg)
+		gonet.GetAsyncRuntime().PushMessage(msg)
 	}
 }
 
-// todo 心跳检测
 func SessionType() reflect.Type {
 	return reflect.TypeOf(session{})
 }

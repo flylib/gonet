@@ -26,17 +26,17 @@ func NewClient(options ...Option) gonet.IClient {
 }
 
 func (c *client) Dial(addr string) (gonet.ISession, error) {
-	udpAddr, err := net.ResolveUDPAddr(string(gonet.UDP), addr)
+	udpAddr, err := net.ResolveUDPAddr("udp", addr)
 	if err != nil {
 		return nil, err
 	}
-	conn, err := net.DialUDP(string(gonet.UDP), nil, udpAddr)
+	conn, err := net.DialUDP("udp", nil, udpAddr)
 	if err != nil {
 		return nil, err
 	}
 	c.SetAddr(addr)
 
-	s := newSession(c.Context, conn, udpAddr)
+	s := newSession(conn, udpAddr)
 	s.remoteConn = conn
 	go s.readLoop()
 	return s, nil
