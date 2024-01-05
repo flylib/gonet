@@ -13,12 +13,11 @@ type server struct {
 	option
 }
 
-func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+func NewServer(options ...Option) gonet.IServer {
 	s := &server{}
 	for _, f := range options {
 		f(&s.option)
 	}
-	s.WithContext(ctx)
 	return s
 }
 
@@ -34,7 +33,7 @@ func (s *server) Listen(addr string) (err error) {
 		if err != nil {
 			continue
 		}
-		ns := newSession(s.Context, conn)
+		ns := newSession(conn)
 		ns.mod = s.modulo
 		go ns.acceptStream()
 	}

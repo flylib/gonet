@@ -12,12 +12,11 @@ type client struct {
 	conn quic.Connection
 }
 
-func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
+func NewClient(options ...Option) gonet.IClient {
 	c := &client{}
 	for _, f := range options {
 		f(&c.option)
 	}
-	c.WithContext(ctx)
 	return c
 }
 

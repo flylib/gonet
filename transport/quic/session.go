@@ -20,11 +20,11 @@ type session struct {
 
 // 新会话
 func newSession(conn quic.Connection) *session {
-	ses := c.GetIdleSession()
-	ns, _ := ses.(*session)
+	is := gonet.GetSessionManager().GetIdleSession()
+	ns := is.(*session)
 	ns.conn = conn
-	ns.WithContext(c)
-	c.GetEventHandler().OnConnect(ns)
+	gonet.GetSessionManager().AddSession(ns)
+	gonet.GetEventHandler().OnConnect(ns)
 	return ns
 }
 
@@ -58,35 +58,33 @@ func (s *session) acceptStream() {
 	for {
 		ch, err := s.conn.AcceptStream(context.Background())
 		if err != nil {
-			s.GetContext().GetEventHandler().OnClose(s, err)
-			s.GetContext().RecycleSession(s)
+			gonet.GetEventHandler().OnClose(s, err)
+			gonet.GetSessionManager().RecycleSession(s)
 			return
 		}
 		s.channels = append(s.channels, ch)
-		go s.recvLoop(ch)
+		go s.readLoop(ch)
 	}
 
 }
 
 // 循环读取消息
-func (s *session) recvLoop(channel quic.Stream) {
+func (s *session) readLoop(channel quic.Stream) {
 	defer channel.Close()
 	var buf = make([]byte, gonet.MTU)
 	for {
 		n, err := channel.Read(buf)
 		if err != nil {
-			s.GetContext().GetEventHandler().OnError(s, err)
+			gonet.GetEventHandler().OnError(s, err)
 			channel.Close()
 			return
 		}
-		msg, _, err := s.GetContext().UnPackage(s, buf[:n])
+		msg, err := gonet.GetNetPackager().UnPackage(s, buf[:n])
 		if err != nil {
-			s.GetContext().GetEventHandler().OnError(s, err)
+			gonet.GetEventHandler().OnError(s, err)
 			continue
 		}
-		msg.ID()
-
-		s.GetContext().PushGlobalMessageQueue(msg)
+		gonet.GetAsyncRuntime().PushMessage(msg)
 	}
 }
 
