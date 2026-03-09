@@ -9,13 +9,12 @@ import (
 
 var _ gonet.IServer = new(server)
 
-// 接收端
 type server struct {
-	gonet.PeerCommon
+	gonet.PeerCommon[*Session]
 	option
 }
 
-func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+func NewServer(ctx *gonet.Context[*Session], options ...Option) gonet.IServer {
 	s := &server{}
 	for _, f := range options {
 		f(&s.option)
@@ -41,13 +40,16 @@ func (s *server) Close() error {
 }
 
 func (s *server) newConn(w http.ResponseWriter, r *http.Request) {
-	r.Header.Add("Connection", "upgrade") //升级
-	r.Header.Add("Upgrade", "websocket")  //websocket
-
+	r.Header.Add("Connection", "upgrade")
+	r.Header.Add("Upgrade", "websocket")
 	conn, err := s.option.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}
-	ns := newSession(s.Context, conn)
+	ns := newSession(s.GetCtx(), conn)
+	if ns == nil {
+		_ = conn.Close()
+		return
+	}
 	go ns.ReadLoop()
 }

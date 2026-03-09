@@ -4,6 +4,8 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sync/atomic"
+
+	ilog "github.com/flylib/interface/log"
 )
 
 type poolConfig struct {
@@ -12,75 +14,86 @@ type poolConfig struct {
 	maxIdleNum int32
 }
 
-// Lightweight goroutine pool
+// GoroutinePool is a lightweight goroutine pool for processing messages.
 type GoroutinePool struct {
-	cfg poolConfig
-	*Context
-	curWorkingNum     int32
-	cacheQueueSize    int
-	queue             chan IMessage
-	addRoutineChannel chan bool
+	cfg          poolConfig
+	queue        chan IMessage
+	addCh        chan struct{}
+	stopCh       chan struct{}
+	curWorkers   int32
+	logger       ilog.ILogger
+	eventHandler IEventHandler
 }
 
-func newGoroutinePool(ctx *Context) *GoroutinePool {
-	if ctx.poolCfg.maxIdleNum == 0 {
-		ctx.poolCfg.maxIdleNum = int32(runtime.NumCPU())
+func newGoroutinePool(cfg poolConfig, logger ilog.ILogger, handler IEventHandler) *GoroutinePool {
+	if cfg.maxIdleNum == 0 {
+		cfg.maxIdleNum = int32(runtime.NumCPU())
 	}
-	if ctx.poolCfg.queueSize == 0 {
-		ctx.poolCfg.queueSize = 64
+	if cfg.queueSize == 0 {
+		cfg.queueSize = 64
 	}
-
-	pool := &GoroutinePool{
-		Context:           ctx,
-		cfg:               ctx.poolCfg,
-		addRoutineChannel: make(chan bool),
-		queue:             make(chan IMessage, ctx.poolCfg.queueSize),
+	p := &GoroutinePool{
+		cfg:          cfg,
+		queue:        make(chan IMessage, cfg.queueSize),
+		addCh:        make(chan struct{}, cfg.maxIdleNum+1),
+		stopCh:       make(chan struct{}),
+		logger:       logger,
+		eventHandler: handler,
 	}
-
-	go pool.run()
-	pool.ascRoutine(pool.cfg.maxIdleNum)
-	return pool
+	go p.supervisor()
+	p.addWorkers(cfg.maxIdleNum)
+	return p
 }
 
-func (b *GoroutinePool) ascRoutine(count int32) {
-	if count <= 0 {
-		count = 1
-	}
-	for i := int32(0); i < count; i++ {
-		b.addRoutineChannel <- true
-	}
+func (p *GoroutinePool) push(msg IMessage) {
+	p.queue <- msg
 }
 
-func (b *GoroutinePool) descRoutine(count int32) {
-	if count <= 0 {
-		count = 1
-	}
-	for i := int32(0); i < count; i++ {
-		//b.queue <- newErrorMessage(nil)
+// addWorkers signals the supervisor to start n new workers.
+func (p *GoroutinePool) addWorkers(n int32) {
+	for i := int32(0); i < n; i++ {
+		select {
+		case p.addCh <- struct{}{}:
+		default:
+		}
 	}
 }
 
-func (b *GoroutinePool) run() {
-	for range b.addRoutineChannel {
-		if b.cfg.maxNum != 0 &&
-			b.curWorkingNum >= b.cfg.maxNum {
+// supervisor listens for add-worker signals and enforces the maxNum cap.
+func (p *GoroutinePool) supervisor() {
+	for range p.addCh {
+		if p.cfg.maxNum > 0 && atomic.LoadInt32(&p.curWorkers) >= p.cfg.maxNum {
 			continue
 		}
-		atomic.AddInt32(&b.curWorkingNum, 1)
-		go func() {
-			// panic handling
-			defer func() {
-				atomic.AddInt32(&b.curWorkingNum, -1)
-				if err := recover(); err != nil {
-					b.ILogger.Errorf("panic error:%s\n%s", err, debug.Stack())
-					b.ascRoutine(1)
-				}
-			}()
-
-			// message handling
-			for e := range b.queue {
-				b.eventHandler.OnMessage(e)
-			}
-		}()
+		atomic.AddInt32(&p.curWorkers, 1)
+		go p.worker()
 	}
+}
+
+func (p *GoroutinePool) worker() {
+	defer func() {
+		atomic.AddInt32(&p.curWorkers, -1)
+		if r := recover(); r != nil {
+			p.logger.Errorf("gonet worker panic: %v\n%s", r, debug.Stack())
+			// restart to maintain pool size after panic
+			p.addWorkers(1)
+		}
+	}()
+
+	for {
+		select {
+		case <-p.stopCh:
+			return
+		case msg := <-p.queue:
+			p.eventHandler.OnMessage(msg)
+			if m, ok := msg.(*message); ok {
+				releaseMessage(m)
+			}
+		}
+	}
+}
+
+// Stop signals all workers to exit gracefully.
+func (p *GoroutinePool) Stop() {
+	close(p.stopCh)
 }

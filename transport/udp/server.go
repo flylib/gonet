@@ -7,14 +7,14 @@ import (
 )
 
 type server struct {
-	gonet.PeerCommon
+	gonet.PeerCommon[*session]
 	ln *net.UDPConn
 	option
 	sync.RWMutex
 	remotes map[string]uint64
 }
 
-func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+func NewServer(ctx *gonet.Context[*session], options ...Option) gonet.IServer {
 	s := &server{
 		option: option{
 			mtu: gonet.MTU,
@@ -29,11 +29,11 @@ func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
 }
 
 func (s *server) Listen(addr string) error {
-	udpAddr, err := net.ResolveUDPAddr(string(gonet.UDP), addr)
+	udpAddr, err := net.ResolveUDPAddr("udp", addr)
 	if err != nil {
 		return err
 	}
-	s.ln, err = net.ListenUDP(string(gonet.UDP), udpAddr)
+	s.ln, err = net.ListenUDP("udp", udpAddr)
 	if err != nil {
 		return err
 	}
@@ -43,26 +43,28 @@ func (s *server) Listen(addr string) error {
 	for {
 		n, remoteAddr, err := s.ln.ReadFromUDP(buf)
 		if err != nil {
-			s.ILogger.Errorf("#udp.read failed(%v) %v \n", s.ln.RemoteAddr(), err.Error())
+			s.GetCtx().GetLogger().Errorf("#udp.read failed(%v) %v \n", s.ln.RemoteAddr(), err.Error())
 			return err
 		}
 
 		var ses *session
-		if sid, exit := s.remotes[remoteAddr.String()]; exit {
-			is, _ := s.Context.GetSession(sid)
+		if sid, exist := s.remotes[remoteAddr.String()]; exist {
+			is, _ := s.GetCtx().GetSession(sid)
 			ses, _ = is.(*session)
 		} else {
-			ses = newSession(s.Context, s.ln, remoteAddr)
+			ses = newSession(s.GetCtx(), s.ln, remoteAddr)
+			if ses == nil {
+				continue
+			}
 			s.remotes[remoteAddr.String()] = ses.ID()
 		}
-		msg, _, err := s.Context.UnPackage(ses, buf[:n])
+		msg, _, err := s.GetCtx().UnPackage(ses, buf[:n])
 		if err != nil {
-			s.ILogger.Errorf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
+			s.GetCtx().GetLogger().Errorf("session_%v msg parser error,reason is %v \n", ses.ID(), err)
 			continue
 		}
-		s.Context.PushGlobalMessageQueue(msg)
+		s.GetCtx().PushGlobalMessageQueue(msg)
 	}
-	return nil
 }
 
 func (s *server) Close() error {

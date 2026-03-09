@@ -4,51 +4,52 @@ import (
 	"github.com/flylib/gonet"
 	"github.com/gorilla/websocket"
 	"net"
-	"reflect"
 )
 
-var _ gonet.ISession = new(session)
-
-// webSocket conn
-type session struct {
+// Session is the WebSocket connection session.
+type Session struct {
 	gonet.SessionCommon
-
 	conn *websocket.Conn
 	option
 }
 
-// 新会话
-func newSession(c *gonet.Context, conn *websocket.Conn) *session {
-	is := c.GetIdleSession()
-	ns := is.(*session)
-	ns.conn = conn
-	ns.WithContext(c)
-	c.GetEventHandler().OnConnect(ns)
-	return ns
+// newSession gets an idle session from the pool and attaches conn.
+// Returns nil if the max session limit has been reached.
+func newSession(c *gonet.Context[*Session], conn *websocket.Conn) *Session {
+	s, ok := c.GetIdleSession()
+	if !ok {
+		return nil
+	}
+	s.conn = conn
+	c.GetEventHandler().OnConnect(s)
+	return s
 }
 
-func (s *session) RemoteAddr() net.Addr {
-	return s.conn.RemoteAddr()
-}
+func (s *Session) RemoteAddr() net.Addr { return s.conn.RemoteAddr() }
 
-func (s *session) Close() error {
+func (s *Session) Close() error {
 	return s.conn.Close()
 }
 
-// websocket does not support sending messages concurrently
-func (s *session) Send(msgID uint32, msg any) (err error) {
+// Send is safe to call from multiple goroutines (WebSocket requires serialized writes).
+func (s *Session) Send(msgID uint32, msg any) error {
 	buf, err := s.GetContext().Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
 	s.Lock()
 	defer s.Unlock()
-	err = s.conn.WriteMessage(websocket.BinaryMessage, buf)
-	return
+	return s.conn.WriteMessage(websocket.BinaryMessage, buf)
 }
 
-// Loop to read messages
-func (s *session) ReadLoop() {
+// Clear resets the session so it can be reused from the pool.
+func (s *Session) Clear() {
+	s.SessionCommon.Clear()
+	s.conn = nil
+}
+
+// ReadLoop reads WebSocket frames until the connection closes.
+func (s *Session) ReadLoop() {
 	for {
 		_, buf, err := s.conn.ReadMessage()
 		if err != nil {
@@ -63,8 +64,4 @@ func (s *session) ReadLoop() {
 		}
 		s.GetContext().PushGlobalMessageQueue(msg)
 	}
-}
-
-func SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
 }

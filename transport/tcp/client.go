@@ -6,12 +6,11 @@ import (
 )
 
 type client struct {
-	gonet.PeerCommon
+	gonet.PeerCommon[*Session]
 	option
-	conn net.Conn
 }
 
-func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
+func NewClient(ctx *gonet.Context[*Session], options ...Option) gonet.IClient {
 	c := &client{}
 	for _, f := range options {
 		f(&c.option)
@@ -21,24 +20,26 @@ func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
 }
 
 func (c *client) Dial(addr string) (gonet.ISession, error) {
+	var conn net.Conn
+	var err error
 	if c.option.HandshakeTimeout > 0 {
-		conn, err := net.DialTimeout("tcp", addr, c.option.HandshakeTimeout)
-		if err != nil {
-			return nil, err
-		}
-		c.conn = conn
+		conn, err = net.DialTimeout("tcp", addr, c.option.HandshakeTimeout)
 	} else {
-		conn, err := net.Dial("tcp", addr)
-		if err != nil {
-			return nil, err
-		}
-		c.conn = conn
+		conn, err = net.Dial("tcp", addr)
 	}
-	s := newSession(c.Context, c.conn)
+	if err != nil {
+		return nil, err
+	}
+	c.SetAddr(addr)
+	s := newSession(c.GetCtx(), conn)
+	if s == nil {
+		_ = conn.Close()
+		return nil, nil
+	}
 	go s.recvLoop()
 	return s, nil
 }
 
 func (c *client) Close() error {
-	return c.conn.Close()
+	return nil
 }

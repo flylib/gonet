@@ -3,71 +3,46 @@ package gonet
 import (
 	"github.com/flylib/interface/codec"
 	ilog "github.com/flylib/interface/log"
-	"reflect"
 )
 
-type Option func(o *Context)
+// Option configures a Context via NewContext.
+type Option func(*config)
 
-// Default:0 means is no limit
 func WithEventHandler(handler IEventHandler) Option {
-	return func(o *Context) {
-		o.eventHandler = handler
-	}
+	return func(c *config) { c.eventHandler = handler }
 }
 
-// Default:0 means is no limit
+// WithMaxSessions limits the maximum number of concurrent sessions (0 = unlimited).
 func WithMaxSessions(max int) Option {
-	return func(o *Context) {
-		o.maxSessionCount = max
-	}
+	return func(c *config) { c.maxSessionCount = max }
 }
 
-// Default is runtime.NumCPU(), means no goroutines will be dynamically scaled
+// WithPoolMaxRoutines sets the hard cap on worker goroutines (0 = unlimited).
 func WithPoolMaxRoutines(num int32) Option {
-	return func(o *Context) {
-
-		o.poolCfg.maxNum = num
-	}
+	return func(c *config) { c.poolCfg.maxNum = num }
 }
 
-// allow max idle routines
+// WithPoolMaxIdleRoutines sets the initial/idle worker count (default: NumCPU).
 func WithPoolMaxIdleRoutines(num int32) Option {
-	return func(o *Context) {
-		o.poolCfg.maxIdleNum = num
-	}
+	return func(c *config) { c.poolCfg.maxIdleNum = num }
 }
 
-// Default 512,global queue size
+// WithGQSize sets the global message queue buffer size (default: 64).
 func WithGQSize(size int32) Option {
-	return func(o *Context) {
-		o.poolCfg.queueSize = size
-	}
+	return func(c *config) { c.poolCfg.queueSize = size }
 }
 
-// network package paser
-func WithNetPackager(packager INetPackager) Option {
-	return func(o *Context) {
-		o.INetPackager = packager
-	}
+// WithNetPackager sets a custom network packet encoder/decoder.
+func WithNetPackager(p INetPackager) Option {
+	return func(c *config) { c.INetPackager = p }
 }
 
-// Default json codec, message codec
-func MustWithCodec(codec codec.ICodec) Option {
-	return func(o *Context) {
-		o.ICodec = codec
-	}
+// MustWithCodec sets the message codec (required).
+func MustWithCodec(c codec.ICodec) Option {
+	return func(cfg *config) { cfg.ICodec = c }
 }
 
-// set logger
+// MustWithLogger sets the logger (required).
 func MustWithLogger(l ilog.ILogger) Option {
-	return func(o *Context) {
-		o.ILogger = l
-	}
-}
-
-// set SessionType
-func MustWithSessionType(t reflect.Type) Option {
-	return func(o *Context) {
-		o.sessionType = t
-	}
+	return func(cfg *config) { cfg.ILogger = l }
 }

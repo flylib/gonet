@@ -9,17 +9,17 @@ import (
 
 type server struct {
 	gnet.EventHandler
-	gonet.PeerCommon
+	gonet.PeerCommon[*session]
 	engine gnet.Engine
 	opt    option
 }
 
-func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+func NewServer(ctx *gonet.Context[*session], options ...Option) gonet.IServer {
 	var opt option
 	for _, f := range options {
 		f(&opt)
 	}
-	opt.Logger = ctx.ILogger
+	opt.Logger = ctx.GetLogger()
 
 	s := &server{opt: opt}
 	s.WithContext(ctx)
@@ -27,21 +27,20 @@ func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
 }
 
 // OnBoot fires when the engine is ready for accepting connections.
-// The parameter engine has information and various utilities.
 func (s *server) OnBoot(eng gnet.Engine) (action gnet.Action) {
 	s.engine = eng
 	return
 }
 
 func (s *server) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
-	newSession(s.Context, c)
+	newSession(s.GetCtx(), c)
 	return nil, gnet.None
 }
 
 func (s *server) OnClose(c gnet.Conn, err error) (action gnet.Action) {
-	is, ok := s.Context.GetSession(uint64(c.Fd()))
+	is, ok := s.GetCtx().GetSession(uint64(c.Fd()))
 	if ok {
-		s.Context.RecycleSession(is)
+		s.GetCtx().RecycleSession(is)
 	}
 	return gnet.None
 }
@@ -51,16 +50,16 @@ func (s *server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	if err != nil {
 		return gnet.Close
 	}
-	is, ok := s.Context.GetSession(uint64(c.Fd()))
+	is, ok := s.GetCtx().GetSession(uint64(c.Fd()))
 	if !ok {
 		return gnet.Close
 	}
-	message, _, err := s.Context.UnPackage(is, buf)
+	message, _, err := s.GetCtx().UnPackage(is, buf)
 	if err != nil {
 		log.Printf("session_%v msg parser error,reason is %v \n", c.Fd(), err)
 		return gnet.None
 	}
-	s.Context.PushGlobalMessageQueue(message)
+	s.GetCtx().PushGlobalMessageQueue(message)
 	return gnet.None
 }
 

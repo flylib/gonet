@@ -8,17 +8,17 @@ import (
 )
 
 type client struct {
-	gonet.PeerCommon
+	gonet.PeerCommon[*session]
 	eng gnet.Engine
 	cli *gnet.Client
 }
 
-func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
+func NewClient(ctx *gonet.Context[*session], options ...Option) gonet.IClient {
 	var opt option
 	for _, f := range options {
 		f(&opt)
 	}
-	opt.Logger = ctx.ILogger
+	opt.Logger = ctx.GetLogger()
 
 	c := &client{}
 	cli, err := gnet.NewClient(c, gnet.WithOptions(opt.Options))
@@ -26,7 +26,6 @@ func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
 		panic(err)
 	}
 	c.cli = cli
-
 	c.WithContext(ctx)
 	return c
 }
@@ -40,14 +39,13 @@ func (c *client) OnShutdown(eng gnet.Engine) {
 }
 
 func (c *client) OnOpen(conn gnet.Conn) (out []byte, action gnet.Action) {
-	//TODO implement me
 	panic("implement me")
 }
 
 func (c *client) OnClose(conn gnet.Conn, err error) (action gnet.Action) {
-	is, ok := c.Context.GetSession(uint64(conn.Fd()))
+	is, ok := c.GetCtx().GetSession(uint64(conn.Fd()))
 	if ok {
-		c.Context.RecycleSession(is)
+		c.GetCtx().RecycleSession(is)
 	}
 	return gnet.None
 }
@@ -57,16 +55,16 @@ func (c *client) OnTraffic(conn gnet.Conn) (action gnet.Action) {
 	if err != nil {
 		return gnet.Close
 	}
-	is, ok := c.Context.GetSession(uint64(conn.Fd()))
+	is, ok := c.GetCtx().GetSession(uint64(conn.Fd()))
 	if !ok {
 		return gnet.Close
 	}
-	message, _, err := c.Context.UnPackage(is, buf)
+	message, _, err := c.GetCtx().UnPackage(is, buf)
 	if err != nil {
 		log.Printf("session_%v msg parser error,reason is %v \n", conn.Fd(), err)
 		return gnet.None
 	}
-	c.Context.PushGlobalMessageQueue(message)
+	c.GetCtx().PushGlobalMessageQueue(message)
 	return gnet.None
 }
 
@@ -79,7 +77,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newSession(c.Context, conn), nil
+	return newSession(c.GetCtx(), conn), nil
 }
 
 func (c *client) Close() error {

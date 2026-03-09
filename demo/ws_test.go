@@ -15,9 +15,8 @@ import (
 
 func TestWebsocketServer(t *testing.T) {
 	ctx := gonet.NewContext(
+		func() *transport.Session { return new(transport.Session) },
 		gonet.WithEventHandler(handler.EventHandler{}),
-
-		gonet.MustWithSessionType(transport.SessionType()),
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
@@ -29,8 +28,8 @@ func TestWebsocketServer(t *testing.T) {
 
 func TestWebsocketClient(t *testing.T) {
 	ctx := gonet.NewContext(
+		func() *transport.Session { return new(transport.Session) },
 		gonet.WithEventHandler(handler.EventHandler{}),
-		gonet.MustWithSessionType(transport.SessionType()),
 		gonet.MustWithCodec(&json.Codec{}),
 		gonet.MustWithLogger(builtinlog.NewLogger()),
 	)
@@ -44,7 +43,6 @@ func TestWebsocketClient(t *testing.T) {
 	tick := time.Tick(time.Second * 1)
 	var i int
 	for range tick {
-		//fmt.Println("send msg", i)
 		i++
 		err = session.Send(101, &proto.Say{
 			fmt.Sprintf("hello server %d", i),

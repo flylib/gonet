@@ -1,41 +1,65 @@
 package gonet
 
-import "encoding/binary"
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//+                   +              +                 +
-//+  消息总长度（2）    + 消息ID（4）   + 消息内容         +
-//+                   +              +                 +
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-const (
-	MTU           = 1500                      // 最大传输单元
-	PktSizeOffset = 2                         // 包体大小字段
-	MsgIDOffset   = 4                         // 消息ID字段
-	HeaderOffset  = MsgIDOffset + MsgIDOffset //包头部分
+import (
+	"encoding/binary"
+	"errors"
 )
 
-// 网络包解析器(network package)
+// Packet wire format:
+//
+// +-------------------+--------------+------------------+
+// | body length (2B)  | msg ID (4B)  | body (N bytes)   |
+// +-------------------+--------------+------------------+
+//
+// The "body length" field stores the combined size of msgID(4) + body(N).
+
+const (
+	PktSizeOffset = 2                           // uint16: stores len(msgID field + body)
+	MsgIDOffset   = 4                           // uint32: message ID
+	HeaderOffset  = PktSizeOffset + MsgIDOffset // 6 bytes total header
+	MTU           = 1500
+)
+
+// INetPackager encodes and decodes network packets.
 type INetPackager interface {
+	// Package serializes msgID + v into a wire packet.
 	Package(s ISession, msgID uint32, v any) ([]byte, error)
+	// UnPackage decodes one message from data.
+	// Returns (message, unused_byte_count, error).
+	// unused_byte_count > 0 means data contained trailing bytes (multi-packet read).
 	UnPackage(s ISession, data []byte) (IMessage, int, error)
 }
 
-type DefaultNetPackager struct {
-}
+// DefaultNetPackager is the built-in packet codec.
+type DefaultNetPackager struct{}
 
 func (d *DefaultNetPackager) Package(s ISession, msgID uint32, v any) ([]byte, error) {
 	body, err := s.GetContext().Marshal(v)
 	if err != nil {
 		return nil, err
 	}
-	content := make([]byte, MsgIDOffset+len(body))
-	binary.LittleEndian.PutUint32(content, msgID)
-	copy(content[MsgIDOffset:], body)
-	return content, nil
+	bodyFieldLen := MsgIDOffset + len(body) // what PktSizeOffset field stores
+	if bodyFieldLen > 0xFFFF {
+		return nil, errors.New("gonet: message body too large")
+	}
+	pkt := make([]byte, HeaderOffset+len(body))
+	binary.LittleEndian.PutUint16(pkt, uint16(bodyFieldLen))
+	binary.LittleEndian.PutUint32(pkt[PktSizeOffset:], msgID)
+	copy(pkt[HeaderOffset:], body)
+	return pkt, nil
 }
 
 func (d *DefaultNetPackager) UnPackage(s ISession, data []byte) (IMessage, int, error) {
-	msgID := binary.LittleEndian.Uint32(data[:MsgIDOffset])
-	return &message{id: msgID, body: data[MsgIDOffset:], session: s}, 0, nil
+	if len(data) < HeaderOffset {
+		return nil, 0, errors.New("gonet: incomplete header")
+	}
+	bodyFieldLen := int(binary.LittleEndian.Uint16(data[:PktSizeOffset]))
+	totalLen := PktSizeOffset + bodyFieldLen
+	if len(data) < totalLen {
+		return nil, 0, errors.New("gonet: incomplete packet")
+	}
+	msgID := binary.LittleEndian.Uint32(data[PktSizeOffset : PktSizeOffset+MsgIDOffset])
+	body := data[HeaderOffset:totalLen]
+	unused := len(data) - totalLen
+	return newMessage(msgID, body, s), unused, nil
 }

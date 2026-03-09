@@ -5,39 +5,36 @@ import (
 	"net"
 )
 
-// Socket会话
+// Session is the TCP connection session.
 type Session struct {
-	//核心会话标志
 	gonet.SessionCommon
-	//存储功能
-
-	//累计收消息总数
 	recvCount uint64
-	//raw conn
-	conn net.Conn
-	//缓存数据，用于解决粘包问题
-	cache []byte
+	conn      net.Conn
+	cache     []byte
 }
 
-// 新会话
-func newSession(c *gonet.Context, conn net.Conn) *Session {
-	is := c.GetIdleSession()
-	ns := is.(*Session)
-	ns.conn = conn
-	ns.WithContext(c)
-	c.GetEventHandler().OnConnect(ns)
-	return ns
+// newSession gets an idle session from the pool and attaches conn.
+// Returns nil if the max session limit has been reached.
+func newSession(c *gonet.Context[*Session], conn net.Conn) *Session {
+	s, ok := c.GetIdleSession()
+	if !ok {
+		return nil
+	}
+	s.conn = conn
+	c.GetEventHandler().OnConnect(s)
+	return s
 }
 
-func (s *Session) RemoteAddr() net.Addr {
-	return s.conn.RemoteAddr()
-}
+func (s *Session) RemoteAddr() net.Addr { return s.conn.RemoteAddr() }
 
+// Send is safe to call from multiple goroutines.
 func (s *Session) Send(msgID uint32, msg any) error {
 	buf, err := s.GetContext().Package(s, msgID, msg)
 	if err != nil {
 		return err
 	}
+	s.Lock()
+	defer s.Unlock()
 	_, err = s.conn.Write(buf)
 	return err
 }
@@ -46,9 +43,17 @@ func (s *Session) Close() error {
 	return s.conn.Close()
 }
 
-// 接收循环
+// Clear resets the session state so it can be reused from the pool.
+func (s *Session) Clear() {
+	s.SessionCommon.Clear()
+	s.conn = nil
+	s.cache = s.cache[:0]
+	s.recvCount = 0
+}
+
+// recvLoop reads from the TCP connection, handling sticky packets.
 func (s *Session) recvLoop() {
-	var buf = make([]byte, gonet.MTU)
+	buf := make([]byte, gonet.MTU)
 	for {
 		n, err := s.conn.Read(buf)
 		if err != nil {
@@ -59,22 +64,30 @@ func (s *Session) recvLoop() {
 		if n == 0 {
 			continue
 		}
-		//如果有粘包未处理数据部分，放入本次进行处理
+		s.recvCount++
+
+		// merge with any cached (incomplete) data from prior read
+		var data []byte
 		if len(s.cache) > 0 {
-			buf = append(s.cache, buf[:n]...)
-			n = len(buf)
-			s.cache = nil
+			data = append(s.cache, buf[:n]...)
+			s.cache = s.cache[:0]
+		} else {
+			data = buf[:n]
 		}
-		msg, unUsedCount, err := s.GetContext().UnPackage(s, buf[:n])
-		if err != nil {
-			s.cache = nil
-			s.GetContext().GetEventHandler().OnError(s, err)
-			continue
+
+		// parse all complete packets from data
+		for len(data) > 0 {
+			msg, unused, err := s.GetContext().UnPackage(s, data)
+			if err != nil {
+				// incomplete packet — cache remaining bytes for next read
+				s.cache = append(s.cache[:0], data...)
+				break
+			}
+			s.GetContext().PushGlobalMessageQueue(msg)
+			if unused <= 0 {
+				break
+			}
+			data = data[len(data)-unused:]
 		}
-		//存储未使用部分
-		if unUsedCount > 0 {
-			s.cache = append(s.cache, buf[n-unUsedCount-1:n]...)
-		}
-		s.GetContext().PushGlobalMessageQueue(msg)
 	}
 }

@@ -4,32 +4,28 @@ import (
 	"github.com/flylib/gonet"
 	"github.com/panjf2000/gnet/v2"
 	"net"
-	"reflect"
 )
 
-// Socket会话
+// session is the gnet connection session.
 type session struct {
-	//核心会话标志
 	gonet.SessionCommon
-	//存储功能
 
-	//累计收消息总数
 	recvCount uint64
-	//raw conn
-	conn gnet.Conn
-	//缓存数据，用于解决粘包问题
-	cache []byte
+	conn      gnet.Conn
+	cache     []byte
 }
 
-// 新会话
-func newSession(c *gonet.Context, conn gnet.Conn) *session {
-	is := c.GetIdleSession()
-	ns := is.(*session)
-	ns.conn = conn
-	ns.WithContext(c)
-	ns.UpdateID(uint64(conn.Fd()))
-	c.GetEventHandler().OnConnect(ns)
-	return ns
+// newSession gets an idle session from the pool and attaches the gnet connection.
+func newSession(c *gonet.Context[*session], conn gnet.Conn) *session {
+	s, ok := c.GetIdleSession()
+	if !ok {
+		return nil
+	}
+	s.conn = conn
+	// Use the file descriptor as the session ID so we can look up sessions by conn.
+	s.UpdateID(s, uint64(conn.Fd()))
+	c.GetEventHandler().OnConnect(s)
+	return s
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -47,8 +43,4 @@ func (s *session) Send(msgID uint32, msg any) error {
 
 func (s *session) Close() error {
 	return s.conn.Close()
-}
-
-func SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
 }

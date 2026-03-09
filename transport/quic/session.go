@@ -6,10 +6,9 @@ import (
 	"github.com/flylib/gonet"
 	"github.com/quic-go/quic-go"
 	"net"
-	"reflect"
 )
 
-// conn
+// session is the QUIC connection session.
 type session struct {
 	gonet.SessionCommon
 
@@ -18,14 +17,15 @@ type session struct {
 	mod      uint32
 }
 
-// 新会话
-func newSession(c *gonet.Context, conn quic.Connection) *session {
-	ses := c.GetIdleSession()
-	ns, _ := ses.(*session)
-	ns.conn = conn
-	ns.WithContext(c)
-	c.GetEventHandler().OnConnect(ns)
-	return ns
+// newSession gets an idle session from the pool and attaches the QUIC connection.
+func newSession(c *gonet.Context[*session], conn quic.Connection) *session {
+	s, ok := c.GetIdleSession()
+	if !ok {
+		return nil
+	}
+	s.conn = conn
+	c.GetEventHandler().OnConnect(s)
+	return s
 }
 
 func (s *session) RemoteAddr() net.Addr {
@@ -37,7 +37,6 @@ func (s *session) Send(msgID uint32, msg any) error {
 	if err != nil {
 		return err
 	}
-	//2*1000000+101 = 2000000101
 	channelId := msgID / s.mod
 	msgID = msgID - channelId*s.mod
 	if s.channels[channelId] != nil {
@@ -65,10 +64,9 @@ func (s *session) acceptStream() {
 		s.channels = append(s.channels, ch)
 		go s.recvLoop(ch)
 	}
-
 }
 
-// 循环读取消息
+// recvLoop reads messages from a single QUIC stream.
 func (s *session) recvLoop(channel quic.Stream) {
 	defer channel.Close()
 	var buf = make([]byte, gonet.MTU)
@@ -84,12 +82,7 @@ func (s *session) recvLoop(channel quic.Stream) {
 			s.GetContext().GetEventHandler().OnError(s, err)
 			continue
 		}
-		msg.ID()
-
+		_ = msg.ID()
 		s.GetContext().PushGlobalMessageQueue(msg)
 	}
-}
-
-func SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
 }

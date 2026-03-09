@@ -3,28 +3,28 @@ package udp
 import (
 	"github.com/flylib/gonet"
 	"net"
-	"reflect"
 	"time"
 )
 
-// Socket会话
+// session is the UDP connection session.
 type session struct {
 	gonet.SessionCommon
 
 	remoteAddr             *net.UDPAddr
 	serverConn, remoteConn *net.UDPConn
 	uuid                   string
-	heartbeatTime          time.Time //最近心跳时间点
-	nexCheckTime           time.Time //下次检查时间点
+	heartbeatTime          time.Time
+	nexCheckTime           time.Time
 }
 
-// 新会话
-func newSession(c *gonet.Context, conn *net.UDPConn, remote *net.UDPAddr) *session {
-	is := c.GetIdleSession()
-	s := is.(*session)
+// newSession gets an idle session from the pool and attaches the connection info.
+func newSession(c *gonet.Context[*session], conn *net.UDPConn, remote *net.UDPAddr) *session {
+	s, ok := c.GetIdleSession()
+	if !ok {
+		return nil
+	}
 	s.serverConn = conn
 	s.remoteAddr = remote
-	s.WithContext(c)
 	return s
 }
 
@@ -32,7 +32,6 @@ func (s *session) RemoteAddr() net.Addr {
 	return s.remoteAddr
 }
 
-// 发送封包
 func (s *session) Send(msgID uint32, msg any) error {
 	data, err := s.GetContext().Package(s, msgID, msg)
 	if err != nil {
@@ -43,7 +42,6 @@ func (s *session) Send(msgID uint32, msg any) error {
 	} else {
 		_, err = s.serverConn.WriteToUDP(data, s.remoteAddr)
 	}
-
 	return err
 }
 
@@ -51,7 +49,7 @@ func (s *session) Close() error {
 	return s.serverConn.Close()
 }
 
-// Loop to read messages
+// recvLoop reads from a dedicated UDP connection (client-side).
 func (s *session) recvLoop() {
 	var buf = make([]byte, 1024)
 	for {
@@ -67,9 +65,4 @@ func (s *session) recvLoop() {
 		}
 		s.GetContext().PushGlobalMessageQueue(msg)
 	}
-}
-
-// todo 心跳检测
-func SessionType() reflect.Type {
-	return reflect.TypeOf(session{})
 }

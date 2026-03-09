@@ -1,52 +1,51 @@
 package gonet
 
 import (
-	"reflect"
 	"sync"
 	"sync/atomic"
 )
 
-// 会话管理
-type sessionManager struct {
-	aliveNum int32     //当前活跃链接总数
-	serial   uint64    //流水号
-	alive    sync.Map  //活跃链接
-	idle     sync.Pool //空闲会话
+// sessionManager manages alive sessions and the idle session pool.
+type sessionManager[S SessionConstraint] struct {
+	aliveNum int32
+	serial   uint64
+	alive    sync.Map
+	pool     sync.Pool
 }
 
-func newSessionManager(sessionType reflect.Type) *sessionManager {
-	return &sessionManager{
-		idle: sync.Pool{New: func() any {
-			return reflect.New(sessionType).Interface()
-		}},
-	}
+func newSessionManager[S SessionConstraint](factory func() S) *sessionManager[S] {
+	m := &sessionManager[S]{}
+	m.pool.New = func() any { return factory() }
+	return m
 }
 
-// 活跃会话
-func (s *sessionManager) addAliveSession(session ISession) {
-	atomic.AddInt32(&s.aliveNum, 1)
-	session.(interface{ SetID(id uint64) }).SetID(atomic.AddUint64(&s.serial, 1))
-	s.alive.Store(session.ID(), session)
+func (m *sessionManager[S]) addAlive(s S) {
+	atomic.AddInt32(&m.aliveNum, 1)
+	s.SetID(atomic.AddUint64(&m.serial, 1))
+	m.alive.Store(s.ID(), s)
 }
 
-func (s *sessionManager) getAliveSession(id uint64) (session ISession, exist bool) {
-	ss, ok := s.alive.Load(id)
+func (m *sessionManager[S]) removeAlive(id uint64) {
+	atomic.AddInt32(&m.aliveNum, -1)
+	m.alive.Delete(id)
+}
+
+func (m *sessionManager[S]) getAlive(id uint64) (ISession, bool) {
+	v, ok := m.alive.Load(id)
 	if !ok {
-		return nil, ok
+		return nil, false
 	}
-	return ss.(ISession), ok
+	return v.(ISession), true
 }
 
-func (s *sessionManager) countAliveSession() int32 {
-	return atomic.LoadInt32(&s.aliveNum)
+func (m *sessionManager[S]) count() int32 {
+	return atomic.LoadInt32(&m.aliveNum)
 }
 
-func (s *sessionManager) getIdleSession() ISession {
-	return s.idle.Get().(ISession)
+func (m *sessionManager[S]) getIdle() S {
+	return m.pool.Get().(S)
 }
 
-func (s *sessionManager) recycleIdleSession(session ISession) {
-	atomic.AddInt32(&s.aliveNum, -1)
-	s.alive.Delete(session.ID())
-	s.idle.Put(session)
+func (m *sessionManager[S]) putIdle(s S) {
+	m.pool.Put(s)
 }

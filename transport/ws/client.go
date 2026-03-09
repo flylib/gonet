@@ -7,12 +7,11 @@ import (
 )
 
 type client struct {
-	gonet.PeerCommon
+	gonet.PeerCommon[*Session]
 	option
-	conn websocket.Conn
 }
 
-func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
+func NewClient(ctx *gonet.Context[*Session], options ...Option) gonet.IClient {
 	c := &client{}
 	for _, f := range options {
 		f(&c.option)
@@ -31,7 +30,11 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 		return nil, err
 	}
 	c.SetAddr(addr)
-	s := newSession(c.Context, conn)
+	s := newSession(c.GetCtx(), conn)
+	if s == nil {
+		_ = conn.Close()
+		return nil, nil
+	}
 	go s.ReadLoop()
 	return s, nil
 }

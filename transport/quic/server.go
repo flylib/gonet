@@ -6,14 +6,14 @@ import (
 	"github.com/quic-go/quic-go"
 )
 
-// 接收端
+// server is the QUIC server-side transport.
 type server struct {
-	gonet.PeerCommon
+	gonet.PeerCommon[*session]
 	ln *quic.Listener
 	option
 }
 
-func NewServer(ctx *gonet.Context, options ...Option) gonet.IServer {
+func NewServer(ctx *gonet.Context[*session], options ...Option) gonet.IServer {
 	s := &server{}
 	for _, f := range options {
 		f(&s.option)
@@ -34,7 +34,11 @@ func (s *server) Listen(addr string) (err error) {
 		if err != nil {
 			continue
 		}
-		ns := newSession(s.Context, conn)
+		ns := newSession(s.GetCtx(), conn)
+		if ns == nil {
+			_ = conn.CloseWithError(0, "max sessions reached")
+			continue
+		}
 		ns.mod = s.modulo
 		go ns.acceptStream()
 	}

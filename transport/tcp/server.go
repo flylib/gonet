@@ -6,19 +6,18 @@ import (
 )
 
 type server struct {
-	gonet.PeerCommon
-
+	gonet.PeerCommon[*Session]
 	ln net.Listener
 }
 
-func NewServer(ctx *gonet.Context) gonet.IServer {
+func NewServer(ctx *gonet.Context[*Session]) gonet.IServer {
 	s := &server{}
 	s.WithContext(ctx)
 	return s
 }
 
 func (s *server) Listen(addr string) error {
-	ln, err := net.Listen(string(gonet.TCP), addr)
+	ln, err := net.Listen("tcp", addr)
 	if err != nil {
 		return err
 	}
@@ -30,9 +29,16 @@ func (s *server) Listen(addr string) error {
 		if err != nil {
 			return err
 		}
-		go newSession(s.Context, conn).recvLoop()
+		session := newSession(s.GetCtx(), conn)
+		if session == nil {
+			// max session count reached
+			_ = conn.Close()
+			continue
+		}
+		go session.recvLoop()
 	}
 }
+
 func (s *server) Close() error {
 	return s.ln.Close()
 }

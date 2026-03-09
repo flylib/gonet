@@ -7,12 +7,12 @@ import (
 )
 
 type client struct {
-	gonet.PeerCommon
+	gonet.PeerCommon[*session]
 	option
 	conn quic.Connection
 }
 
-func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
+func NewClient(ctx *gonet.Context[*session], options ...Option) gonet.IClient {
 	c := &client{}
 	for _, f := range options {
 		f(&c.option)
@@ -27,7 +27,11 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 		return nil, err
 	}
 	c.conn = connection
-	s := newSession(c.Context, connection)
+	s := newSession(c.GetCtx(), connection)
+	if s == nil {
+		_ = connection.CloseWithError(0, "max sessions reached")
+		return nil, nil
+	}
 	go s.acceptStream()
 	return s, nil
 }
