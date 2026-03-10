@@ -45,7 +45,7 @@ func TestWebsocketClient(t *testing.T) {
 	for range tick {
 		i++
 		err = session.Send(101, &proto.Say{
-			fmt.Sprintf("hello server %d", i),
+			Content: fmt.Sprintf("hello server %d", i),
 		})
 		if err != nil {
 			log.Fatal(err)
