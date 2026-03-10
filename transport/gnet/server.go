@@ -14,7 +14,7 @@ type server struct {
 	opt    option
 }
 
-func NewServer(ctx *gonet.Context[*session], options ...Option) gonet.IServer {
+func NewServer(ctx *gonet.AppContext[*session], options ...Option) gonet.IServer {
 	var opt option
 	for _, f := range options {
 		f(&opt)

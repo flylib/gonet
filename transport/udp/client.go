@@ -13,7 +13,7 @@ type client struct {
 	option
 }
 
-func NewClient(ctx *gonet.Context[*session], options ...Option) gonet.IClient {
+func NewClient(ctx *gonet.AppContext[*session], options ...Option) gonet.IClient {
 	c := &client{
 		option: option{
 			mtu: gonet.MTU,

@@ -13,7 +13,7 @@ type client struct {
 	cli *gnet.Client
 }
 
-func NewClient(ctx *gonet.Context[*session], options ...Option) gonet.IClient {
+func NewClient(ctx *gonet.AppContext[*session], options ...Option) gonet.IClient {
 	var opt option
 	for _, f := range options {
 		f(&opt)

@@ -15,7 +15,7 @@ type Session struct {
 
 // newSession gets an idle session from the pool and attaches conn.
 // Returns nil if the max session limit has been reached.
-func newSession(c *gonet.Context[*Session], conn net.Conn) *Session {
+func newSession(c *gonet.AppContext[*Session], conn net.Conn) *Session {
 	s, ok := c.GetIdleSession()
 	if !ok {
 		return nil

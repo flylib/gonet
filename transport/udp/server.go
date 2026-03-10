@@ -14,7 +14,7 @@ type server struct {
 	remotes map[string]uint64
 }
 
-func NewServer(ctx *gonet.Context[*session], options ...Option) gonet.IServer {
+func NewServer(ctx *gonet.AppContext[*session], options ...Option) gonet.IServer {
 	s := &server{
 		option: option{
 			mtu: gonet.MTU,

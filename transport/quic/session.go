@@ -18,7 +18,7 @@ type session struct {
 }
 
 // newSession gets an idle session from the pool and attaches the QUIC connection.
-func newSession(c *gonet.Context[*session], conn quic.Connection) *session {
+func newSession(c *gonet.AppContext[*session], conn quic.Connection) *session {
 	s, ok := c.GetIdleSession()
 	if !ok {
 		return nil

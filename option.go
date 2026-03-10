@@ -5,7 +5,7 @@ import (
 	ilog "github.com/flylib/interface/log"
 )
 
-// Option configures a Context via NewContext.
+// Option configures a Context via NewAppContext.
 type Option func(*config)
 
 func WithEventHandler(handler IEventHandler) Option {

@@ -11,7 +11,7 @@ type client struct {
 	option
 }
 
-func NewClient(ctx *gonet.Context[*Session], options ...Option) gonet.IClient {
+func NewClient(ctx *gonet.AppContext[*Session], options ...Option) gonet.IClient {
 	c := &client{}
 	for _, f := range options {
 		f(&c.option)

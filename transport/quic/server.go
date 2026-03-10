@@ -13,7 +13,7 @@ type server struct {
 	option
 }
 
-func NewServer(ctx *gonet.Context[*session], options ...Option) gonet.IServer {
+func NewServer(ctx *gonet.AppContext[*session], options ...Option) gonet.IServer {
 	s := &server{}
 	for _, f := range options {
 		f(&s.option)

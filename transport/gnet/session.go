@@ -16,7 +16,7 @@ type session struct {
 }
 
 // newSession gets an idle session from the pool and attaches the gnet connection.
-func newSession(c *gonet.Context[*session], conn gnet.Conn) *session {
+func newSession(c *gonet.AppContext[*session], conn gnet.Conn) *session {
 	s, ok := c.GetIdleSession()
 	if !ok {
 		return nil

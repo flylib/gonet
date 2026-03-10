@@ -7,7 +7,7 @@ import (
 )
 
 // IContext is the interface through which sessions interact with the framework.
-// *Context[S] implements this interface.
+// *AppContext[S] implements this interface.
 type IContext interface {
 	GetEventHandler() IEventHandler
 	PushGlobalMessageQueue(msg IMessage)
@@ -33,7 +33,7 @@ type ISession interface {
 	GetContext() IContext
 }
 
-// SessionConstraint is the type constraint for Context[S].
+// SessionConstraint is the type constraint for AppContext[S].
 // Embed SessionCommon in your session struct to satisfy this constraint.
 type SessionConstraint interface {
 	ISession

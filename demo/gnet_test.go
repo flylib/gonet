@@ -1,12 +1,12 @@
 package demo
 
 // NOTE: The gnet transport (transport/gnet) has not been updated to the generic
-// Context[S] API yet. The tests below are commented out until that transport is
-// refactored to use gonet.Context[*gnet.Session] and gonet.PeerCommon[*gnet.Session].
+// AppContext[S] API yet. The tests below are commented out until that transport is
+// refactored to use gonet.AppContext[*gnet.Session] and gonet.PeerCommon[*gnet.Session].
 //
 // When the gnet transport is updated, the usage pattern will be:
 //
-//   ctx := gonet.NewContext(
+//   ctx := gonet.NewAppContext(
 //       func() *transport.Session { return new(transport.Session) },
 //       gonet.WithEventHandler(handler.EventHandler{}),
 //       gonet.MustWithCodec(&json.Codec{}),
@@ -28,7 +28,7 @@ package demo
 // )
 
 // func TestGNETServer(t *testing.T) {
-// 	ctx := gonet.NewContext(
+// 	ctx := gonet.NewAppContext(
 // 		func() *transport.Session { return new(transport.Session) },
 // 		gonet.WithEventHandler(handler.EventHandler{}),
 // 		gonet.MustWithCodec(&json.Codec{}),
@@ -41,7 +41,7 @@ package demo
 // }
 
 // func TestGNETClient(t *testing.T) {
-// 	ctx := gonet.NewContext(
+// 	ctx := gonet.NewAppContext(
 // 		func() *transport.Session { return new(transport.Session) },
 // 		gonet.WithEventHandler(handler.EventHandler{}),
 // 		gonet.MustWithCodec(&json.Codec{}),

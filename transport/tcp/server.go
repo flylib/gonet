@@ -10,7 +10,7 @@ type server struct {
 	ln net.Listener
 }
 
-func NewServer(ctx *gonet.Context[*Session]) gonet.IServer {
+func NewServer(ctx *gonet.AppContext[*Session]) gonet.IServer {
 	s := &server{}
 	s.WithContext(ctx)
 	return s

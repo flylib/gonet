@@ -6,7 +6,7 @@ package demo
 //
 // When ready, the usage pattern will be:
 //
-//   ctx := gonet.NewContext(
+//   ctx := gonet.NewAppContext(
 //       transport.NewSession,
 //       gonet.WithEventHandler(handler.EventHandler{}),
 //       gonet.MustWithCodec(&json.Codec{}),

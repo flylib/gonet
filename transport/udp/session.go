@@ -18,7 +18,7 @@ type session struct {
 }
 
 // newSession gets an idle session from the pool and attaches the connection info.
-func newSession(c *gonet.Context[*session], conn *net.UDPConn, remote *net.UDPAddr) *session {
+func newSession(c *gonet.AppContext[*session], conn *net.UDPConn, remote *net.UDPAddr) *session {
 	s, ok := c.GetIdleSession()
 	if !ok {
 		return nil
