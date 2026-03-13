@@ -26,20 +26,21 @@ type GoroutinePool struct {
 }
 
 func newGoroutinePool(cfg poolConfig, logger ilog.ILogger, handler IEventHandler) *GoroutinePool {
-	if cfg.maxIdleNum == 0 {
-		cfg.maxIdleNum = int32(runtime.NumCPU())
-	}
-	if cfg.queueSize == 0 {
-		cfg.queueSize = 64
-	}
 	p := &GoroutinePool{
 		cfg:          cfg,
-		queue:        make(chan IMessage, cfg.queueSize),
-		addCh:        make(chan struct{}, cfg.maxIdleNum+1),
 		stopCh:       make(chan struct{}),
 		logger:       logger,
 		eventHandler: handler,
 	}
+	if cfg.queueSize == 0 {
+		// No pool: messages are processed inline by the session's own goroutine.
+		return p
+	}
+	if cfg.maxIdleNum == 0 {
+		cfg.maxIdleNum = int32(runtime.NumCPU())
+	}
+	p.queue = make(chan IMessage, cfg.queueSize)
+	p.addCh = make(chan struct{}, cfg.maxIdleNum+1)
 	go p.supervisor()
 	p.addWorkers(cfg.maxIdleNum)
 	return p
@@ -87,7 +88,7 @@ func (p *GoroutinePool) worker() {
 		case msg := <-p.queue:
 			p.eventHandler.OnMessage(msg)
 			if m, ok := msg.(*message); ok {
-				releaseMessage(m)
+				recycleMessage(m)
 			}
 		}
 	}

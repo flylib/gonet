@@ -57,6 +57,14 @@ func NewAppAppContext[S SessionConstraint](factory func() S, options ...Option) 
 func (c *AppContext[S]) GetEventHandler() IEventHandler { return c.eventHandler }
 
 func (c *AppContext[S]) PushGlobalMessageQueue(msg IMessage) {
+	if c.poolCfg.queueSize == 0 {
+		// No pool: session's own goroutine handles the message synchronously.
+		c.eventHandler.OnMessage(msg)
+		if m, ok := msg.(*message); ok {
+			recycleMessage(m)
+		}
+		return
+	}
 	c.routines.push(msg)
 }
 

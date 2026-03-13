@@ -37,7 +37,7 @@ func newMessage(id uint32, body []byte, s ISession) *message {
 	return m
 }
 
-func releaseMessage(m *message) {
+func recycleMessage(m *message) {
 	m.id = 0
 	m.body = nil
 	m.session = nil
