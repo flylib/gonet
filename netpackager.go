@@ -59,7 +59,10 @@ func (d *DefaultNetPackager) UnPackage(s ISession, data []byte) (IMessage, int, 
 		return nil, 0, errors.New("gonet: incomplete packet")
 	}
 	msgID := binary.LittleEndian.Uint32(data[PktSizeOffset : PktSizeOffset+MsgIDOffset])
-	body := data[HeaderOffset:totalLen]
+	// Copy body so the returned message does not retain a reference to the
+	// caller's read buffer, which may be reused on the next Read call.
+	body := make([]byte, totalLen-HeaderOffset)
+	copy(body, data[HeaderOffset:totalLen])
 	unused := len(data) - totalLen
-	return newMessage(msgID, body, s), unused, nil
+	return s.GetContext().NewMsg(msgID, body, s), unused, nil
 }

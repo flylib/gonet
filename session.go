@@ -1,8 +1,8 @@
 package gonet
 
 import (
-	"github.com/flylib/goutils/sync/spinlock"
 	"net"
+	"sync"
 	"sync/atomic"
 )
 
@@ -20,6 +20,8 @@ type IContext interface {
 	UnPackage(s ISession, data []byte) (IMessage, int, error)
 	Marshal(v any) ([]byte, error)
 	Unmarshal(data []byte, v any) error
+	NewMsg(id uint32, body []byte, s ISession) IMessage
+	RecycleMsg(msg IMessage)
 }
 
 // ISession is the public session interface exposed to users.
@@ -51,7 +53,7 @@ var zeroData = invalidData{}
 type SessionCommon struct {
 	ctx IContext
 	atomic.Value
-	spinlock.Locker
+	sync.Mutex
 	id uint64
 }
 

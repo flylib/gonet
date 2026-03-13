@@ -44,3 +44,11 @@ func (s *session) Send(msgID uint32, msg any) error {
 func (s *session) Close() error {
 	return s.conn.Close()
 }
+
+// Clear resets the session so it can be reused from the pool.
+func (s *session) Clear() {
+	s.SessionCommon.Clear()
+	s.conn = nil
+	s.cache = s.cache[:0]
+	s.recvCount = 0
+}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/flylib/gonet"
 	"github.com/panjf2000/gnet/v2"
-	"log"
 )
 
 type server struct {
@@ -54,12 +53,19 @@ func (s *server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	if !ok {
 		return gnet.Close
 	}
-	message, _, err := s.GetCtx().UnPackage(is, buf)
-	if err != nil {
-		log.Printf("session_%v msg parser error,reason is %v \n", c.Fd(), err)
-		return gnet.None
+	// Loop to handle multiple packets in a single traffic event (TCP粘包).
+	for len(buf) > 0 {
+		msg, unused, err := s.GetCtx().UnPackage(is, buf)
+		if err != nil {
+			s.GetCtx().GetLogger().Errorf("gonet gnet: session %d parse error: %v", c.Fd(), err)
+			break
+		}
+		s.GetCtx().PushGlobalMessageQueue(msg)
+		if unused <= 0 {
+			break
+		}
+		buf = buf[len(buf)-unused:]
 	}
-	s.GetCtx().PushGlobalMessageQueue(message)
 	return gnet.None
 }
 

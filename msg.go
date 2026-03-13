@@ -1,7 +1,5 @@
 package gonet
 
-import "sync"
-
 // IMessage represents a decoded network message.
 type IMessage interface {
 	ID() uint32
@@ -18,30 +16,10 @@ type IEventHandler interface {
 	OnError(ISession, error)
 }
 
-// msgPool reduces allocations for high-throughput message processing.
-var msgPool = sync.Pool{
-	New: func() any { return new(message) },
-}
-
 type message struct {
 	id      uint32
 	body    []byte
 	session ISession
-}
-
-func newMessage(id uint32, body []byte, s ISession) *message {
-	m := msgPool.Get().(*message)
-	m.id = id
-	m.body = body
-	m.session = s
-	return m
-}
-
-func recycleMessage(m *message) {
-	m.id = 0
-	m.body = nil
-	m.session = nil
-	msgPool.Put(m)
 }
 
 func (m *message) ID() uint32     { return m.id }

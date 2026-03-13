@@ -1,6 +1,8 @@
 package gonet
 
 import (
+	"sync"
+
 	"github.com/flylib/interface/codec"
 	ilog "github.com/flylib/interface/log"
 )
@@ -29,10 +31,11 @@ type AppContext[S SessionConstraint] struct {
 	config
 	sessions *sessionManager[S]
 	routines *GoroutinePool
+	msgPool  sync.Pool
 }
 
 // NewAppContext creates a new Context. factory must return a new, zero-value session.
-func NewAppAppContext[S SessionConstraint](factory func() S, options ...Option) *AppContext[S] {
+func NewAppContext[S SessionConstraint](factory func() S, options ...Option) *AppContext[S] {
 	cfg := config{INetPackager: &DefaultNetPackager{}}
 	for _, f := range options {
 		f(&cfg)
@@ -47,8 +50,9 @@ func NewAppAppContext[S SessionConstraint](factory func() S, options ...Option) 
 		panic("gonet: IEventHandler is required, use WithEventHandler()")
 	}
 	ctx := &AppContext[S]{config: cfg}
+	ctx.msgPool.New = func() any { return new(message) }
 	ctx.sessions = newSessionManager(factory)
-	ctx.routines = newGoroutinePool(cfg.poolCfg, cfg.ILogger, cfg.eventHandler)
+	ctx.routines = newGoroutinePool(cfg.poolCfg, cfg.ILogger, cfg.eventHandler, ctx.RecycleMsg)
 	return ctx
 }
 
@@ -60,12 +64,31 @@ func (c *AppContext[S]) PushGlobalMessageQueue(msg IMessage) {
 	if c.poolCfg.queueSize == 0 {
 		// No pool: session's own goroutine handles the message synchronously.
 		c.eventHandler.OnMessage(msg)
-		if m, ok := msg.(*message); ok {
-			recycleMessage(m)
-		}
+		c.RecycleMsg(msg)
 		return
 	}
 	c.routines.push(msg)
+}
+
+// NewMsg allocates a message from this context's pool.
+func (c *AppContext[S]) NewMsg(id uint32, body []byte, s ISession) IMessage {
+	m := c.msgPool.Get().(*message)
+	m.id = id
+	m.body = body
+	m.session = s
+	return m
+}
+
+// RecycleMsg resets and returns a message to this context's pool.
+func (c *AppContext[S]) RecycleMsg(msg IMessage) {
+	m, ok := msg.(*message)
+	if !ok {
+		return
+	}
+	m.id = 0
+	m.body = nil
+	m.session = nil
+	c.msgPool.Put(m)
 }
 
 func (c *AppContext[S]) GetSession(id uint64) (ISession, bool) {

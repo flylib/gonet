@@ -3,98 +3,94 @@ package gonet
 import (
 	"runtime"
 	"runtime/debug"
-	"sync/atomic"
 
 	ilog "github.com/flylib/interface/log"
 )
 
 type poolConfig struct {
 	queueSize  int32
-	maxNum     int32
-	maxIdleNum int32
+	maxNum     int32 // reserved, unused in shard model
+	maxIdleNum int32 // shard count (= worker count); default: NumCPU
 }
 
-// GoroutinePool is a lightweight goroutine pool for processing messages.
+// GoroutinePool is a sharded goroutine pool for processing messages.
+//
+// Messages are routed to a shard by (sessionID % numShards), so messages
+// from the same session are always processed in order by the same worker.
+// Each shard has exactly one dedicated goroutine.
+//
+// When a shard queue is full the message is dropped and logged instead of
+// blocking the caller's read loop.
 type GoroutinePool struct {
 	cfg          poolConfig
-	queue        chan IMessage
-	addCh        chan struct{}
+	shards       []chan IMessage
 	stopCh       chan struct{}
-	curWorkers   int32
 	logger       ilog.ILogger
 	eventHandler IEventHandler
+	recycleMsg   func(IMessage)
 }
 
-func newGoroutinePool(cfg poolConfig, logger ilog.ILogger, handler IEventHandler) *GoroutinePool {
+func newGoroutinePool(cfg poolConfig, logger ilog.ILogger, handler IEventHandler, recycleMsg func(IMessage)) *GoroutinePool {
 	p := &GoroutinePool{
 		cfg:          cfg,
 		stopCh:       make(chan struct{}),
 		logger:       logger,
 		eventHandler: handler,
+		recycleMsg:   recycleMsg,
 	}
 	if cfg.queueSize == 0 {
-		// No pool: messages are processed inline by the session's own goroutine.
+		// queueSize=0: messages handled inline by the session's own goroutine.
 		return p
 	}
-	if cfg.maxIdleNum == 0 {
-		cfg.maxIdleNum = int32(runtime.NumCPU())
+	numShards := int(cfg.maxIdleNum)
+	if numShards == 0 {
+		numShards = runtime.NumCPU()
 	}
-	p.queue = make(chan IMessage, cfg.queueSize)
-	p.addCh = make(chan struct{}, cfg.maxIdleNum+1)
-	go p.supervisor()
-	p.addWorkers(cfg.maxIdleNum)
+	p.shards = make([]chan IMessage, numShards)
+	for i := range p.shards {
+		p.shards[i] = make(chan IMessage, cfg.queueSize)
+		go p.worker(p.shards[i])
+	}
 	return p
 }
 
+// push routes msg to the shard determined by session ID.
+// If the shard queue is full the message is dropped and a warning is logged.
 func (p *GoroutinePool) push(msg IMessage) {
-	p.queue <- msg
-}
-
-// addWorkers signals the supervisor to start n new workers.
-func (p *GoroutinePool) addWorkers(n int32) {
-	for i := int32(0); i < n; i++ {
-		select {
-		case p.addCh <- struct{}{}:
-		default:
-		}
+	n := uint64(len(p.shards))
+	if n == 0 {
+		return
+	}
+	idx := msg.From().ID() % n
+	select {
+	case p.shards[idx] <- msg:
+	default:
+		p.logger.Errorf("gonet: shard[%d] queue full, dropping msg %d from session %d",
+			idx, msg.ID(), msg.From().ID())
+		p.recycleMsg(msg)
 	}
 }
 
-// supervisor listens for add-worker signals and enforces the maxNum cap.
-func (p *GoroutinePool) supervisor() {
-	for range p.addCh {
-		if p.cfg.maxNum > 0 && atomic.LoadInt32(&p.curWorkers) >= p.cfg.maxNum {
-			continue
-		}
-		atomic.AddInt32(&p.curWorkers, 1)
-		go p.worker()
-	}
-}
-
-func (p *GoroutinePool) worker() {
+func (p *GoroutinePool) worker(queue chan IMessage) {
 	defer func() {
-		atomic.AddInt32(&p.curWorkers, -1)
 		if r := recover(); r != nil {
 			p.logger.Errorf("gonet worker panic: %v\n%s", r, debug.Stack())
-			// restart to maintain pool size after panic
-			p.addWorkers(1)
+			// Restart on the same shard queue to maintain worker count.
+			go p.worker(queue)
 		}
 	}()
-
 	for {
 		select {
 		case <-p.stopCh:
 			return
-		case msg := <-p.queue:
+		case msg := <-queue:
 			p.eventHandler.OnMessage(msg)
-			if m, ok := msg.(*message); ok {
-				recycleMessage(m)
-			}
+			p.recycleMsg(msg)
 		}
 	}
 }
 
-// Stop signals all workers to exit gracefully.
+// Stop signals all shard workers to exit gracefully.
 func (p *GoroutinePool) Stop() {
 	close(p.stopCh)
 }
