@@ -8,12 +8,12 @@ import (
 )
 
 type client struct {
-	gonet.PeerCommon
+	gonet.PeerCommon[*Session]
 	conn *kcp.UDPSession
 	option
 }
 
-func NewClient(ctx *gonet.Context, options ...Option) gonet.IClient {
+func NewClient(ctx *gonet.AppContext[*Session], options ...Option) gonet.IClient {
 	c := &client{}
 	for _, f := range options {
 		f(&c.option)
@@ -30,9 +30,13 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 		return nil, err
 	}
 	c.conn = conn
-	s := newSession(c.Context, conn)
+	s := newSession(c.GetCtx(), conn)
+	if s == nil {
+		_ = conn.Close()
+		return nil, nil
+	}
 	go s.recvLoop()
-	return s, err
+	return s, nil
 }
 
 func (c *client) Close() error {

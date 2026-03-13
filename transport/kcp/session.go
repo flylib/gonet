@@ -6,26 +6,23 @@ import (
 	"net"
 )
 
-// Socket会话
+// Session is the KCP connection session.
 type Session struct {
-	//核心会话标志
 	gonet.SessionCommon
-	//存储功能
-
-	//累计收消息总数
 	recvCount uint64
-	//raw conn
-	conn *kcp.UDPSession
+	conn      *kcp.UDPSession
 }
 
-// 新会话
-func newSession(c *gonet.Context, conn *kcp.UDPSession) *Session {
-	is := c.GetIdleSession()
-	ns := is.(*Session)
-	ns.conn = conn
-	ns.WithContext(c)
-	c.GetEventHandler().OnConnect(ns)
-	return ns
+// newSession gets an idle session from the pool and attaches conn.
+// Returns nil if the max session limit has been reached.
+func newSession(c *gonet.AppContext[*Session], conn *kcp.UDPSession) *Session {
+	s, ok := c.GetIdleSession()
+	if !ok {
+		return nil
+	}
+	s.conn = conn
+	c.GetEventHandler().OnConnect(s)
+	return s
 }
 
 func (s *Session) RemoteAddr() net.Addr {
@@ -37,6 +34,8 @@ func (s *Session) Send(msgID uint32, msg any) error {
 	if err != nil {
 		return err
 	}
+	s.Lock()
+	defer s.Unlock()
 	_, err = s.conn.Write(buf)
 	return err
 }
@@ -45,9 +44,16 @@ func (s *Session) Close() error {
 	return s.conn.Close()
 }
 
-// 接收循环
+// Clear resets the session so it can be reused from the pool.
+func (s *Session) Clear() {
+	s.SessionCommon.Clear()
+	s.conn = nil
+	s.recvCount = 0
+}
+
+// recvLoop reads from the KCP connection until it closes.
 func (s *Session) recvLoop() {
-	var buf = make([]byte, gonet.MTU)
+	buf := make([]byte, gonet.MTU)
 	for {
 		n, err := s.conn.Read(buf)
 		if err != nil {
