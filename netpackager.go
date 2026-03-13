@@ -14,7 +14,7 @@ import (
 // The "body length" field stores the combined size of msgID(4) + body(N).
 
 const (
-	PktSizeOffset = 2                           // uint16: stores len(msgID field + body)
+	PktSizeOffset = 4                           // uint16: stores len(msgID field + body)
 	MsgIDOffset   = 4                           // uint32: message ID
 	HeaderOffset  = PktSizeOffset + MsgIDOffset // 6 bytes total header
 	MTU           = 1500
