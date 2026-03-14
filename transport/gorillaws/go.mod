@@ -1,4 +1,4 @@
-module github.com/flylib/gonet/transport/ws
+module github.com/flylib/gonet/transport/gorillaws
 
 go 1.18
 

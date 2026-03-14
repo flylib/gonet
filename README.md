@@ -49,7 +49,10 @@ GoNet 是一个基于 Go 语言开发的网络框架，参考 [cellnet](https://
 
 ```bash
 go get github.com/flylib/gonet@latest
-go get github.com/flylib/gonet/transport/ws@latest   # WebSocket 传输层
+
+# 选择一种 WebSocket 传输层
+go get github.com/flylib/gonet/transport/fastws@latest      # 推荐：基于 fasthttp/websocket
+go get github.com/flylib/gonet/transport/gorillaws@latest    # 基于 gorilla/websocket
 ```
 
 ### 定义消息与事件处理器
@@ -113,7 +116,7 @@ import (
 
     "your-project/handler"
     "github.com/flylib/gonet"
-    transport "github.com/flylib/gonet/transport/ws"
+    transport "github.com/flylib/gonet/transport/fastws"
     "github.com/flylib/goutils/codec/json"
     "github.com/flylib/pkg/log/builtinlog"
 )
@@ -147,7 +150,7 @@ import (
     "your-project/handler"
     "your-project/proto"
     "github.com/flylib/gonet"
-    transport "github.com/flylib/gonet/transport/ws"
+    transport "github.com/flylib/gonet/transport/fastws"
     "github.com/flylib/goutils/codec/json"
     "github.com/flylib/pkg/log/builtinlog"
 )
@@ -200,7 +203,8 @@ func main() {
 | 协议 | 包路径 | Session 类型 | 特有选项 |
 |------|--------|-------------|----------|
 | **TCP** | `transport/tcp` | `*tcp.Session` | `WithHandshakeTimeout` |
-| **WebSocket** | `transport/ws` | `*ws.Session` | `WithHandshakeTimeout`, `WithReadBufferSize`, `WithWriteBufferSize`, `WithEnableCompression` |
+| **FastWS** | `transport/fastws` | `*fastws.Session` | `WithHandshakeTimeout`, `WithReadBufferSize`, `WithWriteBufferSize`, `WithEnableCompression`, `WithCheckOrigin` |
+| **GorillaWS** | `transport/gorillaws` | `*gorillaws.Session` | `WithHandshakeTimeout`, `WithReadBufferSize`, `WithWriteBufferSize`, `WithEnableCompression` |
 | **UDP** | `transport/udp` | — | `WithMaximumTransmissionUnit` |
 | **QUIC** | `transport/quic` | — | `WithHandshakeTimeout`, `WithChannelIdModulo`, `WithMaximumTransmissionUnit` |
 | **KCP** | `transport/kcp` | `*kcp.Session` | `WithHandshakeTimeout`, `WithPBKDF2` |
@@ -211,7 +215,10 @@ func main() {
 只需更换 import 路径和 Session 工厂函数，业务代码零修改：
 
 ```go
-// WebSocket → TCP，仅改两行
+// FastWS → GorillaWS，仅改 import
+import transport "github.com/flylib/gonet/transport/gorillaws"
+
+// FastWS → TCP，仅改 import
 import transport "github.com/flylib/gonet/transport/tcp"
 
 ctx := gonet.NewAppContext(
@@ -288,21 +295,27 @@ type IMessage interface {
 ```bash
 cd demo
 
-# Go benchmark (建议 -count=3 取稳定值)
+# GorillaWS benchmark
 go test -run='^$' -bench=BenchmarkWs -benchmem -count=3
 
-# 快速吞吐量报告 (5 万条消息)
-go test -run=TestWsBenchmarkReport -v -count=1
+# FastWS benchmark
+go test -run='^$' -bench=BenchmarkFastws -benchmem -count=3
+
+# 快速吞吐量报告
+go test -run=TestWsBenchmarkReport -v -count=1        # gorillaws
+go test -run=TestFastwsBenchmarkReport -v -count=1     # fastws
 ```
 
 ### 测试用例说明
 
-| 用例 | 说明 |
+每种 WS 传输层均提供相同的三组 benchmark + 一个吞吐报告：
+
+| 用例 (gorillaws / fastws) | 说明 |
 |------|------|
-| `BenchmarkWsSendRecv` | 客户端发送 → 服务端 echo → 客户端接收，测量完整往返延迟 |
-| `BenchmarkWsThroughput` | 客户端单向持续发送，服务端消费，测量最大吞吐 |
-| `BenchmarkWsParallelSend` | 多 goroutine 并发发送到同一 session，测量锁竞争下的吞吐 |
-| `TestWsBenchmarkReport` | 发送 5 万条消息，打印 QPS / 平均延迟摘要 |
+| `BenchmarkWsSendRecv` / `BenchmarkFastwsSendRecv` | 客户端发送 → 服务端 echo → 客户端接收，测量完整往返延迟 |
+| `BenchmarkWsThroughput` / `BenchmarkFastwsThroughput` | 客户端单向持续发送，服务端消费，测量最大吞吐 |
+| `BenchmarkWsParallelSend` / `BenchmarkFastwsParallelSend` | 多 goroutine 并发发送到同一 session，测量锁竞争下的吞吐 |
+| `TestWsBenchmarkReport` / `TestFastwsBenchmarkReport` | 发送 5 万条消息，打印 QPS / 平均延迟摘要 |
 
 ## 参与贡献
 

@@ -1,4 +1,4 @@
-package ws
+package gorillaws
 
 import (
 	"github.com/flylib/gonet"

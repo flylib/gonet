@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/flylib/gonet"
-	transport "github.com/flylib/gonet/transport/ws"
+	transport "github.com/flylib/gonet/transport/gorillaws"
 	"github.com/flylib/goutils/codec/json"
 	"github.com/flylib/pkg/log/builtinlog"
 )

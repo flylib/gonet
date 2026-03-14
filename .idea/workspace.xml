@@ -5,7 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="optimize by calude">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/demo/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/demo/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws_bench_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/demo/ws_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/client.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/go.sum" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/option.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/ws/session.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -203,11 +214,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/demo/ws_test.go</url>
-          <line>15</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/transport/gnet/client.go</url>
           <line>57</line>
