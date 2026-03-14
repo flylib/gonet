@@ -14,10 +14,18 @@ import (
 // The "body length" field stores the combined size of msgID(4) + body(N).
 
 const (
-	PktSizeOffset = 4                           // uint16: stores len(msgID field + body)
-	MsgIDOffset   = 4                           // uint32: message ID
-	HeaderOffset  = PktSizeOffset + MsgIDOffset // 6 bytes total header
-	MTU           = 1500
+	// PktSizeOffset is the byte length of the size field (uint16).
+	PktSizeOffset = 2
+	// MsgIDOffset is the byte length of the message ID field (uint32).
+	MsgIDOffset  = 4
+	HeaderOffset = PktSizeOffset + MsgIDOffset // 6 bytes total header
+	MTU          = 1500
+)
+
+var (
+	ErrMessageTooLarge  = errors.New("gonet: message body too large")
+	ErrIncompleteHeader = errors.New("gonet: incomplete header")
+	ErrIncompletePacket = errors.New("gonet: incomplete packet")
 )
 
 // INetPackager encodes and decodes network packets.
@@ -40,7 +48,7 @@ func (d *DefaultNetPackager) Package(s ISession, msgID uint32, v any) ([]byte, e
 	}
 	bodyFieldLen := MsgIDOffset + len(body) // what PktSizeOffset field stores
 	if bodyFieldLen > 0xFFFF {
-		return nil, errors.New("gonet: message body too large")
+		return nil, ErrMessageTooLarge
 	}
 	pkt := make([]byte, HeaderOffset+len(body))
 	binary.LittleEndian.PutUint16(pkt, uint16(bodyFieldLen))
@@ -51,12 +59,12 @@ func (d *DefaultNetPackager) Package(s ISession, msgID uint32, v any) ([]byte, e
 
 func (d *DefaultNetPackager) UnPackage(s ISession, data []byte) (IMessage, int, error) {
 	if len(data) < HeaderOffset {
-		return nil, 0, errors.New("gonet: incomplete header")
+		return nil, 0, ErrIncompleteHeader
 	}
 	bodyFieldLen := int(binary.LittleEndian.Uint16(data[:PktSizeOffset]))
 	totalLen := PktSizeOffset + bodyFieldLen
 	if len(data) < totalLen {
-		return nil, 0, errors.New("gonet: incomplete packet")
+		return nil, 0, ErrIncompletePacket
 	}
 	msgID := binary.LittleEndian.Uint32(data[PktSizeOffset : PktSizeOffset+MsgIDOffset])
 	// Copy body so the returned message does not retain a reference to the

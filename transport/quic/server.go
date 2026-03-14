@@ -14,9 +14,12 @@ type server struct {
 }
 
 func NewServer(ctx *gonet.AppContext[*session], options ...Option) gonet.IServer {
-	s := &server{}
+	s := &server{option: option{modulo: defaultChannelModulo}}
 	for _, f := range options {
 		f(&s.option)
+	}
+	if s.option.modulo == 0 {
+		s.option.modulo = defaultChannelModulo
 	}
 	s.WithContext(ctx)
 	return s

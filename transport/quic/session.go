@@ -24,6 +24,7 @@ func newSession(c *gonet.AppContext[*session], conn quic.Connection) *session {
 		return nil
 	}
 	s.conn = conn
+	s.mod = defaultChannelModulo
 	c.GetEventHandler().OnConnect(s)
 	return s
 }
@@ -37,16 +38,17 @@ func (s *session) Send(msgID uint32, msg any) error {
 	if err != nil {
 		return err
 	}
-	channelId := msgID / s.mod
-	msgID = msgID - channelId*s.mod
-	if s.channels[channelId] != nil {
-		_, err = s.channels[channelId].Write(buf)
-		if err != nil {
-			return err
-		}
+	mod := s.mod
+	if mod == 0 {
+		mod = defaultChannelModulo
 	}
-
-	return fmt.Errorf("not found the channel-%d", channelId)
+	channelId := msgID / mod
+	msgID = msgID - channelId*mod
+	if int(channelId) >= len(s.channels) || s.channels[channelId] == nil {
+		return fmt.Errorf("not found the channel-%d", channelId)
+	}
+	_, err = s.channels[channelId].Write(buf)
+	return err
 }
 
 func (s *session) Close() error {

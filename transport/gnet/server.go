@@ -2,6 +2,8 @@ package gnet
 
 import (
 	"context"
+	"errors"
+
 	"github.com/flylib/gonet"
 	"github.com/panjf2000/gnet/v2"
 )
@@ -53,18 +55,35 @@ func (s *server) OnTraffic(c gnet.Conn) (action gnet.Action) {
 	if !ok {
 		return gnet.Close
 	}
+	ses, ok := is.(*session)
+	if !ok {
+		return gnet.Close
+	}
+
+	var data []byte
+	if len(ses.cache) > 0 {
+		data = append(ses.cache, buf...)
+		ses.cache = ses.cache[:0]
+	} else {
+		data = buf
+	}
 	// Loop to handle multiple packets in a single traffic event (TCP粘包).
-	for len(buf) > 0 {
-		msg, unused, err := s.GetCtx().UnPackage(is, buf)
+	for len(data) > 0 {
+		msg, unused, err := s.GetCtx().UnPackage(is, data)
 		if err != nil {
-			s.GetCtx().GetLogger().Errorf("gonet gnet: session %d parse error: %v", c.Fd(), err)
+			if errors.Is(err, gonet.ErrIncompleteHeader) || errors.Is(err, gonet.ErrIncompletePacket) {
+				// Cache remaining bytes for the next OnTraffic.
+				ses.cache = append(ses.cache[:0], data...)
+			} else {
+				s.GetCtx().GetLogger().Errorf("gonet gnet: session %d parse error: %v", c.Fd(), err)
+			}
 			break
 		}
 		s.GetCtx().PushGlobalMessageQueue(msg)
 		if unused <= 0 {
 			break
 		}
-		buf = buf[len(buf)-unused:]
+		data = data[len(data)-unused:]
 	}
 	return gnet.None
 }

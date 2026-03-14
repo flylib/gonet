@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="add event handler">
+    <list default="true" id="11f0d781-a2e3-4ebc-83d8-d0ba1cf23bc7" name="Changes" comment="optimize">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo/ws_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/demo/ws_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transport/udp/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/transport/udp/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packet.go" beforeDir="false" afterPath="$PROJECT_DIR$/packet.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/gnet/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/gnet/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/option.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/option.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transport/quic/session.go" beforeDir="false" afterPath="$PROJECT_DIR$/transport/quic/session.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +74,7 @@
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
     "WebServerToolWindowFactoryState": "false",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "v4",
+    "git-widget-placeholder": "claude",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
     "ignore.virus.scanning.warn.message": "true",
@@ -194,7 +198,8 @@
     <MESSAGE value="add kcp" />
     <MESSAGE value="opt" />
     <MESSAGE value="add event handler" />
-    <option name="LAST_COMMIT_MESSAGE" value="add event handler" />
+    <MESSAGE value="optimize" />
+    <option name="LAST_COMMIT_MESSAGE" value="optimize" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

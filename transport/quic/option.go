@@ -21,6 +21,8 @@ type option struct {
 	mtu    int
 }
 
+const defaultChannelModulo uint32 = ^uint32(0)
+
 func WithHandshakeTimeout(t time.Duration) Option {
 	return func(option *option) {
 		option.HandshakeTimeout = t

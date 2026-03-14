@@ -13,9 +13,12 @@ type client struct {
 }
 
 func NewClient(ctx *gonet.AppContext[*session], options ...Option) gonet.IClient {
-	c := &client{}
+	c := &client{option: option{modulo: defaultChannelModulo}}
 	for _, f := range options {
 		f(&c.option)
+	}
+	if c.option.modulo == 0 {
+		c.option.modulo = defaultChannelModulo
 	}
 	c.WithContext(ctx)
 	return c
@@ -32,6 +35,7 @@ func (c *client) Dial(addr string) (gonet.ISession, error) {
 		_ = connection.CloseWithError(0, "max sessions reached")
 		return nil, nil
 	}
+	s.mod = c.modulo
 	go s.acceptStream()
 	return s, nil
 }
