@@ -24,6 +24,12 @@ type IContext interface {
 	RecycleMsg(msg IMessage)
 }
 
+// BodyBufferProvider provides pooled buffers for message bodies.
+type BodyBufferProvider interface {
+	GetBodyBuffer(size int) []byte
+	RecycleBodyBuffer(buf []byte)
+}
+
 // ISession is the public session interface exposed to users.
 type ISession interface {
 	ID() uint64

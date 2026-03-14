@@ -12,6 +12,7 @@ type config struct {
 	eventHandler    IEventHandler
 	maxSessionCount int
 	poolCfg         poolConfig
+	bodyPoolMaxCap  int
 	codec.ICodec
 	ilog.ILogger
 	INetPackager
@@ -32,11 +33,14 @@ type AppContext[S SessionConstraint] struct {
 	sessions *sessionManager[S]
 	routines *GoroutinePool
 	msgPool  sync.Pool
+	bodyPool bytePool
 }
 
 // NewAppContext creates a new Context. factory must return a new, zero-value session.
 func NewAppContext[S SessionConstraint](factory func() S, options ...Option) *AppContext[S] {
-	cfg := config{INetPackager: &DefaultNetPackager{}}
+	cfg := config{
+		INetPackager: &DefaultNetPackager{},
+	}
 	for _, f := range options {
 		f(&cfg)
 	}
@@ -53,6 +57,7 @@ func NewAppContext[S SessionConstraint](factory func() S, options ...Option) *Ap
 	ctx.msgPool.New = func() any { return new(message) }
 	ctx.sessions = newSessionManager(factory)
 	ctx.routines = newGoroutinePool(cfg.poolCfg, cfg.ILogger, cfg.eventHandler, ctx.RecycleMsg)
+	ctx.bodyPool = newBytePool(cfg.bodyPoolMaxCap)
 	return ctx
 }
 
@@ -84,6 +89,9 @@ func (c *AppContext[S]) RecycleMsg(msg IMessage) {
 	m, ok := msg.(*message)
 	if !ok {
 		return
+	}
+	if len(m.body) > 0 {
+		c.RecycleBodyBuffer(m.body)
 	}
 	m.id = 0
 	m.body = nil
@@ -159,4 +167,15 @@ func (c *AppContext[S]) GetIdleSession() (S, bool) {
 // GetLogger returns the configured logger.
 func (c *AppContext[S]) GetLogger() ilog.ILogger {
 	return c.ILogger
+}
+
+// GetBodyBuffer returns a pooled buffer for message bodies.
+// If pooling is disabled, it allocates a new buffer.
+func (c *AppContext[S]) GetBodyBuffer(size int) []byte {
+	return c.bodyPool.get(size)
+}
+
+// RecycleBodyBuffer returns a message body buffer to the pool.
+func (c *AppContext[S]) RecycleBodyBuffer(buf []byte) {
+	c.bodyPool.put(buf)
 }

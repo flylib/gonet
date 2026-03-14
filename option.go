@@ -32,6 +32,12 @@ func WithGQSize(size int32) Option {
 	return func(c *config) { c.poolCfg.queueSize = size }
 }
 
+// WithBodyPoolMaxCap sets the max capacity (bytes) for pooled message bodies.
+// Set to 0 to disable body pooling (default).
+func WithBodyPoolMaxCap(maxCap int) Option {
+	return func(c *config) { c.bodyPoolMaxCap = maxCap }
+}
+
 // WithNetPackager sets a custom network packet encoder/decoder.
 func WithNetPackager(p INetPackager) Option {
 	return func(c *config) { c.INetPackager = p }
